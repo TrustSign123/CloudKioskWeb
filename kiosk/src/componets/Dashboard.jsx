@@ -1,12 +1,27 @@
 import React, { useState } from "react";
 import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
+import {
+  ContextMenu,
+  MenuItem,
+  ContextMenuTrigger,
+  showMenu,
+} from "react-contextmenu";
 
 function Dashboard() {
   const [profileOpen, setProfileOpen] = useState(false);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
+  };
+
+  const handleMonuseClick = (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    showMenu({
+      position: [x, y],
+      id: "id",
+    });
   };
   return (
     <>
@@ -351,7 +366,35 @@ function Dashboard() {
                 <h3 className="text-xl">Test Kiosk</h3>
                 <h3 className="text-sm text-gray-400">8G7Y66Z</h3>
               </div>
-              <i className="fa-solid fa-ellipsis fa-xl" />
+              <ContextMenuTrigger mouseButton={0} id="id">
+                <div onClick={handleMonuseClick} className="well">
+                  <i className="fa-solid fa-ellipsis fa-xl" />
+                </div>
+              </ContextMenuTrigger>
+
+              <ContextMenu
+                id="id"
+                className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
+              >
+                <MenuItem
+                  data={{ foo: "bar" }}
+                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                >
+                  <i className="fa-solid fa-eye"></i> <h3>View</h3>
+                </MenuItem>
+                <MenuItem
+                  data={{ foo: "bar" }}
+                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i> <h3>Edit</h3>
+                </MenuItem>
+                <MenuItem
+                  data={{ foo: "bar" }}
+                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-rose-500 py-1.5 px-2"
+                >
+                  <i className="fa-solid fa-trash"></i> <h3>Delete</h3>
+                </MenuItem>
+              </ContextMenu>
             </div>
           </div>
         </main>
