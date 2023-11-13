@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
+import KioskContext from "../context/kiosk/kioskContext";
 import {
   ContextMenu,
   MenuItem,
@@ -9,7 +10,13 @@ import {
 } from "react-contextmenu";
 
 function Dashboard() {
+  const { logout, userProfile, kiosks, fetchKiosk, deleteKiosk, loading } =
+    useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  useEffect(() => {
+    fetchKiosk();
+  }, [kiosks]);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
@@ -23,6 +30,14 @@ function Dashboard() {
       id: "id",
     });
   };
+
+  const handleLogOut = () => {
+    logout();
+  };
+
+  function handleDeleteClick(index) {
+    deleteKiosk(kiosks[index]._id);
+  }
   return (
     <>
       <div className="antialiased bg-gray-50 dark:bg-gray-900">
@@ -140,15 +155,15 @@ function Dashboard() {
               <div
                 className={`${
                   profileOpen ? "visible" : "hidden"
-                } absolute right-2 top-8 z-50 my-4 w-56 text-base list-none  rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl`}
+                } absolute right-2 top-8 z-50 my-4 w-56 text-base list-none  rounded divide-y divide-gray-100 shadow bg-gray-50 dark:bg-gray-700 dark:divide-gray-600 rounded-xl`}
                 id="dropdown"
               >
                 <div className="py-3 px-4">
                   <span className="block text-sm font-semibold text-gray-900 dark:text-white">
-                    Admin
+                    {userProfile.name}
                   </span>
                   <span className="block text-sm text-gray-900 truncate dark:text-white">
-                    admin@gmail.com
+                    {userProfile.email}
                   </span>
                 </div>
                 <ul
@@ -214,12 +229,10 @@ function Dashboard() {
                   className="py-1 text-gray-700 dark:text-gray-300"
                   aria-labelledby="dropdown"
                 >
-                  <li>
-                    <Link to={"/"}>
-                      <a className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                        Sign out
-                      </a>
-                    </Link>
+                  <li onClick={handleLogOut}>
+                    <a className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      Sign out
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -262,24 +275,23 @@ function Dashboard() {
               </div>
             </form>
             <ul className="space-y-2">
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                  </svg>
-                  <span className="ml-3">Overview</span>
-                </a>
-              </li>
+              <Link to={"/over"}>
+                <li>
+                  <a className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <svg
+                      aria-hidden="true"
+                      className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                      <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                    <span className="ml-3">Overview</span>
+                  </a>
+                </li>
+              </Link>
               <li>
                 <a className="cursor-pointer flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <img src={kioskIcon} />
@@ -361,41 +373,47 @@ function Dashboard() {
                 <h3>Add Kiosk</h3>
               </div>
             </Link>
-            <div className="flex flex-col justify-between items-start shadow-md bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white rounded-lg border-gray-300 p-6 h-32 md:h-64 cursor-pointer">
-              <div>
-                <h3 className="text-xl">Test Kiosk</h3>
-                <h3 className="text-sm text-gray-400">8G7Y66Z</h3>
-              </div>
-              <ContextMenuTrigger mouseButton={0} id="id">
-                <div onClick={handleMonuseClick} className="well">
-                  <i className="fa-solid fa-ellipsis fa-xl" />
-                </div>
-              </ContextMenuTrigger>
-
-              <ContextMenu
-                id="id"
-                className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
+            {kiosks.map((kiosk, index) => (
+              <div
+                key={kiosk._id}
+                className="flex flex-col justify-between items-start shadow-md bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white rounded-lg border-gray-300 p-6 h-32 md:h-64 cursor-pointer"
               >
-                <MenuItem
-                  data={{ foo: "bar" }}
-                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                <div>
+                  <h3 className="text-xl">{kiosk.kioskName}</h3>
+                  <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
+                </div>
+                <ContextMenuTrigger mouseButton={0} id="id">
+                  <div onClick={handleMonuseClick} className="well">
+                    <i className="fa-solid fa-ellipsis fa-xl" />
+                  </div>
+                </ContextMenuTrigger>
+
+                <ContextMenu
+                  id="id"
+                  className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
                 >
-                  <i className="fa-solid fa-eye"></i> <h3>View</h3>
-                </MenuItem>
-                <MenuItem
-                  data={{ foo: "bar" }}
-                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
-                >
-                  <i className="fa-solid fa-pen-to-square"></i> <h3>Edit</h3>
-                </MenuItem>
-                <MenuItem
-                  data={{ foo: "bar" }}
-                  className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-rose-500 py-1.5 px-2"
-                >
-                  <i className="fa-solid fa-trash"></i> <h3>Delete</h3>
-                </MenuItem>
-              </ContextMenu>
-            </div>
+                  <MenuItem
+                    data={{ foo: "bar" }}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-eye"></i> <h3>View</h3>
+                  </MenuItem>
+                  <MenuItem
+                    data={{ foo: "bar" }}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-pen-to-square"></i> <h3>Edit</h3>
+                  </MenuItem>
+                  <MenuItem
+                    data={{ foo: "bar" }}
+                    onClick={() => handleDeleteClick(index)}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-rose-500 py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-trash"></i> <h3>Delete</h3>
+                  </MenuItem>
+                </ContextMenu>
+              </div>
+            ))}
           </div>
         </main>
       </div>

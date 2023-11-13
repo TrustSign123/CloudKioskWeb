@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import logo from "./asstes/logo.png";
+import KioskContext from "../context/kiosk/kioskContext";
 import { Link } from "react-router-dom";
 
 function CreateUser() {
+  const { register, loading } = useContext(KioskContext);
+  const [credentials, setCredentials] = useState({
+    name: " ",
+    email: "",
+    password: "",
+  });
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const { name, email, password } = credentials;
+    register(name, email, password);
+  };
+
+  const onChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
   return (
     <>
       <section className="font-sans bg-gray-50 dark:bg-gray-900">
@@ -13,7 +31,10 @@ function CreateUser() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Create an account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form
+                className="space-y-4 md:space-y-6"
+                onSubmit={handleRegister}
+              >
                 <div>
                   <label
                     for="name"
@@ -27,7 +48,9 @@ function CreateUser() {
                     id="name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name"
-                    required=""
+                    required={true}
+                    value={credentials.name}
+                    onChange={onChange}
                   />
                 </div>
                 <div>
@@ -35,7 +58,7 @@ function CreateUser() {
                     for="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Password
+                    Email
                   </label>
                   <input
                     type="email"
@@ -43,7 +66,9 @@ function CreateUser() {
                     id="email"
                     placeholder="name@company.com"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required=""
+                    required={true}
+                    value={credentials.email}
+                    onChange={onChange}
                   />
                 </div>
                 <div>
@@ -51,15 +76,17 @@ function CreateUser() {
                     for="confirm-password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Confirm password
+                    Password
                   </label>
                   <input
-                    type="confirm-password"
-                    name="confirm-password"
-                    id="confirm-password"
+                    type="password"
+                    name="password"
+                    id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required=""
+                    required={true}
+                    value={credentials.password}
+                    onChange={onChange}
                   />
                 </div>
                 <div className="flex items-start">
@@ -69,7 +96,7 @@ function CreateUser() {
                       aria-describedby="terms"
                       type="checkbox"
                       className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                      required=""
+                      required={true}
                     />
                   </div>
                   <div className="ml-3 text-sm">
