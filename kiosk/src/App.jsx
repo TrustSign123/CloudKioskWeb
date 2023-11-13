@@ -9,6 +9,7 @@ import Dashboard from "./componets/Dashboard";
 import CreateKiosk from "./componets/CreateKiosk";
 import Overview from "./componets/Overview";
 import Subscription from "./componets/Subscription";
+import ViewKiosk from "./componets/ViewKiosk";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route exact path="/dash" element={<Dashboard />} />
             <Route exact path="/over" element={<Overview />} />
             <Route exact path="/create-kiosk" element={<CreateKiosk />} />
+            <Route exact path="/view" element={<ViewKiosk />} />
           </Routes>
         </>
       </KioskState>

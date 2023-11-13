@@ -126,6 +126,7 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
+      navigate("/dash");
       setLoading(false);
     } catch (error) {
       setLoading(false);

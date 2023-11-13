@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
+import CreateKiosk from "./CreateKiosk";
 import {
   ContextMenu,
   MenuItem,
@@ -38,6 +39,7 @@ function Dashboard() {
   function handleDeleteClick(index) {
     deleteKiosk(kiosks[index]._id);
   }
+
   return (
     <>
       <div className="antialiased bg-gray-50 dark:bg-gray-900">
@@ -366,8 +368,8 @@ function Dashboard() {
 
         <main className="p-6 md:ml-64 h-auto pt-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            {" "}
             <Link to={"/create-kiosk"}>
-              {" "}
               <div className="flex flex-col justify-center items-center gap-4 border-2 border-dashed border-gray-300 hover:border-gray-100 hover:bg-gray-100 rounded-lg dark:border-gray-700 hover:border-gray-700 hover:dark:bg-gray-700 dark:text-white h-32 md:h-64 cursor-pointer">
                 <i className="fa-solid fa-plus fa-xl" />
                 <h3>Add Kiosk</h3>
@@ -396,7 +398,9 @@ function Dashboard() {
                     data={{ foo: "bar" }}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-eye"></i> <h3>View</h3>
+                    <Link to={"/view"}>
+                      <i className="fa-solid fa-eye"></i> <h3>View</h3>
+                    </Link>
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
