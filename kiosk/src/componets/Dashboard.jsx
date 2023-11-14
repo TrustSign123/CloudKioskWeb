@@ -2,7 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
-import CreateKiosk from "./CreateKiosk";
+import ViewKios from "./ViewKiosk";
+import Overview from "./Overview";
 import {
   ContextMenu,
   MenuItem,
@@ -11,16 +12,32 @@ import {
 } from "react-contextmenu";
 
 function Dashboard() {
-  const { logout, userProfile, kiosks, fetchKiosk, deleteKiosk, loading } =
-    useContext(KioskContext);
+  const {
+    logout,
+    profile,
+    userProfile,
+    kiosks,
+    fetchKiosk,
+    deleteKiosk,
+    loading,
+  } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [overOpen, setOverOpen] = useState(false);
 
   useEffect(() => {
+    profile();
     fetchKiosk();
-  }, [kiosks]);
+  }, [kiosks, userProfile]);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
+  };
+  const handleViewOpen = () => {
+    setViewOpen(!viewOpen);
+  };
+  const handleOverOpen = () => {
+    setOverOpen(!overOpen);
   };
 
   const handleMonuseClick = (e) => {
@@ -90,7 +107,7 @@ function Dashboard() {
                 <label for="topbar-search" className="sr-only">
                   Search
                 </label>
-                <div className="relative md:w-64 md:w-96">
+                <div className="relative md:w-64">
                   <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <svg
                       className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -157,7 +174,7 @@ function Dashboard() {
               <div
                 className={`${
                   profileOpen ? "visible" : "hidden"
-                } absolute right-2 top-8 z-50 my-4 w-56 text-base list-none  rounded divide-y divide-gray-100 shadow bg-gray-50 dark:bg-gray-700 dark:divide-gray-600 rounded-xl`}
+                } absolute right-2 top-8 z-50 my-4 w-56 text-base list-none  divide-y divide-gray-100 shadow bg-gray-50 dark:bg-gray-700 dark:divide-gray-600 rounded-xl`}
                 id="dropdown"
               >
                 <div className="py-3 px-4">
@@ -277,23 +294,22 @@ function Dashboard() {
               </div>
             </form>
             <ul className="space-y-2">
-              <Link to={"/over"}>
-                <li>
-                  <a className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <svg
-                      aria-hidden="true"
-                      className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                      <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                    </svg>
-                    <span className="ml-3">Overview</span>
-                  </a>
-                </li>
-              </Link>
+              <li onClick={handleOverOpen} className="cursor-pointer">
+                <a className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                    aria-hidden="true"
+                    className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                  </svg>
+                  <span className="ml-3">Overview</span>
+                </a>
+              </li>
+
               <li>
                 <a className="cursor-pointer flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <img src={kioskIcon} />
@@ -370,7 +386,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {" "}
             <Link to={"/create-kiosk"}>
-              <div className="flex flex-col justify-center items-center gap-4 border-2 border-dashed border-gray-300 hover:border-gray-100 hover:bg-gray-100 rounded-lg dark:border-gray-700 hover:border-gray-700 hover:dark:bg-gray-700 dark:text-white h-32 md:h-64 cursor-pointer">
+              <div className="flex flex-col justify-center items-center gap-4 border-2 border-dashed border-gray-300 hover:bg-gray-100 rounded-lg dark:border-gray-700 dark:hover:border-gray-700 hover:dark:bg-gray-700 dark:text-white h-32 md:h-64 cursor-pointer">
                 <i className="fa-solid fa-plus fa-xl" />
                 <h3>Add Kiosk</h3>
               </div>
@@ -395,12 +411,11 @@ function Dashboard() {
                   className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
                 >
                   <MenuItem
+                    onClick={handleViewOpen}
                     data={{ foo: "bar" }}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
-                    <Link to={"/view"}>
-                      <i className="fa-solid fa-eye"></i> <h3>View</h3>
-                    </Link>
+                    <i className="fa-solid fa-eye"></i> <h3>View</h3>
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
@@ -419,6 +434,33 @@ function Dashboard() {
               </div>
             ))}
           </div>
+
+          {viewOpen && (
+            <>
+              <div className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4">
+                <button
+                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
+                  onClick={handleViewOpen}
+                >
+                  <i className="fa-solid fa-arrow-left" /> back
+                </button>
+                <ViewKios />
+              </div>
+            </>
+          )}
+          {overOpen && (
+            <>
+              <div className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4 w-full">
+                <button
+                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
+                  onClick={handleOverOpen}
+                >
+                  <i className="fa-solid fa-arrow-left" /> back
+                </button>
+                <Overview />
+              </div>
+            </>
+          )}
         </main>
       </div>
     </>
