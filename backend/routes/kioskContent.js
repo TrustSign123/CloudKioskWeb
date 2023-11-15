@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const KioskCode = require("../models/KioskCode");
 const Kiosk = require("../models/Kiosk");
@@ -16,9 +17,12 @@ router.post("/content/:kioskCode", async (req, res) => {
       return res.status(404).json({ message: "Kiosk not found" });
     }
 
+    // Generate a unique _id for this content
+    const sharedId = new mongoose.Types.ObjectId();
+
     // Add the new content to the Kiosk
-    kiosk.kioskContent.push({ KioskContent: kioskContent });
-    kioskcode.kioskContent.push({ KioskContent: kioskContent });
+    kiosk.kioskContent.push({ KioskContent: kioskContent, _id: sharedId });
+    kioskcode.kioskContent.push({ KioskContent: kioskContent, _id: sharedId });
     await kiosk.save();
     await kioskcode.save();
 
@@ -29,15 +33,17 @@ router.post("/content/:kioskCode", async (req, res) => {
   }
 });
 
-router.put("/content/:contentIdKiosk/:contentIdKioskCode", async (req, res) => {
+router.put("/content/:id", async (req, res) => {
   try {
+    const conetntId = req.params.id;
+
     // Find the Kiosk that contains the content
     const kiosk = await Kiosk.findOne({
-      "kioskContent._id": req.params.contentIdKiosk,
+      "kioskContent._id": conetntId,
     });
 
     const kioskcode = await KioskCode.findOne({
-      "kioskContent._id": req.params.contentIdKioskCode,
+      "kioskContent._id": conetntId,
     });
 
     if (!kiosk || !kioskcode) {
@@ -45,10 +51,8 @@ router.put("/content/:contentIdKiosk/:contentIdKioskCode", async (req, res) => {
     }
 
     // Find and update the specific Kiosk content
-    const content = kiosk.kioskContent.id(req.params.contentIdKiosk);
-    const contentCode = kioskcode.kioskContent.id(
-      req.params.contentIdKioskCode
-    );
+    const content = kiosk.kioskContent.id(conetntId);
+    const contentCode = kioskcode.kioskContent.id(conetntId);
     if (!content || !contentCode) {
       return res.status(404).json({ message: "Kiosk content not found" });
     }
@@ -65,44 +69,40 @@ router.put("/content/:contentIdKiosk/:contentIdKioskCode", async (req, res) => {
   }
 });
 
-router.delete(
-  "/content/:contentIdKiosk/:contentIdKioskCode",
-  async (req, res) => {
-    try {
-      // Find the Kiosk that contains the content
-      const kiosk = await Kiosk.findOne({
-        "kioskContent._id": req.params.contentIdKiosk,
-      });
+router.delete("/content/:id", async (req, res) => {
+  try {
+    const conetntId = req.params.id;
+    // Find the Kiosk that contains the content
+    const kiosk = await Kiosk.findOne({
+      "kioskContent._id": conetntId,
+    });
 
-      const kioskcode = await KioskCode.findOne({
-        "kioskContent._id": req.params.contentIdKioskCode,
-      });
+    const kioskcode = await KioskCode.findOne({
+      "kioskContent._id": conetntId,
+    });
 
-      if (!kiosk || !kioskcode) {
-        return res.status(404).json({ message: "Kiosk content not found" });
-      }
-
-      // Find and remove the specific Kiosk content
-      const content = kiosk.kioskContent.id(req.params.contentIdKiosk);
-      const contentCode = kioskcode.kioskContent.id(
-        req.params.contentIdKioskCode
-      );
-
-      if (!content || !contentCode) {
-        return res.status(404).json({ message: "Kiosk content not found 2" });
-      }
-
-      content.deleteOne();
-      contentCode.deleteOne();
-      await kiosk.save();
-      await kioskcode.save();
-
-      res.status(200).json({ message: "Kiosk content deleted successfully" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Failed to delete Kiosk content" });
+    if (!kiosk || !kioskcode) {
+      return res.status(404).json({ message: "Kiosk content not found" });
     }
+
+    // Find and remove the specific Kiosk content
+    const content = kiosk.kioskContent.id(conetntId);
+    const contentCode = kioskcode.kioskContent.id(conetntId);
+
+    if (!content || !contentCode) {
+      return res.status(404).json({ message: "Kiosk content not found 2" });
+    }
+
+    content.deleteOne();
+    contentCode.deleteOne();
+    await kiosk.save();
+    await kioskcode.save();
+
+    res.status(200).json({ message: "Kiosk content deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete Kiosk content" });
   }
-);
+});
 
 module.exports = router;

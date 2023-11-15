@@ -182,6 +182,66 @@ const Kioskstate = (props) => {
       console.log(error);
     }
   };
+  const addKioskContent = async (kioskContent, kioskCode) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}kioskContent/content/${kioskCode}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          kioskContent,
+        }),
+      });
+
+      const json = await response.json();
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  const editKioskContent = async (kioskContent, id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}kioskContent/content/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          kioskContent,
+        }),
+      });
+
+      const json = await response.json();
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  const deleteKioskContent = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}kioskContent/content/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      const json = await response.json();
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     profile();
@@ -201,6 +261,9 @@ const Kioskstate = (props) => {
         createKiosk,
         editKiosk,
         deleteKiosk,
+        addKioskContent,
+        editKioskContent,
+        deleteKioskContent,
       }}
     >
       {props.children}

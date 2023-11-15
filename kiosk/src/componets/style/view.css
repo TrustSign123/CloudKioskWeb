@@ -1,0 +1,12 @@
+.view-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  height: 330px;
+}
+
+.grag-area{
+    height: 500px;
+}

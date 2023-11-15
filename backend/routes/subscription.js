@@ -6,22 +6,28 @@ const checkSubscription = require("../middleware/checkSubscription");
 require("dotenv").config();
 
 const subscriptionPlans = {
-  "3DaysFreeTrial": {
+  free: {
     name: "3 Days Free Trial",
     price: 0,
-    duration: 3, // 3 days
+    duration: 3,
+    storage: "10 MB",
+    cluster: 1,
     oneTimeOnly: true,
   },
   oneMonth: {
     name: "One Month Plan",
     price: 599,
-    duration: 30, // 30 days
+    duration: 30,
+    storage: "1.5 GB",
+    cluster: 10,
     oneTimeOnly: false,
   },
   oneYear: {
     name: "One Year Plan",
-    price: 1599,
-    duration: 365, // 365 days
+    price: 5999,
+    duration: 365,
+    storage: "20 GB",
+    cluster: 150,
     oneTimeOnly: false,
   },
 };
@@ -37,7 +43,7 @@ router.post("/purchase", fetchUser, async (req, res) => {
     }
 
     // Check if the user is eligible for a free trial
-    if (plan === "3DaysFreeTrial") {
+    if (plan === "free") {
       // Check if the user hasn't used the free trial before
       if (user.hasUsedFreeTrial) {
         return res.status(400).json({ message: "Free trial already used" });
@@ -56,11 +62,14 @@ router.post("/purchase", fetchUser, async (req, res) => {
         validityPlan: plan,
         startDate: currentDate,
         expireDate,
+        price: subscriptionPlans[plan].price,
+        storage: subscriptionPlans[plan].storage,
+        cluster: subscriptionPlans[plan].cluster,
       },
     ];
 
     // Update user.hasUsedFreeTrial if it's a free trial
-    if (plan === "3DaysFreeTrial") {
+    if (plan === "free") {
       user.hasUsedFreeTrial = true;
     }
 

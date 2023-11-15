@@ -18,12 +18,18 @@ function Dashboard() {
     userProfile,
     kiosks,
     fetchKiosk,
+    editKiosk,
     deleteKiosk,
     loading,
   } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [kioskName, setKioskName] = useState("");
+  const [kioskId, setKioskId] = useState("");
+  const [kioskCode, setKioskCode] = useState("");
+  const [kioskContent, setKioskContent] = useState([]);
   const [viewOpen, setViewOpen] = useState(false);
   const [overOpen, setOverOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     profile();
@@ -33,11 +39,29 @@ function Dashboard() {
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
   };
-  const handleViewOpen = () => {
-    setViewOpen(!viewOpen);
+  const handleViewOpen = (index) => {
+    setKioskCode(kiosks[index].kioskCode);
+    setKioskContent(kiosks[index].kioskContent);
+    setViewOpen(true);
+  };
+  const handleViewClose = () => {
+    setViewOpen(false);
   };
   const handleOverOpen = () => {
     setOverOpen(!overOpen);
+  };
+  const handleEditOpen = (index) => {
+    setKioskId(kiosks[index]._id);
+    setKioskName(kiosks[index].kioskName);
+    setEditOpen(true);
+  };
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
+  const handleEditKiosk = () => {
+    editKiosk(kioskName, kioskId);
+    setKioskName("");
+    setEditOpen(false);
   };
 
   const handleMonuseClick = (e) => {
@@ -77,9 +101,8 @@ function Dashboard() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clip-rule="evenodd"
                   ></path>
                 </svg>
                 <svg
@@ -90,9 +113,8 @@ function Dashboard() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
                   ></path>
                 </svg>
                 <span className="sr-only">Toggle sidebar</span>
@@ -104,7 +126,7 @@ function Dashboard() {
                 />
               </a>
               <form action="#" method="GET" className="hidden md:block md:pl-2">
-                <label for="topbar-search" className="sr-only">
+                <label htmlFor="topbar-search" className="sr-only">
                   Search
                 </label>
                 <div className="relative md:w-64">
@@ -116,8 +138,7 @@ function Dashboard() {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
                         d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                       ></path>
                     </svg>
@@ -148,8 +169,7 @@ function Dashboard() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    clip-rule="evenodd"
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                   ></path>
                 </svg>
@@ -221,9 +241,8 @@ function Dashboard() {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
-                            clip-rule="evenodd"
                           ></path>
                         </svg>
                         Subsciption
@@ -236,9 +255,8 @@ function Dashboard() {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clip-rule="evenodd"
                         ></path>
                       </svg>
                     </a>
@@ -266,7 +284,7 @@ function Dashboard() {
         >
           <div className="overflow-y-auto py-5 px-3 h-full  dark:bg-gray-800">
             <form action="#" method="GET" className="md:hidden mb-2">
-              <label for="sidebar-search" className="sr-only">
+              <label htmlFor="sidebar-search" className="sr-only">
                 Search
               </label>
               <div className="relative">
@@ -278,8 +296,7 @@ function Dashboard() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
                       d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                     ></path>
                   </svg>
@@ -332,9 +349,8 @@ function Dashboard() {
                   >
                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-                      clip-rule="evenodd"
                     ></path>
                   </svg>
                   <span className="ml-3">Docs</span>
@@ -370,9 +386,8 @@ function Dashboard() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      clip-rule="evenodd"
                     ></path>
                   </svg>
                   <span className="ml-3">Help</span>
@@ -397,7 +412,31 @@ function Dashboard() {
                 className="flex flex-col justify-between items-start shadow-md bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white rounded-lg border-gray-300 p-6 h-32 md:h-64 cursor-pointer"
               >
                 <div>
-                  <h3 className="text-xl">{kiosk.kioskName}</h3>
+                  {editOpen && (
+                    <>
+                      <div className="flex gap-2">
+                        <input
+                          className="bg-slate-900 w-full p-1 px-2 rounded"
+                          type="text"
+                          placeholder={kiosk.kioskName}
+                          value={kioskName}
+                          onChange={(e) => setKioskName(e.target.value)}
+                        />
+                        <button
+                          onClick={handleEditKiosk}
+                          className="bg-slate-900 hover:bg-slate-800 px-2 py-0.5 rounded"
+                        >
+                          <i className="fa-solid fa-check" />
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {!editOpen && (
+                    <>
+                      <h3 className="text-xl">{kiosk.kioskName}</h3>
+                    </>
+                  )}
+
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
                 </div>
                 <ContextMenuTrigger mouseButton={0} id="id">
@@ -411,7 +450,7 @@ function Dashboard() {
                   className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
                 >
                   <MenuItem
-                    onClick={handleViewOpen}
+                    onClick={() => handleViewOpen(index)}
                     data={{ foo: "bar" }}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
@@ -419,9 +458,10 @@ function Dashboard() {
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
+                    onClick={() => handleEditOpen(index)}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-pen-to-square"></i> <h3>Edit</h3>
+                    <i className="fa-solid fa-pen-to-square" /> <h3>Edit</h3>
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
@@ -440,11 +480,14 @@ function Dashboard() {
               <div className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4">
                 <button
                   className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
-                  onClick={handleViewOpen}
+                  onClick={handleViewClose}
                 >
                   <i className="fa-solid fa-arrow-left" /> back
                 </button>
-                <ViewKios />
+                <ViewKios
+                  getKioskContent={kioskContent}
+                  kioskCode={kioskCode}
+                />
               </div>
             </>
           )}
@@ -457,7 +500,10 @@ function Dashboard() {
                 >
                   <i className="fa-solid fa-arrow-left" /> back
                 </button>
-                <Overview />
+                <Overview
+                  storage={userProfile.userSubscription[0].storage}
+                  cluster={userProfile.userSubscription[0].cluster}
+                />
               </div>
             </>
           )}

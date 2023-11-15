@@ -18,6 +18,18 @@ const SubscriptionSchema = new Schema({
     type: String,
     require: true,
   },
+  price: {
+    type: Number,
+    require: true,
+  },
+  storage: {
+    type: String,
+    require: true,
+  },
+  cluster: {
+    type: Number,
+    require: true,
+  },
 });
 
 const UserSchema = new Schema({
@@ -39,6 +51,10 @@ const UserSchema = new Schema({
     default: false,
   },
   userSubscription: [SubscriptionSchema],
+  hasUsedFreeTrial: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now,
