@@ -13,7 +13,7 @@ const jwtSecret = process.env.JWT_SECRET;
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: "cloud-kiosk.appspot.com",
+    storageBucket: "cloud-kiosk.appspot.com/",
   });
 } catch (error) {
   console.log(error);

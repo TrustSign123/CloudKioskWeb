@@ -81,8 +81,8 @@ function ViewKiosk(props) {
 
   return (
     <>
-      <div className="flex justify-around items-start py-4">
-        <div className="view-layout bg-slate-100 dark:bg-gray-800 w-50 p-5 rounded overflow-scroll">
+      <div className="flex items-start gap-2 py-4">
+        <div className="view-layout bg-slate-100 dark:bg-gray-800 p-5 rounded overflow-scroll">
           <label
             onClick={handdleOpen}
             className="flex justify-center bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-700 py-8 rounded cursor-pointer"
@@ -96,11 +96,11 @@ function ViewKiosk(props) {
               key={content._id}
               onClick={() => handleEditClick(index)}
             >
-              <img className="w-30 h-20 rounded" src={content.KioskContent} />
+              <img className="w-full h-20 rounded" src={content.KioskContent} />
             </div>
           ))}
         </div>
-        <div className="flex flex-col justify-center items-center w-50  ml-2">
+        <div className="flex flex-col justify-center items-center w-50">
           <Carousel
             showArrows={false}
             showThumbs={false}

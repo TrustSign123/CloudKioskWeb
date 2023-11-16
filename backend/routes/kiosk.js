@@ -24,10 +24,16 @@ function generateUniqueKioskCode() {
 router.get("/kiosk-code", async (req, res) => {
   try {
     // Get the user's IP address from the request
-    const userIp = req.ip;
+    const androidId = req.body.androidId;
+
+    if (!androidId) {
+      return res
+        .status(400)
+        .json({ message: "Android Id is missing in the request body" });
+    }
 
     // Check if there is an existing Kiosk code for this IP
-    let existingCode = await KioskCode.findOne({ ip: userIp });
+    let existingCode = await KioskCode.findOne({ androidId: androidId });
 
     if (!existingCode) {
       // Generate a new unique Kiosk code
@@ -36,7 +42,7 @@ router.get("/kiosk-code", async (req, res) => {
       // Create a new KioskCode document
       const kioskCode = new KioskCode({
         KioskCode: newKioskCode,
-        ip: userIp,
+        androidId: androidId,
       });
 
       // Save the Kiosk code to the database
@@ -45,14 +51,14 @@ router.get("/kiosk-code", async (req, res) => {
       res.status(201).json({
         kioskCode: newKioskCode,
         status: kioskCode.status,
-        ip: kioskCode.ip,
+        androidId: kioskCode.androidId,
         kioskContent: [],
       });
     } else {
       res.status(200).json({
         kioskCode: existingCode.KioskCode,
         status: existingCode.status,
-        ip: existingCode.ip,
+        androidId: existingCode.androidId,
         kioskContent: existingCode.kioskContent,
       });
     }

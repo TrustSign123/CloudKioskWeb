@@ -1,41 +1,79 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+const admin = require("firebase-admin");
 const KioskCode = require("../models/KioskCode");
 const Kiosk = require("../models/Kiosk");
+const { v4: uuidv4 } = require("uuid");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/content/:kioskCode", async (req, res) => {
-  try {
-    const kioskCode = req.params.kioskCode;
-    const { kioskContent } = req.body;
+// Initialize Firebase Storage
+const storage = admin.storage();
 
-    // Find the Kiosk associated with the given Kiosk code
-    const kiosk = await Kiosk.findOne({ kioskCode: kioskCode });
-    const kioskcode = await KioskCode.findOne({ KioskCode: kioskCode });
+router.post(
+  "/content/:kioskCode",
+  upload.single("kioskContent"),
+  async (req, res) => {
+    try {
+      const kioskCode = req.params.kioskCode;
+      const kioskContent = req.file;
+      const filename = `${uuidv4()}-${kioskContent.originalname}`;
+      const file = storage.bucket().file(filename);
+      const bucket = storage.bucket();
 
-    if (!kiosk || !kioskcode) {
-      return res.status(404).json({ message: "Kiosk not found" });
+      // console.log(kioskContent)
+
+      // Find the Kiosk associated with the given Kiosk code
+      const kiosk = await Kiosk.findOne({ kioskCode: kioskCode });
+      const kioskcode = await KioskCode.findOne({ KioskCode: kioskCode });
+
+      if (!kiosk || !kioskcode) {
+        return res.status(404).json({ message: "Kiosk not found" });
+      }
+
+      await file.save(kioskContent.buffer);
+      const privateUrl = `https://storage.googleapis.com/${
+        storage.bucket().name
+      }/${filename}`;
+
+      const [publicUrl] = await bucket.file(filename).getSignedUrl({
+        action: "read",
+        expires: "01-01-3000",
+      });
+
+      // Generate a unique _id for this content
+      const sharedId = new mongoose.Types.ObjectId();
+
+      // Add the new content to the Kiosk
+      kiosk.kioskContent.push({
+        KioskContent: publicUrl,
+        KioskContentPrivate: privateUrl,
+        _id: sharedId,
+      });
+      kioskcode.kioskContent.push({
+        KioskContent: publicUrl,
+        KioskContentPrivate: privateUrl,
+        _id: sharedId,
+      });
+      await kiosk.save();
+      await kioskcode.save();
+
+      res.status(201).json({ message: "Kiosk content added successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to add Kiosk content" });
     }
-
-    // Generate a unique _id for this content
-    const sharedId = new mongoose.Types.ObjectId();
-
-    // Add the new content to the Kiosk
-    kiosk.kioskContent.push({ KioskContent: kioskContent, _id: sharedId });
-    kioskcode.kioskContent.push({ KioskContent: kioskContent, _id: sharedId });
-    await kiosk.save();
-    await kioskcode.save();
-
-    res.status(201).json({ message: "Kiosk content added successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to add Kiosk content" });
   }
-});
+);
 
-router.put("/content/:id", async (req, res) => {
+router.put("/content/:id", upload.single("kioskContent"), async (req, res) => {
   try {
     const conetntId = req.params.id;
+    const kioskContent = req.file;
+    const filename = `${uuidv4()}-${kioskContent.originalname}`;
+    const file = storage.bucket().file(filename);
+    const bucket = storage.bucket();
 
     // Find the Kiosk that contains the content
     const kiosk = await Kiosk.findOne({
@@ -57,8 +95,30 @@ router.put("/content/:id", async (req, res) => {
       return res.status(404).json({ message: "Kiosk content not found" });
     }
 
-    content.KioskContent = req.body.kioskContent;
-    contentCode.KioskContent = req.body.kioskContent;
+    await file.save(kioskContent.buffer);
+    const privateUrl = `https://storage.googleapis.com/${
+      storage.bucket().name
+    }/${filename}`;
+
+    const [publicUrl] = await bucket.file(filename).getSignedUrl({
+      action: "read",
+      expires: "01-01-3000",
+    });
+
+    // Delete the old image from Firebase Storage
+    const oldImageUrl = content.KioskContentPrivate;
+    const oldImageUrlCode = contentCode.KioskContentPrivate;
+    const oldImageName = oldImageUrl.split("/").pop();
+    const oldImageNameCode = oldImageUrlCode.split("/").pop();
+    const oldImageFile = bucket.file(oldImageName);
+    const oldImageFileCode = bucket.file(oldImageNameCode);
+    await oldImageFile.delete();
+    await oldImageFileCode.delete();
+
+    content.KioskContent = publicUrl;
+    content.KioskContentPrivate = privateUrl;
+    contentCode.KioskContent = publicUrl;
+    contentCode.KioskContentPrivate = privateUrl;
     await kiosk.save();
     await kioskcode.save();
 

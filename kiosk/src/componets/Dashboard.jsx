@@ -49,19 +49,18 @@ function Dashboard() {
   };
   const handleOverOpen = () => {
     setOverOpen(!overOpen);
+    setViewOpen(false);
   };
   const handleEditOpen = (index) => {
     setKioskId(kiosks[index]._id);
     setKioskName(kiosks[index].kioskName);
     setEditOpen(true);
   };
-  const handleEditClose = () => {
-    setEditOpen(false);
-  };
   const handleEditKiosk = () => {
     editKiosk(kioskName, kioskId);
     setKioskName("");
     setEditOpen(false);
+    setKioskId("");
   };
 
   const handleMonuseClick = (e) => {
@@ -69,8 +68,9 @@ function Dashboard() {
     const y = e.clientY;
     showMenu({
       position: [x, y],
-      id: "id",
+      id: kioskId,
     });
+    setKioskId("");
   };
 
   const handleLogOut = () => {
@@ -439,14 +439,14 @@ function Dashboard() {
 
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
                 </div>
-                <ContextMenuTrigger mouseButton={0} id="id">
+                <ContextMenuTrigger mouseButton={0} id={kiosk._id}>
                   <div onClick={handleMonuseClick} className="well">
                     <i className="fa-solid fa-ellipsis fa-xl" />
                   </div>
                 </ContextMenuTrigger>
 
                 <ContextMenu
-                  id="id"
+                  id={kiosk._id}
                   className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 "
                 >
                   <MenuItem
@@ -477,7 +477,7 @@ function Dashboard() {
 
           {viewOpen && (
             <>
-              <div className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4">
+              <div className="w-full absolute top-20 bg-slate-50 dark:bg-slate-900 ">
                 <button
                   className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
                   onClick={handleViewClose}

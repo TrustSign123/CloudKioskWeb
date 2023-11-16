@@ -6,6 +6,15 @@ const KioskContentSchema = new Schema({
     type: String,
     required: true,
   },
+  KioskContentPrivate: {
+    type: String,
+  },
+  KioskContentName: {
+    type: String,
+  },
+  KioskContentSize: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now,

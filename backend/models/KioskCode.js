@@ -6,6 +6,9 @@ const KioskContentSchema = new Schema({
     type: String,
     required: true,
   },
+  KioskContentPrivate: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now,
@@ -17,9 +20,8 @@ const KioskCodeSchema = new Schema({
     type: String,
     required: true,
   },
-  ip: {
+  androidId: {
     type: String,
-    required: true,
   },
   lastSynced: {
     type: Date,
