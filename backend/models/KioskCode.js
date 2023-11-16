@@ -6,7 +6,7 @@ const KioskContentSchema = new Schema({
     type: String,
     required: true,
   },
-  KioskContentPrivate: {
+  KioskContentName: {
     type: String,
   },
   date: {

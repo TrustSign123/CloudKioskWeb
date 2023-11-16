@@ -185,15 +185,14 @@ const Kioskstate = (props) => {
   const addKioskContent = async (kioskContent, kioskCode) => {
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("kioskContent", kioskContent);
       const response = await fetch(`${host}kioskContent/content/${kioskCode}`, {
         method: "POST",
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
           "auth-token": token,
         },
-        body: JSON.stringify({
-          kioskContent,
-        }),
       });
 
       const json = await response.json();
@@ -206,15 +205,14 @@ const Kioskstate = (props) => {
   const editKioskContent = async (kioskContent, id) => {
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("kioskContent", kioskContent);
       const response = await fetch(`${host}kioskContent/content/${id}`, {
         method: "PUT",
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
           "auth-token": token,
         },
-        body: JSON.stringify({
-          kioskContent,
-        }),
       });
 
       const json = await response.json();

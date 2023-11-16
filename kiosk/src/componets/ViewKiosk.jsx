@@ -10,16 +10,23 @@ function ViewKiosk(props) {
   const { addKioskContent, editKioskContent, deleteKioskContent, loading } =
     useContext(KioskContext);
   const [openModal, setOpenModal] = useState(false);
-  const [kioskContent, setKioskContent] = useState("");
+  const [kioskContent, setKioskContent] = useState(null);
+  const [contentPreview, setContentPreview] = useState(null);
+  const [contentFileName, setContentFileName] = useState("none");
+  const [contentFileSize, setContentFileSize] = useState(0);
+  const [contentFileType, setContentFileType] = useState("none");
   const [kioskContentId, setKioskContentId] = useState("");
   const [kioskEdit, setKioskEdit] = useState(false);
   const [kioskIndex, setKioskIndex] = useState(0);
-  const [contentPreview, setContentPreview] = useState(null);
   const [buttonDisable, setButtonDisable] = useState(true);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    setContentFileName(file.name);
+    setContentFileSize(file.size);
+    setContentFileType(file.type);
     if (file) {
+      setKioskContent(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setContentPreview(reader.result);
@@ -27,9 +34,24 @@ function ViewKiosk(props) {
       };
       reader.readAsDataURL(file);
     } else {
+      setKioskContent(null);
       setContentPreview(null);
       setButtonDisable(false);
     }
+  };
+
+  const convertBytes = (contentFileSize) => {
+    if (contentFileSize === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+
+    const i = parseInt(Math.floor(Math.log(contentFileSize) / Math.log(k)));
+
+    return (
+      Math.round(100 * (contentFileSize / Math.pow(k, i))) / 100 +
+      " " +
+      sizes[i]
+    );
   };
 
   const handdleOpen = () => {
@@ -38,8 +60,11 @@ function ViewKiosk(props) {
   const handdleClose = () => {
     setOpenModal(false);
     setKioskEdit(false);
-    setKioskContent("");
+    setKioskContent(null);
     setContentPreview(null);
+    setContentFileName("none");
+    setContentFileSize(0);
+    setContentFileType("none");
     setButtonDisable(true);
   };
 
@@ -47,13 +72,20 @@ function ViewKiosk(props) {
     addKioskContent(kioskContent, kioskCode);
     setOpenModal(false);
     setKioskEdit(false);
-    setKioskContent("");
+    setKioskContent(null);
+    setContentPreview(null);
+    setContentFileName("none");
+    setContentFileSize(0);
+    setContentFileType("none");
     setButtonDisable(true);
   };
 
   const handleEditClick = (index) => {
     setKioskContentId(getKioskContent[index]._id);
     setKioskContent(getKioskContent[index].KioskContent);
+    setContentFileName(getKioskContent[index].KioskContentFileName);
+    setContentFileSize(getKioskContent[index].KioskContentFileSize);
+    setContentFileType(getKioskContent[index].KioskContentFileType);
     setOpenModal(true);
     setKioskEdit(true);
     setKioskIndex(index);
@@ -61,8 +93,12 @@ function ViewKiosk(props) {
 
   const handleEditContent = () => {
     editKioskContent(kioskContent, kioskContentId);
-    setKioskContent("");
+    setKioskContent(null);
+    setContentPreview(null);
     setKioskContentId("");
+    setContentFileName("none");
+    setContentFileSize(0);
+    setContentFileType("none");
     setOpenModal(false);
     setKioskEdit(false);
     setButtonDisable(true);
@@ -75,8 +111,10 @@ function ViewKiosk(props) {
   };
 
   const handleRemoveContent = () => {
-    setContentPreview(null);
     setKioskContent(contentPreview);
+    setContentFileName("none");
+    setContentFileSize(0);
+    setContentFileType("none");
   };
 
   return (
@@ -109,8 +147,8 @@ function ViewKiosk(props) {
             autoPlay={true}
             infiniteLoop={true}
             interval={2000}
+            // axis={"vertical"}
           >
-            {" "}
             {getKioskContent.map((content) => (
               <>
                 <img
@@ -134,38 +172,50 @@ function ViewKiosk(props) {
             <div className="relative bg-gray-100 rounded-lg shadow dark:bg-gray-700">
               <div className="p-4 md:p-5 text-center">
                 <div className="flex justify-center items-center rounded-lg mb-4 ">
+                  <div className="file-dics bg-slate-200 dark:bg-slate-900 flex flex-col justify-around text-left gap-3 p-3 rounded mr-4">
+                    <h3>File name: {contentFileName}</h3>
+                    <h3>File size: {convertBytes(contentFileSize)}</h3>
+                    <h3>File type: {contentFileType}</h3>
+                  </div>
+
                   {!kioskEdit && (
                     <>
                       {" "}
                       <label
                         htmlFor="input-img"
-                        className="grag-area flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        className="grag-area flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 overflow-hidden"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 overflow-hidden">
-                          <svg
-                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 16"
-                          >
-                            <path
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                            />
-                          </svg>
-                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or GIF (MAX. 800x400px)
-                          </p>
+                          {buttonDisable && (
+                            <>
+                              {" "}
+                              <svg
+                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                              </svg>
+                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold">
+                                  Click to upload
+                                </span>{" "}
+                                or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                              </p>
+                            </>
+                          )}
+
                           <img src={contentPreview} />
                         </div>
                       </label>
@@ -187,31 +237,36 @@ function ViewKiosk(props) {
                         className="grag-area flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 overflow-hidden">
-                          <svg
-                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 16"
-                          >
-                            <path
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                            />
-                          </svg>
-                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or GIF (MAX. 800x400px)
-                          </p>
-                          <img src={kioskContent || contentPreview} />
+                          {!buttonDisable && (
+                            <>
+                              {" "}
+                              <svg
+                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                              </svg>
+                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold">
+                                  Click to upload
+                                </span>{" "}
+                                or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                              </p>
+                            </>
+                          )}
+                          <img src={kioskContent} />
                         </div>
                       </label>
                       <input
@@ -225,6 +280,7 @@ function ViewKiosk(props) {
                     </>
                   )}
                 </div>
+
                 {/* Buttons */}
                 {!kioskEdit && (
                   <>
@@ -234,7 +290,7 @@ function ViewKiosk(props) {
                       data-modal-hide="popup-modal"
                       type="button"
                       disabled={buttonDisable}
-                      className="mb-2 text-white bg-slate-800 hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                      className="mb-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                     >
                       Add
                     </button>
@@ -248,7 +304,7 @@ function ViewKiosk(props) {
                       data-modal-hide="popup-modal"
                       type="button"
                       disabled={buttonDisable}
-                      className=" text-white bg-slate-800 hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                     >
                       Update
                     </button>
@@ -256,7 +312,7 @@ function ViewKiosk(props) {
                       onClick={handleRemoveContent}
                       data-modal-hide="popup-modal"
                       type="button"
-                      className=" text-white bg-slate-800 hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                     >
                       Remove
                     </button>
@@ -264,7 +320,7 @@ function ViewKiosk(props) {
                       onClick={() => handleDeleteContent(kioskIndex)}
                       data-modal-hide="popup-modal"
                       type="button"
-                      className=" text-white bg-slate-800 hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                     >
                       Delete
                     </button>
@@ -275,7 +331,7 @@ function ViewKiosk(props) {
                   onClick={handdleClose}
                   data-modal-hide="popup-modal"
                   type="button"
-                  className=" text-white bg-slate-800 hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                  className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                 >
                   Close
                 </button>

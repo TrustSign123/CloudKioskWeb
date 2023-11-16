@@ -19,6 +19,9 @@ router.post(
       const kioskCode = req.params.kioskCode;
       const kioskContent = req.file;
       const filename = `${uuidv4()}-${kioskContent.originalname}`;
+      const KioskContentFileName = kioskContent.originalname;
+      const KioskContentFileSize = kioskContent.size;
+      const KioskContentFileType = kioskContent.mimetype;
       const file = storage.bucket().file(filename);
       const bucket = storage.bucket();
 
@@ -33,9 +36,7 @@ router.post(
       }
 
       await file.save(kioskContent.buffer);
-      const privateUrl = `https://storage.googleapis.com/${
-        storage.bucket().name
-      }/${filename}`;
+      const privateUrl = filename;
 
       const [publicUrl] = await bucket.file(filename).getSignedUrl({
         action: "read",
@@ -48,12 +49,15 @@ router.post(
       // Add the new content to the Kiosk
       kiosk.kioskContent.push({
         KioskContent: publicUrl,
-        KioskContentPrivate: privateUrl,
+        KioskContentName: privateUrl,
+        KioskContentFileName,
+        KioskContentFileSize,
+        KioskContentFileType,
         _id: sharedId,
       });
       kioskcode.kioskContent.push({
         KioskContent: publicUrl,
-        KioskContentPrivate: privateUrl,
+        KioskContentName: privateUrl,
         _id: sharedId,
       });
       await kiosk.save();
@@ -72,6 +76,9 @@ router.put("/content/:id", upload.single("kioskContent"), async (req, res) => {
     const conetntId = req.params.id;
     const kioskContent = req.file;
     const filename = `${uuidv4()}-${kioskContent.originalname}`;
+    const KioskContentFileName = kioskContent.originalname;
+    const KioskContentFileSize = kioskContent.size;
+    const KioskContentFileType = kioskContent.mimetype;
     const file = storage.bucket().file(filename);
     const bucket = storage.bucket();
 
@@ -96,29 +103,27 @@ router.put("/content/:id", upload.single("kioskContent"), async (req, res) => {
     }
 
     await file.save(kioskContent.buffer);
-    const privateUrl = `https://storage.googleapis.com/${
-      storage.bucket().name
-    }/${filename}`;
+    const privateUrl = filename;
 
     const [publicUrl] = await bucket.file(filename).getSignedUrl({
       action: "read",
       expires: "01-01-3000",
     });
 
-    // Delete the old image from Firebase Storage
-    const oldImageUrl = content.KioskContentPrivate;
-    const oldImageUrlCode = contentCode.KioskContentPrivate;
-    const oldImageName = oldImageUrl.split("/").pop();
-    const oldImageNameCode = oldImageUrlCode.split("/").pop();
-    const oldImageFile = bucket.file(oldImageName);
-    const oldImageFileCode = bucket.file(oldImageNameCode);
+    // Delete the old image from Firebase Storage using the full path
+    const oldImageUrl = content.KioskContentName;
+    const oldImageFile = bucket.file(oldImageUrl);
+
     await oldImageFile.delete();
-    await oldImageFileCode.delete();
 
     content.KioskContent = publicUrl;
-    content.KioskContentPrivate = privateUrl;
+    content.KioskContentName = privateUrl;
+    content.KioskContentFileName = KioskContentFileName;
+    content.KioskContentFileSize = KioskContentFileSize;
+    content.KioskContentFileType = KioskContentFileType;
     contentCode.KioskContent = publicUrl;
-    contentCode.KioskContentPrivate = privateUrl;
+    contentCode.KioskContentName = privateUrl;
+
     await kiosk.save();
     await kioskcode.save();
 
@@ -132,6 +137,7 @@ router.put("/content/:id", upload.single("kioskContent"), async (req, res) => {
 router.delete("/content/:id", async (req, res) => {
   try {
     const conetntId = req.params.id;
+    const bucket = storage.bucket();
     // Find the Kiosk that contains the content
     const kiosk = await Kiosk.findOne({
       "kioskContent._id": conetntId,
@@ -152,6 +158,12 @@ router.delete("/content/:id", async (req, res) => {
     if (!content || !contentCode) {
       return res.status(404).json({ message: "Kiosk content not found 2" });
     }
+
+    // Delete the old image from Firebase Storage using the full path
+    const oldImageUrl = content.KioskContentName;
+    const oldImageFile = bucket.file(oldImageUrl);
+
+    await oldImageFile.delete();
 
     content.deleteOne();
     contentCode.deleteOne();

@@ -71,8 +71,8 @@ router.get("/kiosk-code", async (req, res) => {
 // Endpoint to fecth a Kiosk
 router.get("/get-kiosk", fetchUser, async (req, res) => {
   try {
-    const foods = await Kiosk.find({ user: req.user.id });
-    res.json(foods);
+    const kiosks = await Kiosk.find({ user: req.user.id });
+    res.json(kiosks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch Kiosks" });

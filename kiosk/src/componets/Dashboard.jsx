@@ -416,7 +416,7 @@ function Dashboard() {
                     <>
                       <div className="flex gap-2">
                         <input
-                          className="bg-slate-900 w-full p-1 px-2 rounded"
+                          className="text-sm bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 w-full p-1 px-2 rounded"
                           type="text"
                           placeholder={kiosk.kioskName}
                           value={kioskName}
@@ -424,7 +424,7 @@ function Dashboard() {
                         />
                         <button
                           onClick={handleEditKiosk}
-                          className="bg-slate-900 hover:bg-slate-800 px-2 py-0.5 rounded"
+                          className="text-sm bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 px-2 py-0.5 rounded"
                         >
                           <i className="fa-solid fa-check" />
                         </button>
