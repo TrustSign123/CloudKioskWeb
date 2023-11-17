@@ -2,9 +2,9 @@
   display: grid;
   grid-template-columns: repeat(4, 100px);
   justify-content: center;
-  align-items: center;
-  gap: 5px;
-  height: 330px;
+  align-items: start;
+  gap: 8px;
+  height: 350px;
 }
 
 .grag-area {

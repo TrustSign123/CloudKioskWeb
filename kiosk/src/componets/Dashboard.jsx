@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
 import ViewKios from "./ViewKiosk";
 import Overview from "./Overview";
+import { Carousel } from "react-responsive-carousel";
+
 import {
   ContextMenu,
   MenuItem,
@@ -26,6 +28,9 @@ function Dashboard() {
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState("");
+  const [axis, setAxis] = useState("horizontal");
+  const [transitionTime, setTransitionTime] = useState(1000);
+  const [interval, setInterval] = useState(3000);
   const [kioskContent, setKioskContent] = useState([]);
   const [viewOpen, setViewOpen] = useState(false);
   const [overOpen, setOverOpen] = useState(false);
@@ -58,6 +63,11 @@ function Dashboard() {
   };
   const handleEditKiosk = () => {
     editKiosk(kioskName, kioskId);
+    setKioskName("");
+    setEditOpen(false);
+    setKioskId("");
+  };
+  const handleEditClose = () => {
     setKioskName("");
     setEditOpen(false);
     setKioskId("");
@@ -412,30 +422,7 @@ function Dashboard() {
                 className="flex flex-col justify-between items-start shadow-md bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white rounded-lg border-gray-300 p-6 h-32 md:h-64 cursor-pointer"
               >
                 <div>
-                  {editOpen && (
-                    <>
-                      <div className="flex gap-2">
-                        <input
-                          className="text-sm bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 w-full p-1 px-2 rounded"
-                          type="text"
-                          placeholder={kiosk.kioskName}
-                          value={kioskName}
-                          onChange={(e) => setKioskName(e.target.value)}
-                        />
-                        <button
-                          onClick={handleEditKiosk}
-                          className="text-sm bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 px-2 py-0.5 rounded"
-                        >
-                          <i className="fa-solid fa-check" />
-                        </button>
-                      </div>
-                    </>
-                  )}
-                  {!editOpen && (
-                    <>
-                      <h3 className="text-xl">{kiosk.kioskName}</h3>
-                    </>
-                  )}
+                  <h3 className="text-xl">{kiosk.kioskName}</h3>
 
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
                 </div>
@@ -461,7 +448,7 @@ function Dashboard() {
                     onClick={() => handleEditOpen(index)}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-pen-to-square" /> <h3>Edit</h3>
+                    <i className="fa-solid fa-gear" /> <h3>Setting</h3>
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
@@ -506,6 +493,117 @@ function Dashboard() {
                 />
               </div>
             </>
+          )}
+          {editOpen && (
+            <div
+              id="popup-modal"
+              tabindex="-1"
+              className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            >
+              <div className="relative p-4 w-full">
+                <div className=" relative bg-gray-100 rounded-lg shadow dark:bg-gray-700">
+                  <div className="p-4 md:p-5 text-center">
+                    <div className="flex flex-col justify-center items-center gap-3 rounded-lg ">
+                      {" "}
+                      <input
+                        className="text-sm bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 w-50 p-1 px-2 rounded"
+                        type="text"
+                        placeholder={kioskName}
+                        value={kioskName}
+                        onChange={(e) => setKioskName(e.target.value)}
+                      />
+                      <div className=" flex flex-row justify-center items-start gap-8 w-50 mb-4">
+                        <div className="w-full">
+                          <label
+                            for="axis"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Axis
+                          </label>
+                          <select
+                            id="axis"
+                            onChange={(e) => setAxis(e.target.value)}
+                            className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option selected value={"horizontal"}>
+                              Horizontal
+                            </option>
+                            <option value={"vertical"}>Vertical</option>
+                          </select>
+
+                          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Transition Time
+                          </label>
+                          <select
+                            onChange={(e) => setTransitionTime(e.target.value)}
+                            className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option selected value={1000}>
+                              Normal
+                            </option>
+                            <option value={2000}>Slow</option>
+                            <option value={500}>Fast</option>
+                          </select>
+
+                          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Interval
+                          </label>
+                          <select
+                            onChange={(e) => setInterval(e.target.value)}
+                            className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option selected value={3000}>
+                              Normal
+                            </option>
+                            <option value={2000}>Slow</option>
+                            <option value={3000}>Fast</option>
+                          </select>
+                        </div>
+                        <Carousel
+                          showArrows={false}
+                          showThumbs={false}
+                          showIndicators={false}
+                          showStatus={false}
+                          autoPlay={true}
+                          infiniteLoop={true}
+                          interval={interval}
+                          axis={axis}
+                          width={"350px"}
+                          transitionTime={transitionTime}
+                        >
+                          <img
+                            src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1nfGVufDB8fDB8fHww"
+                            style={{ height: "550px" }}
+                          />
+                          <img
+                            src="https://media.tacdn.com/media/attractions-splice-spp-674x446/0a/68/84/8c.jpg"
+                            style={{ height: "550px" }}
+                          />
+                        </Carousel>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleEditKiosk}
+                      data-modal-hide="popup-modal"
+                      type="button"
+                      className="mb-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                    >
+                      Save{" "}
+                    </button>
+
+                    <button
+                      onClick={handleEditClose}
+                      data-modal-hide="popup-modal"
+                      type="button"
+                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </main>
       </div>

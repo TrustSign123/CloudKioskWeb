@@ -22,11 +22,11 @@ function ViewKiosk(props) {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setContentFileName(file.name);
-    setContentFileSize(file.size);
-    setContentFileType(file.type);
     if (file) {
       setKioskContent(file);
+      setContentFileName(file.name);
+      setContentFileSize(file.size);
+      setContentFileType(file.type);
       const reader = new FileReader();
       reader.onloadend = () => {
         setContentPreview(reader.result);
@@ -138,7 +138,7 @@ function ViewKiosk(props) {
             </div>
           ))}
         </div>
-        <div className="flex flex-col justify-center items-center w-50">
+        <div className="flex flex-col justify-center items-center w-50 ml-20">
           <Carousel
             showArrows={false}
             showThumbs={false}
@@ -148,13 +148,14 @@ function ViewKiosk(props) {
             infiniteLoop={true}
             interval={2000}
             // axis={"vertical"}
+            width={"80%"}
           >
             {getKioskContent.map((content) => (
               <>
                 <img
                   key={content._id}
                   src={content.KioskContent}
-                  style={{ height: "335px" }}
+                  style={{ height: "350px" }}
                 />
               </>
             ))}
@@ -211,7 +212,7 @@ function ViewKiosk(props) {
                                 or drag and drop
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                SVG, PNG, JPG or GIF (MAX. 1920x1080px)
                               </p>
                             </>
                           )}
@@ -262,7 +263,7 @@ function ViewKiosk(props) {
                                 or drag and drop
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                SVG, PNG, JPG or GIF (MAX. 1920x1080px)
                               </p>
                             </>
                           )}
