@@ -2,13 +2,17 @@ import React, { useState, useContext, useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./style/view.css";
 import { Carousel } from "react-responsive-carousel";
-import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
 
 function ViewKiosk(props) {
   const { getKioskContent, kioskCode } = props;
-  const { addKioskContent, editKioskContent, deleteKioskContent, loading } =
-    useContext(KioskContext);
+  const {
+    addKioskContent,
+    editKioskContent,
+    deleteKioskContent,
+    loading,
+    upload,
+  } = useContext(KioskContext);
   const [openModal, setOpenModal] = useState(false);
   const [kioskContent, setKioskContent] = useState(null);
   const [contentPreview, setContentPreview] = useState(null);
@@ -119,6 +123,27 @@ function ViewKiosk(props) {
 
   return (
     <>
+      {upload && (
+        <div className="absolute left-60 flex justify-center items-center dark:bg-slate-950 bg-opacity-0 w-50 h-50 z-50 rounded-md">
+          <svg
+            aria-hidden="true"
+            className="inline w-10 h-10text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
       <div className="flex items-start gap-2 py-4">
         <div className="view-layout bg-slate-100 dark:bg-gray-800 p-5 rounded overflow-scroll">
           <label
@@ -134,7 +159,20 @@ function ViewKiosk(props) {
               key={content._id}
               onClick={() => handleEditClick(index)}
             >
-              <img className="w-full h-20 rounded" src={content.KioskContent} />
+              {content.KioskContentFileType === "image/jpeg" ? (
+                <img
+                  className="w-full h-20 rounded"
+                  src={content.KioskContent}
+                />
+              ) : (
+                <video
+                  className="w-full h-20 rounded"
+                  style={{ objectFit: "cover" }}
+                >
+                  <source src={content.KioskContent} type="video/mp4" />
+                  Your browser doest not support the video tag.
+                </video>
+              )}
             </div>
           ))}
         </div>
@@ -151,13 +189,20 @@ function ViewKiosk(props) {
             width={"80%"}
           >
             {getKioskContent.map((content) => (
-              <>
-                <img
-                  key={content._id}
-                  src={content.KioskContent}
-                  style={{ height: "350px" }}
-                />
-              </>
+              <div key={content._id}>
+                {content.KioskContentFileType === "image/jpeg" ? (
+                  <img src={content.KioskContent} style={{ height: "350px" }} />
+                ) : (
+                  <video
+                    height={"350px"}
+                    style={{ objectFit: "cover" }}
+                    controls
+                  >
+                    <source src={content.KioskContent} type="video/mp4" />
+                    Your browser doest not support the video tag.
+                  </video>
+                )}
+              </div>
             ))}
           </Carousel>
           <div className="bg-slate-800 w-20 h-60 -z-40"></div>
@@ -174,6 +219,7 @@ function ViewKiosk(props) {
               <div className="p-4 md:p-5 text-center">
                 <div className="flex justify-center items-center rounded-lg mb-4 ">
                   <div className="file-dics bg-slate-200 dark:bg-slate-900 flex flex-col justify-around text-left gap-3 p-3 rounded mr-4">
+                    <h3 className="border-b pb-2"> File details</h3>
                     <h3>File name: {contentFileName}</h3>
                     <h3>File size: {convertBytes(contentFileSize)}</h3>
                     <h3>File type: {contentFileType}</h3>
@@ -217,13 +263,24 @@ function ViewKiosk(props) {
                             </>
                           )}
 
-                          <img src={contentPreview} />
+                          {contentFileType === "image/jpeg" ? (
+                            <img src={contentPreview} />
+                          ) : (
+                            <video
+                              width={"350"}
+                              height={"200"}
+                              style={{ objectFit: "cover" }}
+                            >
+                              <source src={contentPreview} type="video/mp4" />
+                              Your browser doest not support the video tag.
+                            </video>
+                          )}
                         </div>
                       </label>
                       <input
                         id="input-img"
                         type="file"
-                        accept="image/*"
+                        accept="image/*,video/*"
                         onChange={handleFileChange}
                         enctype="multipart/form-data"
                         className="hidden"
@@ -267,13 +324,26 @@ function ViewKiosk(props) {
                               </p>
                             </>
                           )}
-                          <img src={kioskContent} />
+
+                          {contentFileType === "image/jpeg" ? (
+                            <img src={kioskContent} />
+                          ) : (
+                            <video
+                              width={"100%"}
+                              height={"200"}
+                              style={{ objectFit: "cover" }}
+                              controls
+                            >
+                              <source src={kioskContent} type="video/mp4" />
+                              Your browser doest not support the video tag.
+                            </video>
+                          )}
                         </div>
                       </label>
                       <input
                         id="input-img"
                         type="file"
-                        accept="image/*"
+                        accept="image/*,video/*"
                         onChange={handleFileChange}
                         enctype="multipart/form-data"
                         className="hidden"

@@ -58,6 +58,7 @@ router.post(
       kioskcode.kioskContent.push({
         KioskContent: publicUrl,
         KioskContentName: privateUrl,
+        KioskContentFileType,
         _id: sharedId,
       });
       await kiosk.save();
@@ -123,6 +124,7 @@ router.put("/content/:id", upload.single("kioskContent"), async (req, res) => {
     content.KioskContentFileType = KioskContentFileType;
     contentCode.KioskContent = publicUrl;
     contentCode.KioskContentName = privateUrl;
+    contentCode.KioskContentFileType = KioskContentFileType;
 
     await kiosk.save();
     await kioskcode.save();

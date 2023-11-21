@@ -2,10 +2,12 @@ import KioskContext from "./kioskContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 const Kioskstate = (props) => {
-  const host = "http://localhost:5000/api/";
+  // const host = "http://localhost:5000/api/";
+  const host = "https://cloudkiosk.onrender.com/api/";
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
+  const [upload, setUpload] = useState(false);
   const [kiosks, setKiosks] = useState([]);
   const [userProfile, setUserProfile] = useState([]);
 
@@ -183,7 +185,7 @@ const Kioskstate = (props) => {
     }
   };
   const addKioskContent = async (kioskContent, kioskCode) => {
-    setLoading(true);
+    setUpload(true);
     try {
       const formData = new FormData();
       formData.append("kioskContent", kioskContent);
@@ -196,14 +198,14 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
-      setLoading(false);
+      setUpload(false);
     } catch (error) {
-      setLoading(false);
+      setUpload(false);
       console.log(error);
     }
   };
   const editKioskContent = async (kioskContent, id) => {
-    setLoading(true);
+    setUpload(true);
     try {
       const formData = new FormData();
       formData.append("kioskContent", kioskContent);
@@ -216,9 +218,9 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
-      setLoading(false);
+      setUpload(false);
     } catch (error) {
-      setLoading(false);
+      setUpload(false);
       console.log(error);
     }
   };
@@ -249,6 +251,7 @@ const Kioskstate = (props) => {
     <KioskContext.Provider
       value={{
         loading,
+        upload,
         userProfile,
         kiosks,
         logout,

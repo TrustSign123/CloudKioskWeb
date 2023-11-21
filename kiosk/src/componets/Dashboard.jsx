@@ -28,7 +28,7 @@ function Dashboard() {
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState("");
-  const [axis, setAxis] = useState("horizontal");
+  const [axis, setAxis] = useState("verticle");
   const [transitionTime, setTransitionTime] = useState(1000);
   const [interval, setInterval] = useState(3000);
   const [kioskContent, setKioskContent] = useState([]);
@@ -39,7 +39,7 @@ function Dashboard() {
   useEffect(() => {
     profile();
     fetchKiosk();
-  }, [kiosks, userProfile]);
+  }, [userProfile]);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);

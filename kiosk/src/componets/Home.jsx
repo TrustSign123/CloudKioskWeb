@@ -12,9 +12,6 @@ function Home() {
         <Link to={"/create"}>
           <button className="bg-blue-600 py-2 px-5 rounded">create</button>
         </Link>
-        <Link to={"/dash"}>
-          <button className="bg-blue-600 py-2 px-5 rounded">dashboard</button>
-        </Link>
       </div>
     </>
   );

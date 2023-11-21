@@ -9,6 +9,9 @@ const KioskContentSchema = new Schema({
   KioskContentName: {
     type: String,
   },
+  KioskContentFileType: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now,
