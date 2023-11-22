@@ -1,17 +1,20 @@
 import KioskContext from "./kioskContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 const Kioskstate = (props) => {
-  // const host = "http://localhost:5000/api/";
-  const host = "https://cloudkiosk.onrender.com/api/";
+  const host = "http://localhost:5000/api/";
+  // const host = "https://cloudkiosk.onrender.com/api/";
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-  const [upload, setUpload] = useState(false);
   const [kiosks, setKiosks] = useState([]);
   const [userProfile, setUserProfile] = useState([]);
 
   let navigate = useNavigate();
+  const notify = (message, type) => {
+    toast[type](message);
+  };
 
   const logout = () => {
     navigate("/login");
@@ -42,7 +45,7 @@ const Kioskstate = (props) => {
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const login = async (email, password) => {
@@ -67,11 +70,11 @@ const Kioskstate = (props) => {
         navigate("/dash");
       } else {
         setLoading(false);
-        console.log("error");
+        console.error("error");
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const profile = async () => {
@@ -90,7 +93,7 @@ const Kioskstate = (props) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const fetchKiosk = async () => {
@@ -109,11 +112,10 @@ const Kioskstate = (props) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const createKiosk = async (kioskName, kioskCode) => {
-    setLoading(true);
     try {
       const response = await fetch(`${host}kioskMachine/kiosk`, {
         method: "POST",
@@ -129,10 +131,11 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       navigate("/dash");
+      notify(`${json.message}`, "success");
       setLoading(false);
     } catch (error) {
-      setLoading(false);
-      console.log(error);
+      notify("add Failed", "error");
+      console.error(error);
     }
   };
   const editKiosk = async (kioskName, id) => {
@@ -163,7 +166,7 @@ const Kioskstate = (props) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const deleteKiosk = async (id) => {
@@ -181,11 +184,10 @@ const Kioskstate = (props) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const addKioskContent = async (kioskContent, kioskCode) => {
-    setUpload(true);
     try {
       const formData = new FormData();
       formData.append("kioskContent", kioskContent);
@@ -198,10 +200,10 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
-      setUpload(false);
+      notify("add Successful", "success");
     } catch (error) {
-      setUpload(false);
-      console.log(error);
+      notify("Login Successful", "error");
+      console.error(error);
     }
   };
   const editKioskContent = async (kioskContent, id) => {
@@ -221,7 +223,7 @@ const Kioskstate = (props) => {
       setUpload(false);
     } catch (error) {
       setUpload(false);
-      console.log(error);
+      console.error(error);
     }
   };
   const deleteKioskContent = async (id) => {
@@ -239,7 +241,7 @@ const Kioskstate = (props) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -251,7 +253,6 @@ const Kioskstate = (props) => {
     <KioskContext.Provider
       value={{
         loading,
-        upload,
         userProfile,
         kiosks,
         logout,

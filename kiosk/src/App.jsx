@@ -1,9 +1,10 @@
 import { useState } from "react";
 import KioskState from "./context/kiosk/KioskState";
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Home from "./componets/Home";
 import CreateUser from "./componets/CreateUser";
-import Navbar from "./componets/Navbar";
 import LoginUser from "./componets/LoginUser";
 import Dashboard from "./componets/Dashboard";
 import CreateKiosk from "./componets/CreateKiosk";
@@ -15,9 +16,18 @@ function App() {
   return (
     <>
       <KioskState>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          draggable
+          pauseOnHover={false}
+          theme="dark"
+        />
         <>
           <Routes>
-            {" "}
             <Route exact path="/" element={<Home />} />
             <Route exact path="/create" element={<CreateUser />} />
             <Route exact path="/sub" element={<Subscription />} />

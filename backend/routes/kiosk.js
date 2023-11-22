@@ -20,8 +20,8 @@ function generateUniqueKioskCode() {
   return kioskCode;
 }
 
-// Endpoint to generate a Kiosk code using the user's IP
-router.get("/kiosk-code", async (req, res) => {
+// Endpoint to generate a Kiosk code using the android id
+router.post("/kiosk-code", async (req, res) => {
   try {
     // Get the user's IP address from the request
     const androidId = req.body.androidId;
