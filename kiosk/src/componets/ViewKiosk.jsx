@@ -3,6 +3,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./style/view.css";
 import { Carousel } from "react-responsive-carousel";
 import KioskContext from "../context/kiosk/kioskContext";
+import ProgressBar from "../componets/ProgressBar";
 
 function ViewKiosk(props) {
   const { getKioskContent, kioskCode } = props;
@@ -11,7 +12,7 @@ function ViewKiosk(props) {
     editKioskContent,
     deleteKioskContent,
     loading,
-    upload,
+    uploadStatus,
   } = useContext(KioskContext);
   const [openModal, setOpenModal] = useState(false);
   const [kioskContent, setKioskContent] = useState(null);
@@ -123,6 +124,7 @@ function ViewKiosk(props) {
 
   return (
     <>
+      {uploadStatus.status && <ProgressBar progress={uploadStatus.progress} />}
       <div className="flex items-start gap-2 py-4">
         <div className="view-layout bg-slate-100 dark:bg-gray-800 p-5 rounded overflow-scroll">
           <label
@@ -175,7 +177,7 @@ function ViewKiosk(props) {
                   <video
                     height={"350px"}
                     style={{ objectFit: "cover" }}
-                    controls
+                    autoPlay
                   >
                     <source src={content.KioskContent} type="video/mp4" />
                     Your browser doest not support the video tag.
@@ -249,6 +251,7 @@ function ViewKiosk(props) {
                               width={"350"}
                               height={"200"}
                               style={{ objectFit: "cover" }}
+                              autoPlay
                             >
                               <source src={contentPreview} type="video/mp4" />
                               Your browser doest not support the video tag.
@@ -259,7 +262,7 @@ function ViewKiosk(props) {
                       <input
                         id="input-img"
                         type="file"
-                        accept="image/*,video/*"
+                        accept="image/jpeg,video/mp4"
                         onChange={handleFileChange}
                         enctype="multipart/form-data"
                         className="hidden"
@@ -312,6 +315,7 @@ function ViewKiosk(props) {
                               height={"200"}
                               style={{ objectFit: "cover" }}
                               controls
+                              autoPlay
                             >
                               <source src={kioskContent} type="video/mp4" />
                               Your browser doest not support the video tag.
@@ -322,7 +326,7 @@ function ViewKiosk(props) {
                       <input
                         id="input-img"
                         type="file"
-                        accept="image/*,video/*"
+                        accept="image/jpeg,video/mp4"
                         onChange={handleFileChange}
                         enctype="multipart/form-data"
                         className="hidden"

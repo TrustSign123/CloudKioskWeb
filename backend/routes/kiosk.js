@@ -68,6 +68,42 @@ router.post("/kiosk-code", async (req, res) => {
   }
 });
 
+// Endpoint to fetch a Kiosk group
+router.post("/group-kiosk", async (req, res) => {
+  try {
+    const kioskCode = req.body.kioskCode;
+    const androidId = req.body.androidId;
+
+    if (!androidId) {
+      return res
+        .status(400)
+        .json({ message: "Android Id is missing in the request body" });
+    }
+
+    const kiosks = await Kiosk.findOne({ kioskCode: kioskCode });
+    if (!kiosks) {
+      return res.status(404).json({ message: "Kiosk not found" });
+    }
+
+    // Check if androidId already exists in groupDevices
+    const isAndroidIdExists = kiosks.groupDevices.some(
+      (device) => device.androidId === androidId
+    );
+
+    if (!isAndroidIdExists) {
+      kiosks.groupDevices.push({
+        androidId: androidId,
+      });
+      await kiosks.save();
+    }
+
+    res.json(kiosks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch Kiosks" });
+  }
+});
+
 // Endpoint to fecth a Kiosk
 router.get("/get-kiosk", fetchUser, async (req, res) => {
   try {
@@ -157,6 +193,35 @@ router.delete("/kiosk/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to delete Kiosk" });
+  }
+});
+
+// Endpoint to ungroup kiosk
+router.delete("/group-kiosk/:kioskCode/:id", async (req, res) => {
+  try {
+    const kioskCode = req.params.kioskCode;
+    const androidId = req.params.id;
+
+    // Find and delete the Kiosk document by ID
+    const kiosk = await Kiosk.findOne({ kioskCode });
+    if (!kiosk) {
+      res.status(404).json({ message: "Kiosk not found" });
+    } // Find the index of the groupDevice with the specified androidId
+    const indexToRemove = kiosk.groupDevices.findIndex(
+      (device) => device._id.toString() === androidId
+    );
+
+    if (indexToRemove === -1) {
+      return res.status(404).json({ message: "Device not found in the group" });
+    }
+    // Remove the item from 'groupDevices' array
+    kiosk.groupDevices.splice(indexToRemove, 1);
+    await kiosk.save();
+
+    res.status(200).json({ message: "Device ungrouped successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to ungroup this device" });
   }
 });
 

@@ -2,12 +2,17 @@ import KioskContext from "./kioskContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+
 const Kioskstate = (props) => {
-  const host = "http://localhost:5000/api/";
-  // const host = "https://cloudkiosk.onrender.com/api/";
+  // const host = "http://localhost:5000/api/";
+  const host = "https://cloudkiosk.onrender.com/api/";
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState({
+    status: false,
+    progress: 0,
+  });
   const [kiosks, setKiosks] = useState([]);
   const [userProfile, setUserProfile] = useState([]);
 
@@ -130,6 +135,7 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
+      ws.send("New kiosk created");
       navigate("/dash");
       notify(`${json.message}`, "success");
       setLoading(false);
@@ -188,6 +194,7 @@ const Kioskstate = (props) => {
     }
   };
   const addKioskContent = async (kioskContent, kioskCode) => {
+    setUploadStatus({ status: true, progress: 90 });
     try {
       const formData = new FormData();
       formData.append("kioskContent", kioskContent);
@@ -198,16 +205,17 @@ const Kioskstate = (props) => {
           "auth-token": token,
         },
       });
-
       const json = await response.json();
+      setUploadStatus({ status: false, progress: 100 });
       notify("add Successful", "success");
     } catch (error) {
-      notify("Login Successful", "error");
+      setUploadStatus({ status: false, progress: 0 });
+      notify("add failed", "error");
       console.error(error);
     }
   };
   const editKioskContent = async (kioskContent, id) => {
-    setUpload(true);
+    setUploadStatus({ status: true, progress: 90 });
     try {
       const formData = new FormData();
       formData.append("kioskContent", kioskContent);
@@ -220,9 +228,11 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
-      setUpload(false);
+      setUploadStatus({ status: false, progress: 100 });
+      notify("edit Successful", "success");
     } catch (error) {
-      setUpload(false);
+      setUploadStatus({ status: false, progress: 0 });
+      notify("edit failed", "error");
       console.error(error);
     }
   };
@@ -239,8 +249,33 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       setLoading(false);
+      notify("delete Successful", "success");
     } catch (error) {
       setLoading(false);
+      notify("edit failed", "error");
+      console.error(error);
+    }
+  };
+  const ungroupDevice = async (kioskCode, id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${host}kioskMachine/group-kiosk/${kioskCode}/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": token,
+          },
+        }
+      );
+
+      const json = await response.json();
+      setLoading(false);
+      notify("ungroup Successful", "success");
+    } catch (error) {
+      setLoading(false);
+      notify(`${error}`, "error");
       console.error(error);
     }
   };
@@ -253,6 +288,7 @@ const Kioskstate = (props) => {
     <KioskContext.Provider
       value={{
         loading,
+        uploadStatus,
         userProfile,
         kiosks,
         logout,
@@ -266,6 +302,7 @@ const Kioskstate = (props) => {
         addKioskContent,
         editKioskContent,
         deleteKioskContent,
+        ungroupDevice,
       }}
     >
       {props.children}

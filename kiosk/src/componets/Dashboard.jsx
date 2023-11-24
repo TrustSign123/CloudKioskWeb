@@ -5,6 +5,8 @@ import KioskContext from "../context/kiosk/kioskContext";
 import ViewKios from "./ViewKiosk";
 import Overview from "./Overview";
 import { Carousel } from "react-responsive-carousel";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 import {
   ContextMenu,
@@ -22,12 +24,14 @@ function Dashboard() {
     fetchKiosk,
     editKiosk,
     deleteKiosk,
+    ungroupDevice,
     loading,
   } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState("");
+  const [groupData, setGroupData] = useState([]);
   const [axis, setAxis] = useState("verticle");
   const [transitionTime, setTransitionTime] = useState(1000);
   const [interval, setInterval] = useState(3000);
@@ -35,6 +39,7 @@ function Dashboard() {
   const [viewOpen, setViewOpen] = useState(false);
   const [overOpen, setOverOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [groupOpen, setGroupOpen] = useState(false);
 
   useEffect(() => {
     profile();
@@ -61,6 +66,22 @@ function Dashboard() {
     setKioskName(kiosks[index].kioskName);
     setEditOpen(true);
   };
+  const handleGroupOpen = (index) => {
+    setKioskCode(kiosks[index].kioskCode);
+    setGroupData(kiosks[index].groupDevices);
+    setGroupOpen(true);
+  };
+
+  const handleUngroupDevice = (id) => {
+    ungroupDevice(kioskCode, id);
+  };
+
+  const handleGroupClose = () => {
+    setKioskCode("");
+    setGroupData([]);
+    setGroupOpen(false);
+  };
+
   const handleEditKiosk = () => {
     editKiosk(kioskName, kioskId);
     setKioskName("");
@@ -93,6 +114,7 @@ function Dashboard() {
 
   return (
     <>
+      <Tooltip id="group" />
       <div className="antialiased bg-gray-50 dark:bg-gray-900">
         <nav className="border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
           <div className="flex flex-wrap justify-between items-center">
@@ -426,11 +448,20 @@ function Dashboard() {
 
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
                 </div>
-                <ContextMenuTrigger mouseButton={0} id={kiosk._id}>
-                  <div onClick={handleMonuseClick} className="well">
-                    <i className="fa-solid fa-ellipsis fa-xl" />
-                  </div>
-                </ContextMenuTrigger>
+                <div className="flex justify-between  w-full">
+                  <ContextMenuTrigger mouseButton={0} id={kiosk._id}>
+                    <div onClick={handleMonuseClick} className="well">
+                      <i className="fa-solid fa-ellipsis fa-xl" />
+                    </div>
+                  </ContextMenuTrigger>
+                  <h3
+                    data-tooltip-id="group"
+                    data-tooltip-content={`${kiosk.groupDevices.length} device connected`}
+                    className="text-sm text-gray-400"
+                  >
+                    {kiosk.groupDevices.length}
+                  </h3>
+                </div>
 
                 <ContextMenu
                   id={kiosk._id}
@@ -449,6 +480,13 @@ function Dashboard() {
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
                   >
                     <i className="fa-solid fa-gear" /> <h3>Setting</h3>
+                  </MenuItem>
+                  <MenuItem
+                    data={{ foo: "bar" }}
+                    onClick={() => handleGroupOpen(index)}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 dark:hover:bg-gray-600 py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-link" /> <h3>Group</h3>
                   </MenuItem>
                   <MenuItem
                     data={{ foo: "bar" }}
@@ -594,6 +632,45 @@ function Dashboard() {
 
                     <button
                       onClick={handleEditClose}
+                      data-modal-hide="popup-modal"
+                      type="button"
+                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {groupOpen && (
+            <div
+              id="popup-modal"
+              tabindex="-1"
+              className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            >
+              <div className="relative p-4 w-full">
+                <div className=" relative bg-gray-100 rounded-lg shadow dark:bg-gray-700">
+                  <div className="p-4 md:p-5 text-center">
+                    <div className="grag-area flex flex-col justify-start items-start gap-3 rounded-lg overflow-scroll">
+                      {groupData.map((group, index) => (
+                        <div
+                          key={group._id}
+                          className="flex justify-center items-center gap-5"
+                        >
+                          <h3>Device ID: {group.androidId}</h3>
+                          <button
+                            className="bg-rose-700 hover:bg-rose-800 text-sm py-1 px-2 rounded"
+                            onClick={() => handleUngroupDevice(group._id)}
+                          >
+                            Ungroup
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={handleGroupClose}
                       data-modal-hide="popup-modal"
                       type="button"
                       className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
