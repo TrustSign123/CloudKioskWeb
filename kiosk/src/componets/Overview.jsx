@@ -1,7 +1,69 @@
 import React, { useState } from "react";
 
 function Overview(props) {
-  const { storage, cluster } = props;
+  const { userStorage, userCluster, storage, cluster } = props;
+
+  // Function to extract numeric value from a string with units (e.g., "84.98 MB")
+  const extractNumericValue = (str) => {
+    const match = str.match(/(\d+(\.\d+)?)\s*(\w*)/);
+    if (match) {
+      const numericValue = parseFloat(match[1]);
+      const unit = match[3].toLowerCase(); // Extracted unit (e.g., "MB")
+
+      // Convert to bytes for consistent comparison
+      switch (unit) {
+        case "kb":
+          return numericValue * 1024;
+        case "mb":
+          return numericValue * 1024 * 1024;
+        case "gb":
+          return numericValue * 1024 * 1024 * 1024;
+        case "tb":
+          return numericValue * 1024 * 1024 * 1024 * 1024;
+        default:
+          return numericValue;
+      }
+    }
+    return NaN; // Return NaN if no numeric value is found
+  };
+
+  // Parse numeric values
+  const numericUserStorage = extractNumericValue(userStorage);
+  const numericStorage = extractNumericValue(storage);
+
+  // Check if numeric values are valid
+  if (
+    isNaN(numericUserStorage) ||
+    isNaN(numericStorage) ||
+    numericStorage === 0
+  ) {
+    console.error("Invalid storage values or division by zero.");
+    return null;
+  }
+
+  // Calculate the percentage of storage used
+  const percentageUsed = (numericUserStorage / numericStorage) * 100;
+  const percentageUsedCluser = (userCluster / cluster) * 100;
+
+  // Determine the color based on the percentage used
+  let barColor;
+  if (percentageUsed < 50) {
+    barColor = "bg-green-500";
+  } else if (percentageUsed < 80) {
+    barColor = "bg-yellow-500";
+  } else {
+    barColor = "bg-red-500";
+  }
+
+  let barColorCluster;
+  if (percentageUsedCluser < 50) {
+    barColorCluster = "bg-green-500";
+  } else if (percentageUsedCluser < 80) {
+    barColorCluster = "bg-yellow-500";
+  } else {
+    barColorCluster = "bg-red-500";
+  }
+
   return (
     <>
       <div
@@ -23,13 +85,13 @@ function Overview(props) {
               <div className="flex justify-between mb-1 text-gray-500 dark:text-gray-400">
                 <span className="text-base font-normal">My storage</span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  440GB of {storage} used
+                  {userStorage} of {storage} used
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
                 <div
-                  className="bg-orange-500 h-2.5 rounded-full"
-                  style={{ width: "85%" }}
+                  className={`rounded-full h-2.5 ${barColor}`}
+                  style={{ width: `${percentageUsed}%` }}
                 ></div>
               </div>
 
@@ -58,13 +120,13 @@ function Overview(props) {
               <div className="flex justify-between mb-1 text-gray-500 dark:text-gray-400">
                 <span className="text-base font-normal">My clusters</span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  75 of {cluster} used
+                  {userCluster} of {cluster} used
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
                 <div
-                  className="bg-orange-300 h-2.5 rounded-full"
-                  style={{ width: "55%" }}
+                  className={`${barColorCluster} h-2.5 rounded-full`}
+                  style={{ width: `${percentageUsedCluser}%` }}
                 ></div>
               </div>
 

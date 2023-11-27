@@ -122,6 +122,9 @@ function ViewKiosk(props) {
     setContentFileType("none");
   };
 
+  const isImage = (fileType) =>
+    ["image/jpeg", "image/png", "image/gif"].includes(fileType);
+
   return (
     <>
       {uploadStatus.status && <ProgressBar progress={uploadStatus.progress} />}
@@ -140,7 +143,7 @@ function ViewKiosk(props) {
               key={content._id}
               onClick={() => handleEditClick(index)}
             >
-              {content.KioskContentFileType === "image/jpeg" ? (
+              {isImage(content.KioskContentFileType) ? (
                 <img
                   className="w-full h-20 rounded"
                   src={content.KioskContent}
@@ -171,7 +174,7 @@ function ViewKiosk(props) {
           >
             {getKioskContent.map((content) => (
               <div key={content._id}>
-                {content.KioskContentFileType === "image/jpeg" ? (
+                {isImage(content.KioskContentFileType) ? (
                   <img src={content.KioskContent} style={{ height: "350px" }} />
                 ) : (
                   <video
@@ -239,12 +242,14 @@ function ViewKiosk(props) {
                                 or drag and drop
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                SVG, PNG, JPG or GIF (MAX. 1920x1080px)
+                                PNG, JPG or GIF (MAX. 1920x1080px)
                               </p>
                             </>
                           )}
 
-                          {contentFileType === "image/jpeg" ? (
+                          {contentFileType === "image/jpeg" ||
+                          contentFileType === "image/png" ||
+                          contentFileType === "image/gif" ? (
                             <img src={contentPreview} />
                           ) : (
                             <video
@@ -262,7 +267,7 @@ function ViewKiosk(props) {
                       <input
                         id="input-img"
                         type="file"
-                        accept="image/jpeg,video/mp4"
+                        accept="image/*,video/mp4"
                         onChange={handleFileChange}
                         enctype="multipart/form-data"
                         className="hidden"
@@ -302,12 +307,14 @@ function ViewKiosk(props) {
                                 or drag and drop
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                SVG, PNG, JPG or GIF (MAX. 1920x1080px)
+                                PNG, JPG or GIF (MAX. 1920x1080px)
                               </p>
                             </>
                           )}
 
-                          {contentFileType === "image/jpeg" ? (
+                          {contentFileType === "image/jpeg" ||
+                          contentFileType === "image/png" ||
+                          contentFileType === "image/gif" ? (
                             <img src={kioskContent} />
                           ) : (
                             <video

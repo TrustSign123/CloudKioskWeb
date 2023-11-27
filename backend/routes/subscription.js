@@ -9,7 +9,7 @@ const subscriptionPlans = {
   free: {
     name: "3 Days Free Trial",
     price: 0,
-    duration: 3,
+    duration: 3, // 3 days
     storage: "10 MB",
     cluster: 1,
     oneTimeOnly: true,
@@ -48,6 +48,12 @@ router.post("/purchase", fetchUser, async (req, res) => {
       if (user.hasUsedFreeTrial) {
         return res.status(400).json({ message: "Free trial already used" });
       }
+    }
+
+    if (user.userSubscription) {
+      return res
+        .status(400)
+        .json({ message: "Your Subscription Already Activated" });
     }
 
     // Calculate the expiration date

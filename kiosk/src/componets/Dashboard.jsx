@@ -21,6 +21,7 @@ function Dashboard() {
     profile,
     userProfile,
     kiosks,
+    fileSize,
     fetchKiosk,
     editKiosk,
     deleteKiosk,
@@ -518,7 +519,10 @@ function Dashboard() {
           )}
           {overOpen && (
             <>
-              <div className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4 w-full">
+              <div
+                className="absolute top-20 bg-slate-50 dark:bg-slate-900 p-4 w-full"
+                style={{ height: "100vh" }}
+              >
                 <button
                   className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
                   onClick={handleOverOpen}
@@ -526,6 +530,8 @@ function Dashboard() {
                   <i className="fa-solid fa-arrow-left" /> back
                 </button>
                 <Overview
+                  userStorage={fileSize}
+                  userCluster={kiosks.length}
                   storage={userProfile.userSubscription[0].storage}
                   cluster={userProfile.userSubscription[0].cluster}
                 />

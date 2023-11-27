@@ -14,6 +14,7 @@ const Kioskstate = (props) => {
     progress: 0,
   });
   const [kiosks, setKiosks] = useState([]);
+  const [fileSize, setFileSize] = useState(0);
   const [userProfile, setUserProfile] = useState([]);
 
   let navigate = useNavigate();
@@ -113,7 +114,8 @@ const Kioskstate = (props) => {
       });
 
       const json = await response.json();
-      setKiosks(json);
+      setKiosks(json.kiosks);
+      setFileSize(json.fileSize);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -291,6 +293,7 @@ const Kioskstate = (props) => {
         uploadStatus,
         userProfile,
         kiosks,
+        fileSize,
         logout,
         register,
         login,

@@ -5,6 +5,18 @@ const KioskCode = require("../models/KioskCode");
 const fetchUser = require("../middleware/fetchuser");
 const checkSubscription = require("../middleware/checkSubscription");
 
+const convertBytes = (contentFileSize) => {
+  if (contentFileSize === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+
+  const i = parseInt(Math.floor(Math.log(contentFileSize) / Math.log(k)));
+
+  return (
+    Math.round(100 * (contentFileSize / Math.pow(k, i))) / 100 + " " + sizes[i]
+  );
+};
+
 // Function to generate a unique Kiosk code
 function generateUniqueKioskCode() {
   const characters =
@@ -108,7 +120,18 @@ router.post("/group-kiosk", async (req, res) => {
 router.get("/get-kiosk", fetchUser, async (req, res) => {
   try {
     const kiosks = await Kiosk.find({ user: req.user.id });
-    res.json(kiosks);
+    // Calculate the sum of all kiosk content file sizes
+    const totalFileSize = kiosks.reduce((sum, kiosk) => {
+      const kioskContent = kiosk.kioskContent || [];
+      const contentFileSizeSum = kioskContent.reduce((contentSum, content) => {
+        return contentSum + (content.KioskContentFileSize || 0);
+      }, 0);
+
+      return sum + contentFileSizeSum;
+    }, 0);
+    const fileSize = convertBytes(totalFileSize);
+    // Send the total file size in the response
+    res.json({ fileSize, kiosks });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch Kiosks" });
