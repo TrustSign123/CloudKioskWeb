@@ -17,6 +17,7 @@ connectToMongo()
     app.use("/api/subscription", require("./routes/subscription"));
     app.use("/api/kioskMachine", require("./routes/kiosk"));
     app.use("/api/kioskContent", require("./routes/kioskContent"));
+    app.use("/api/offlineMode", require("./routes/offlineKiosk"));
 
     app.listen(port, () => {
       console.log(
