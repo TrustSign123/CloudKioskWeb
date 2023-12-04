@@ -289,6 +289,7 @@ const Kioskstate = (props) => {
   return (
     <KioskContext.Provider
       value={{
+        host,
         loading,
         uploadStatus,
         userProfile,

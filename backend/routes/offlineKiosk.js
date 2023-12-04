@@ -42,6 +42,16 @@ router.get("/offline-code", async (req, res) => {
   }
 });
 
+router.get("/offline-codes", async (req, res) => {
+  try {
+    const codes = await OfflineKioskCode.find();
+    res.json({ codes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.post("/offline-code", async (req, res) => {
   try {
     const code = req.body.code;
@@ -67,6 +77,21 @@ router.post("/offline-code", async (req, res) => {
     await existingCode.save();
 
     res.status(200).json({ status: "Code successfully used" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/offline-codes/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const code = await OfflineKioskCode.findById(id);
+    if (!code) {
+      return res.status(404).json({ message: "Not Found" });
+    }
+    await OfflineKioskCode.findByIdAndDelete(id);
+    res.status(200).json("Code Deleted");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -426,6 +426,15 @@ function Dashboard() {
                   <span className="ml-3">Help</span>
                 </a>
               </li>
+              <li>
+                <Link
+                  to={"/admin"}
+                  className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
+                >
+                  <i className="fa-solid fa-screwdriver-wrench" />
+                  <span className="ml-3">Admin</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </aside>
