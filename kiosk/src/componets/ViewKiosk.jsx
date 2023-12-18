@@ -3,7 +3,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./style/view.css";
 import { Carousel } from "react-responsive-carousel";
 import KioskContext from "../context/kiosk/kioskContext";
-import ProgressBar from "../componets/ProgressBar";
+import LoadingScreen from "../componets/LoadingScreen";
 
 function ViewKiosk(props) {
   const { getKioskContent, kioskCode } = props;
@@ -127,7 +127,7 @@ function ViewKiosk(props) {
 
   return (
     <>
-      {uploadStatus.status && <ProgressBar progress={uploadStatus.progress} />}
+      {uploadStatus.status && <LoadingScreen/>}
       <div className="flex items-start gap-2 py-4">
         <div className="view-layout bg-slate-100 dark:bg-gray-800 p-5 rounded overflow-scroll">
           <label

@@ -7,7 +7,7 @@ const navigation = [
   { name: "Community", href: "#", current: false },
   { name: "Learn", href: "#", current: false },
   { name: "Pricing", href: "#", current: false },
-  { name: "Dashboard", href: "#", current: true },
+  { name: "Get Started", href: "http://localhost:5173/login", current: true, target: "_blank" },
 ];
 
 function classNames(...classes) {
@@ -48,11 +48,12 @@ function Navbar() {
                         <a
                           key={item.name}
                           href={item.href}
+                          target={item.target}
                           className={classNames(
                             item.current
-                              ? "bg-gray-900 text-white"
+                              ? " bg-gradient-to-r from-pink-600 to-pink-500 py-1.5 px-3 rounded-full active:scale-75 duration-150"
                               : "text-gray-400 font-semibold hover:text-white",
-                            "rounded-md px-3 py-2  font-medium"
+                            "rounded-md px-3  font-medium"
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
@@ -74,7 +75,7 @@ function Navbar() {
                     href={item.href}
                     className={classNames(
                       item.current
-                        ? "bg-gray-900 text-white"
+                        ? "bg-gray-900 text-white hidden"
                         : "text-gray-400 font-semibold hover:text-white",
                       "block rounded-md px-3 py-2 text-base font-medium"
                     )}

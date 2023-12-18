@@ -15,6 +15,6 @@ export default {
       backgroundOpacity: ["active"],
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
   presets: [keepPreset],
 };

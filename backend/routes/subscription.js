@@ -65,7 +65,7 @@ router.post("/purchase", fetchUser, async (req, res) => {
     user.userSubscription = [
       {
         status: true,
-        validityPlan: plan,
+        validityPlan: subscriptionPlans[plan].name,
         startDate: currentDate,
         expireDate,
         price: subscriptionPlans[plan].price,

@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 const Kioskstate = (props) => {
-  // const host = "http://localhost:5000/api/";
-  const host = "https://cloudkiosk.onrender.com/api/";
+  const host = "http://localhost:5000/api/";
+  // const host = "https://cloudkiosk.onrender.com/api/";
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
@@ -68,6 +68,11 @@ const Kioskstate = (props) => {
         }),
       });
 
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const json = await response.json();
       if (json.success) {
         setLoading(false);
@@ -113,6 +118,11 @@ const Kioskstate = (props) => {
         },
       });
 
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const json = await response.json();
       setKiosks(json.kiosks);
       setFileSize(json.fileSize);
@@ -136,13 +146,17 @@ const Kioskstate = (props) => {
         }),
       });
 
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const json = await response.json();
-      ws.send("New kiosk created");
+      setKiosks(kiosks.concat(json));
       navigate("/dash");
       notify(`${json.message}`, "success");
       setLoading(false);
     } catch (error) {
-      notify("add Failed", "error");
       console.error(error);
     }
   };
@@ -159,6 +173,11 @@ const Kioskstate = (props) => {
           kioskName,
         }),
       });
+
+      if (!response.ok) {
+        notify(`Failed to edit this kiosk`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const json = await response.json();
       let newkiosk = JSON.parse(JSON.stringify(kiosks));
@@ -188,7 +207,16 @@ const Kioskstate = (props) => {
         },
       });
 
+      if (!response.ok) {
+        notify(`Failed to delete this kiosk`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const json = await response.json();
+      const newKiosks = kiosks.filter((kiosk) => {
+        return kiosk._id !== id;
+      });
+      setKiosks(newKiosks);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -207,6 +235,11 @@ const Kioskstate = (props) => {
           "auth-token": token,
         },
       });
+
+      if (!response.ok) {
+        notify(`Failed to add content`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       const json = await response.json();
       setUploadStatus({ status: false, progress: 100 });
       notify("add Successful", "success");
@@ -229,6 +262,11 @@ const Kioskstate = (props) => {
         },
       });
 
+      if (!response.ok) {
+        notify(`Failed to edit this content`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const json = await response.json();
       setUploadStatus({ status: false, progress: 100 });
       notify("edit Successful", "success");
@@ -248,6 +286,11 @@ const Kioskstate = (props) => {
           "auth-token": token,
         },
       });
+
+      if (!response.ok) {
+        notify(`Failed to delete this content`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const json = await response.json();
       setLoading(false);
@@ -271,6 +314,11 @@ const Kioskstate = (props) => {
           },
         }
       );
+
+      if (!response.ok) {
+        notify(`Failed to ungroup`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const json = await response.json();
       setLoading(false);

@@ -29,6 +29,7 @@ function Dashboard() {
     loading,
   } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState("");
@@ -45,11 +46,16 @@ function Dashboard() {
   useEffect(() => {
     profile();
     fetchKiosk();
-  }, [userProfile]);
+  }, []);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
   };
+
+  const handleDrawerToggle = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
   const handleViewOpen = (index) => {
     setKioskCode(kiosks[index].kioskCode);
     setKioskContent(kiosks[index].kioskContent);
@@ -125,6 +131,7 @@ function Dashboard() {
                 data-drawer-toggle="drawer-navigation"
                 aria-controls="drawer-navigation"
                 className="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                onClick={handleDrawerToggle}
               >
                 <svg
                   aria-hidden="true"
@@ -243,20 +250,20 @@ function Dashboard() {
                   aria-labelledby="dropdown"
                 >
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to={"/profile"}
                       className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
                     >
                       My profile
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to={"/settings"}
                       className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
                     >
                       Account settings
-                    </a>
+                    </Link>
                   </li>
                 </ul>
                 <ul
@@ -264,7 +271,10 @@ function Dashboard() {
                   aria-labelledby="dropdown"
                 >
                   <li>
-                    <a className="flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <Link
+                      to={"/sub"}
+                      className="flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
                       <span className="flex items-center">
                         <svg
                           aria-hidden="true"
@@ -292,15 +302,15 @@ function Dashboard() {
                           d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                         ></path>
                       </svg>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
                 <ul
-                  className="py-1 text-gray-700 dark:text-gray-300"
+                  className="py-1 text-gray-700 dark:text-gray-300 cursor-pointer"
                   aria-labelledby="dropdown"
                 >
                   <li onClick={handleLogOut}>
-                    <a className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <a className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-b-lg">
                       Sign out
                     </a>
                   </li>
@@ -311,12 +321,14 @@ function Dashboard() {
         </nav>
 
         <aside
-          className="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full  border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+          className={`fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform ${
+            isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+          }  border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700`}
           aria-label="Sidenav"
           id="drawer-navigation"
         >
           <div className="overflow-y-auto py-5 px-3 h-full  dark:bg-gray-800">
-            <form action="#" method="GET" className="md:hidden mb-2">
+            <form action="#" method="GET" className="sm:hidden mb-2">
               <label htmlFor="sidebar-search" className="sr-only">
                 Search
               </label>
@@ -362,7 +374,7 @@ function Dashboard() {
 
               <li>
                 <a className="cursor-pointer flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                  <img src={kioskIcon} />
+                  <i class="fa-solid fa-cloud-arrow-up fa-lg text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
                   <span className="ml-3">Kiosks</span>
                 </a>
               </li>
@@ -407,8 +419,8 @@ function Dashboard() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to={"/test"}
                   className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
                 >
                   <svg
@@ -424,7 +436,7 @@ function Dashboard() {
                     ></path>
                   </svg>
                   <span className="ml-3">Help</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -440,7 +452,10 @@ function Dashboard() {
         </aside>
 
         <main className="p-6 md:ml-64 h-auto pt-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4"
+            style={{ height: "100vh" }}
+          >
             {" "}
             <Link to={"/create-kiosk"}>
               <div className="flex flex-col justify-center items-center gap-4 border-2 border-dashed border-gray-300 hover:bg-gray-100 rounded-lg dark:border-gray-700 dark:hover:border-gray-700 hover:dark:bg-gray-700 dark:text-white h-32 md:h-64 cursor-pointer">
