@@ -4,12 +4,24 @@ import "react-modern-drawer/dist/index.css";
 import "react-tooltip/dist/react-tooltip.css";
 import { v4 as uuidv4 } from "uuid";
 import { Tooltip } from "react-tooltip";
+import Select from "react-select";
 
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [size, setSize] = useState(0);
+  const [color, setColor] = useState("bg-gray-300");
   const [mode, setMode] = useState("element");
   const [elements, setElements] = useState([
-    { id: String, data: String(), positionX: 800, positionY: 350 },
+    {
+      id: String,
+      data: "",
+      positionX: 800,
+      positionY: 350,
+      size: 0,
+      color: "bg-gray-300",
+    },
   ]);
   const [selectedId, setSelectedId] = useState(null);
 
@@ -17,6 +29,12 @@ function Test() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [elementPositions, setElementPositions] = useState({});
+
+  const options = [
+    { value: "gray-300", label: "Gray" },
+    { value: "black", label: "Black" },
+    { value: "yellow-300", label: "Yellow" },
+  ];
 
   const dragRef = useRef(null);
 
@@ -49,9 +67,12 @@ function Test() {
     setIsOpen(true);
   };
 
+  const toggleEditDrawer = () => {
+    setEditOpen((prevState) => !prevState);
+  };
+
   const toggleDrawerClose = () => {
     setIsOpen(false);
-    setSelectedElement(null);
   };
 
   const handleModeChange = (newMode) => {
@@ -65,6 +86,8 @@ function Test() {
       data: data,
       positionX: 800,
       positionY: 350,
+      size: size,
+      color: color,
     };
     setElements((prevElements) => ({
       ...prevElements,
@@ -74,13 +97,32 @@ function Test() {
     }));
   };
 
-  const handleSetId = (id) => {
+  const handleSetId = (id, data) => {
     setSelectedId(id);
+    setSelectedElement(data);
+    toggleEditDrawer();
   };
+
+  const handleColorChange = (selectedOption) => {
+    const updatedElements = elements.data.map((element) => {
+      if (element.id === selectedId) {
+        return { ...element, color: selectedOption.value };
+      }
+      return element;
+    });
+
+    setElements(updatedElements);
+  };
+
+  const elementCanvas = [
+    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm cursor-pointer"></canvas>,
+    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded cursor-pointer"></canvas>,
+    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"></canvas>,
+  ];
 
   return (
     <>
-      <Tooltip id={selectedId} place="top" className="z-50" />
+      <Tooltip id={"id"} place="top" className="z-50" />
       <Drawer
         open={isOpen}
         onClose={isOpen}
@@ -89,7 +131,7 @@ function Test() {
         duration="300"
         enableOverlay={false}
         size="350px"
-        className="ml-20 p-2"
+        className="ml-20 p-2 shadow-sm"
       >
         <div className="text-black">
           <button onClick={toggleDrawerClose}>close</button>
@@ -97,14 +139,18 @@ function Test() {
             <>
               <div className="grid grid-cols-2 gap-4 ">
                 <canvas
-                  onClick={() => handleGetElements("test1")}
+                  onClick={() => handleGetElements(elementCanvas[0])}
                   className="w-[150px] h-[150px] bg-gray-300 shadow-sm cursor-pointer"
                 ></canvas>
+
                 <canvas
-                  onClick={() => handleGetElements("test2")}
+                  onClick={() => handleGetElements(elementCanvas[1])}
                   className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded cursor-pointer"
                 ></canvas>
-                <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"></canvas>
+                <canvas
+                  onClick={() => handleGetElements(elementCanvas[2])}
+                  className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"
+                ></canvas>
               </div>
             </>
           )}
@@ -120,6 +166,27 @@ function Test() {
           {mode === "photo" && <>photo</>}
           {mode === "frames" && <>frames</>}
           {mode === "templates" && <>templates</>}
+        </div>
+      </Drawer>
+
+      {/* edit drawer */}
+
+      <Drawer
+        open={editOpen}
+        onClose={toggleEditDrawer}
+        direction="right"
+        size="300px"
+        className=" text-black p-3"
+      >
+        <div className="flex flex-col justify-start items-center gap-4">
+          {/* {selectedId} */}
+          <p className="">{selectedElement}</p>
+          <Select
+            options={options}
+            defaultValue={options.find((option) => option.value === color)}
+            onChange={handleColorChange}
+            className="w-full"
+          />
         </div>
       </Drawer>
 
@@ -178,12 +245,7 @@ function Test() {
             elements.data.map((canva, index) => (
               <div
                 key={canva.id}
-                className=" text-black cursor-pointer"
-                data-tooltip-id={canva.id}
-                data-tooltip-content={`${canva.id}`}
-                onClick={() => {
-                  handleSetId(canva.id);
-                }}
+                className="hover:border-2 border-blue-600 text-black cursor-pointer"
                 ref={dragRef}
                 style={{
                   position: "fixed",
@@ -192,7 +254,18 @@ function Test() {
                 }}
                 onMouseDown={(e) => handleMouseDown(e, canva.id)}
               >
-                {canva.data}
+                <p
+                  className=""
+                  onClick={() => {
+                    handleSetId(canva.id, canva.data);
+                  }}
+                  data-tooltip-id={"id"}
+                  data-tooltip-content={`X:${
+                    elementPositions[canva.id]?.x || 0
+                  }, Y:${elementPositions[canva.id]?.y || 0}`}
+                >
+                  {canva.data}
+                </p>
               </div>
             ))
           ) : (
