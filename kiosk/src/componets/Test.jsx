@@ -9,20 +9,15 @@ import Select from "react-select";
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedElement, setSelectedElement] = useState(null);
+  const [id, setId] = useState(null);
+  const [canvaData, setData] = useState(null);
+  const [position, setPosition] = useState({ positionX: 768, positionY: 286 });
   const [size, setSize] = useState(0);
-  const [color, setColor] = useState("bg-gray-300");
+  const [color, setColor] = useState("");
+  const [selectedElement, setSelectedElement] = useState(null);
   const [mode, setMode] = useState("element");
-  const [elements, setElements] = useState([
-    {
-      id: String,
-      data: "",
-      positionX: 800,
-      positionY: 350,
-      size: 0,
-      color: "bg-gray-300",
-    },
-  ]);
+  const [elements, setElements] = useState([]);
+  const [files, setFiles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
 
   const useId = () => uuidv4();
@@ -35,13 +30,39 @@ function Test() {
     { value: "black", label: "Black" },
     { value: "yellow-300", label: "Yellow" },
   ];
-
   const dragRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles.length > 0) {
+      const promises = Array.from(selectedFiles).map((file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+
+      Promise.all(promises)
+        .then((fileContents) => {
+          setFiles((prevFiles) => [...prevFiles, fileContents]);
+        })
+        .catch((error) => {
+          console.error("Error reading files:", error);
+          setFiles([]);
+        });
+    } else {
+      setFiles([]);
+    }
+  };
 
   const handleMouseDown = (e, id) => {
     setIsDragging(true);
-    const initialX = e.clientX - (elementPositions[id]?.x || 800);
-    const initialY = e.clientY - (elementPositions[id]?.y || 350);
+    const initialX = e.clientX - (elementPositions[id]?.x || 768);
+    const initialY = e.clientY - (elementPositions[id]?.y || 286);
 
     const handleMouseMove = (e) => {
       const newX = e.clientX - initialX;
@@ -51,6 +72,18 @@ function Test() {
         ...prevPositions,
         [id]: { x: newX, y: newY },
       }));
+
+      setElements((prevElements) =>
+        prevElements.map((element) =>
+          element.id === id
+            ? {
+                ...element,
+                positionX: newX,
+                positionY: newY,
+              }
+            : element
+        )
+      );
     };
 
     const handleMouseUp = () => {
@@ -80,21 +113,33 @@ function Test() {
     toggleDrawer();
   };
 
+  // console.log(elements);
+
   const handleGetElements = (data) => {
+    const newId = useId();
+    setId(newId);
+    setData(data);
+    setPosition({ positionX: 768, positionY: 286 });
+    setSize(0);
+    setColor("bg-gray-300");
+
     const newElement = {
-      id: useId(),
+      id: newId,
       data: data,
-      positionX: 800,
-      positionY: 350,
+      positionX: position.positionX,
+      positionY: position.positionY,
       size: size,
       color: color,
     };
-    setElements((prevElements) => ({
-      ...prevElements,
-      data: prevElements.data
-        ? [...prevElements.data, newElement]
-        : [newElement],
-    }));
+
+    setElements((prevElements) => [...prevElements, newElement]);
+
+    // Reset state values
+    setId(null);
+    setData("");
+    setPosition({ positionX: 768, positionY: 286 });
+    setSize(0);
+    setColor("");
   };
 
   const handleSetId = (id, data) => {
@@ -104,7 +149,7 @@ function Test() {
   };
 
   const handleColorChange = (selectedOption) => {
-    const updatedElements = elements.data.map((element) => {
+    const updatedElements = elements.map((element) => {
       if (element.id === selectedId) {
         return { ...element, color: selectedOption.value };
       }
@@ -118,11 +163,14 @@ function Test() {
     <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm cursor-pointer"></canvas>,
     <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded cursor-pointer"></canvas>,
     <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"></canvas>,
+    <canvas className="w-full h-[150px] bg-gray-300 shadow-sm  cursor-pointer"></canvas>,
   ];
+
+  // console.log(files)
 
   return (
     <>
-      <Tooltip id={"id"} place="top" className="z-50" />
+      <Tooltip id={"id"} place="top" className="z-50" clickable />
       <Drawer
         open={isOpen}
         onClose={isOpen}
@@ -131,7 +179,7 @@ function Test() {
         duration="300"
         enableOverlay={false}
         size="350px"
-        className="ml-20 p-2 shadow-sm"
+        className="ml-20 p-2 shadow-sm overflow-hidden"
       >
         <div className="text-black">
           <button onClick={toggleDrawerClose}>close</button>
@@ -151,15 +199,50 @@ function Test() {
                   onClick={() => handleGetElements(elementCanvas[2])}
                   className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"
                 ></canvas>
+
+                <canvas
+                  onClick={() => handleGetElements(elementCanvas[3])}
+                  className="w-full h-[150px] bg-gray-300 shadow-sm  cursor-pointer"
+                ></canvas>
               </div>
             </>
           )}
           {mode === "uploads" && (
             <>
               <div className="flex justify-center ">
-                <butoon className="bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-[35%] rounded cursor-pointer">
+                <label
+                  for="input-file"
+                  className="bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-[35%] rounded cursor-pointer"
+                >
                   Upload files
-                </butoon>
+                </label>
+                <input
+                  id="input-file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  enctype="multipart/form-data"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {files.map((file, index) => (
+                  <img
+                    key={index}
+                    src={file}
+                    alt={`Image ${index + 1}`}
+                    className="w-full cursor-pointer"
+                    onClick={() =>
+                      handleGetElements(
+                        <img
+                          src={file}
+                          className="w-[150px] h-[150px]"
+                          draggable="false"
+                        />
+                      )
+                    }
+                  />
+                ))}
               </div>
             </>
           )}
@@ -240,36 +323,36 @@ function Test() {
           <ul className="flex justify-center items-center gap-2"></ul>
         </nav>
 
-        <main className="flex justify-center items-center fixed top-20 left-60 bg-white w-[80%] h-[80%] ">
-          {elements.data && elements.data.length > 0 ? (
-            elements.data.map((canva, index) => (
+        <main className="flex justify-center items-center fixed top-20 left-60 bg-white w-[80%] h-[80%] overflow-hidden">
+          {elements && elements.length > 0 ? (
+            elements.map((canva, index) => (
               <div
                 key={canva.id}
-                className="hover:border-2 border-blue-600 text-black cursor-pointer"
+                className=" "
                 ref={dragRef}
                 style={{
                   position: "fixed",
-                  left: `${elementPositions[canva.id]?.x || canva.positionX}px`,
-                  top: `${elementPositions[canva.id]?.y || canva.positionY}px`,
+                  left: `${canva.positionX}px`,
+                  top: `${canva.positionY}px`,
                 }}
                 onMouseDown={(e) => handleMouseDown(e, canva.id)}
               >
-                <p
-                  className=""
+                <div
+                  className="hover:border-2 border-blue-600 text-black cursor-pointer"
                   onClick={() => {
                     handleSetId(canva.id, canva.data);
                   }}
                   data-tooltip-id={"id"}
-                  data-tooltip-content={`X:${
-                    elementPositions[canva.id]?.x || 0
-                  }, Y:${elementPositions[canva.id]?.y || 0}`}
+                  data-tooltip-content={`X:${canva.positionX || 0}, Y:${
+                    canva.positionY || 0
+                  } `}
                 >
                   {canva.data}
-                </p>
+                </div>
               </div>
             ))
           ) : (
-            <>no data found</>
+            <></>
           )}
         </main>
       </div>
