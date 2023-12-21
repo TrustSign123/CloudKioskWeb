@@ -8,13 +8,11 @@ import Select from "react-select";
 
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [id, setId] = useState(null);
   const [canvaData, setData] = useState(null);
   const [position, setPosition] = useState({ positionX: 768, positionY: 286 });
   const [size, setSize] = useState(0);
   const [color, setColor] = useState("");
-  const [selectedElement, setSelectedElement] = useState(null);
   const [mode, setMode] = useState("element");
   const [elements, setElements] = useState([]);
   const [files, setFiles] = useState([]);
@@ -26,10 +24,30 @@ function Test() {
   const [elementPositions, setElementPositions] = useState({});
 
   const options = [
-    { value: "gray-300", label: "Gray" },
+    { value: "gray", label: "Gray" },
     { value: "black", label: "Black" },
-    { value: "yellow-300", label: "Yellow" },
+    { value: "yellow", label: "Yellow" },
+    { value: "blue", label: "Blue" },
+    { value: "red", label: "Red" },
   ];
+
+  const wSizeOptions = [
+    { value: "50px", label: "50px" },
+    { value: "100px", label: "100px" },
+    { value: "150px", label: "150px" },
+    { value: "200px", label: "200px" },
+    { value: "250px", label: "250px" },
+    { value: "1230px", label: "Full Screen" },
+  ];
+
+  const hSizeOptions = [
+    { value: "50px", label: "50px" },
+    { value: "100px", label: "100px" },
+    { value: "150px", label: "150px" },
+    { value: "200px", label: "200px" },
+    { value: "250px", label: "250px" },
+  ];
+
   const dragRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -100,10 +118,6 @@ function Test() {
     setIsOpen(true);
   };
 
-  const toggleEditDrawer = () => {
-    setEditOpen((prevState) => !prevState);
-  };
-
   const toggleDrawerClose = () => {
     setIsOpen(false);
   };
@@ -142,16 +156,73 @@ function Test() {
     setColor("");
   };
 
-  const handleSetId = (id, data) => {
+  const handleSetId = (id, index) => {
     setSelectedId(id);
-    setSelectedElement(data);
-    toggleEditDrawer();
+    setColor(elements[index].data.props.style.background);
   };
 
   const handleColorChange = (selectedOption) => {
     const updatedElements = elements.map((element) => {
       if (element.id === selectedId) {
-        return { ...element, color: selectedOption.value };
+        return {
+          ...element,
+          data: {
+            ...element.data,
+            props: {
+              ...element.data.props,
+              style: {
+                ...element.data.props.style,
+                background: selectedOption.value,
+              },
+            },
+          },
+        };
+      }
+      return element;
+    });
+
+    setColor(selectedOption.value);
+    setElements(updatedElements);
+  };
+
+  const handleWSizeChange = (selectedOption) => {
+    const updatedElements = elements.map((element) => {
+      if (element.id === selectedId) {
+        return {
+          ...element,
+          data: {
+            ...element.data,
+            props: {
+              ...element.data.props,
+              style: {
+                ...element.data.props.style,
+                width: selectedOption.value,
+              },
+            },
+          },
+        };
+      }
+      return element;
+    });
+
+    setElements(updatedElements);
+  };
+  const handleHSizeChange = (selectedOption) => {
+    const updatedElements = elements.map((element) => {
+      if (element.id === selectedId) {
+        return {
+          ...element,
+          data: {
+            ...element.data,
+            props: {
+              ...element.data.props,
+              style: {
+                ...element.data.props.style,
+                height: selectedOption.value,
+              },
+            },
+          },
+        };
       }
       return element;
     });
@@ -160,13 +231,26 @@ function Test() {
   };
 
   const elementCanvas = [
-    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm cursor-pointer"></canvas>,
-    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded cursor-pointer"></canvas>,
-    <canvas className="w-[150px] h-[150px] bg-gray-300 shadow-sm rounded-full cursor-pointer"></canvas>,
-    <canvas className="w-full h-[150px] bg-gray-300 shadow-sm  cursor-pointer"></canvas>,
+    <canvas
+      className=" shadow-sm cursor-pointer"
+      style={{ background: "gray", width: "150px", height: "150px" }}
+    ></canvas>,
+    <canvas
+      className=" shadow-sm rounded cursor-pointer"
+      style={{ background: "gray", width: "150px", height: "150px" }}
+    ></canvas>,
+    <canvas
+      className=" shadow-sm rounded-full cursor-pointer"
+      style={{ background: "gray", width: "150px", height: "150px" }}
+    ></canvas>,
+    <canvas
+      className=" shadow-sm  cursor-pointer"
+      style={{ background: "gray", width: "100%", height: "150px" }}
+    ></canvas>,
   ];
 
-  // console.log(files)
+  // console.log(elements[0].data.props.style.background);
+  // console.log(elements[0]);
 
   return (
     <>
@@ -231,7 +315,7 @@ function Test() {
                     key={index}
                     src={file}
                     alt={`Image ${index + 1}`}
-                    className="w-full cursor-pointer"
+                    className="w-full h-40 cursor-pointer"
                     onClick={() =>
                       handleGetElements(
                         <img
@@ -249,27 +333,6 @@ function Test() {
           {mode === "photo" && <>photo</>}
           {mode === "frames" && <>frames</>}
           {mode === "templates" && <>templates</>}
-        </div>
-      </Drawer>
-
-      {/* edit drawer */}
-
-      <Drawer
-        open={editOpen}
-        onClose={toggleEditDrawer}
-        direction="right"
-        size="300px"
-        className=" text-black p-3"
-      >
-        <div className="flex flex-col justify-start items-center gap-4">
-          {/* {selectedId} */}
-          <p className="">{selectedElement}</p>
-          <Select
-            options={options}
-            defaultValue={options.find((option) => option.value === color)}
-            onChange={handleColorChange}
-            className="w-full"
-          />
         </div>
       </Drawer>
 
@@ -319,8 +382,34 @@ function Test() {
           </ul>
         </nav>
 
-        <nav className="fixed  top-0 left-20 bg-white text-black w-[95%] h-15 p-3">
-          <ul className="flex justify-center items-center gap-2"></ul>
+        {/* edit nav */}
+        <nav className="fixed  top-0 left-20 bg-white text-black w-[95%] h-15 p-3 z-50">
+          <ul className="flex justify-start items-center gap-2 z-50">
+            <Select
+              options={options}
+              defaultValue={options.find((option) => option.value === color)}
+              onChange={handleColorChange}
+              className="z-50 "
+            />
+
+            <p>{color}</p>
+            <Select
+              options={wSizeOptions}
+              defaultValue={wSizeOptions.find(
+                (option) => option.value === size
+              )}
+              onChange={handleWSizeChange}
+              className="z-50 "
+            />
+            <Select
+              options={hSizeOptions}
+              defaultValue={hSizeOptions.find(
+                (option) => option.value === size
+              )}
+              onChange={handleHSizeChange}
+              className="z-50 "
+            />
+          </ul>
         </nav>
 
         <main className="flex justify-center items-center fixed top-20 left-60 bg-white w-[80%] h-[80%] overflow-hidden">
@@ -340,7 +429,7 @@ function Test() {
                 <div
                   className="hover:border-2 border-blue-600 text-black cursor-pointer"
                   onClick={() => {
-                    handleSetId(canva.id, canva.data);
+                    handleSetId(canva.id, index);
                   }}
                   data-tooltip-id={"id"}
                   data-tooltip-content={`X:${canva.positionX || 0}, Y:${
