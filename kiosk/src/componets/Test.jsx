@@ -161,6 +161,15 @@ function Test() {
     setColor(elements[index].data.props.style.background);
   };
 
+  const handleDeleteElement = (id) => {
+    const newElements = elements.filter((el) => {
+      return el.id !== id;
+    });
+    setElements(newElements);
+
+    setSelectedId(null);
+  };
+
   const handleColorChange = (selectedOption) => {
     const updatedElements = elements.map((element) => {
       if (element.id === selectedId) {
@@ -336,8 +345,8 @@ function Test() {
         </div>
       </Drawer>
 
-      <div className="bg-gray-300 w-full h-[100vh]">
-        <nav className="bg-slate-800 w-20 h-full overflow-hidden">
+      <div className="flex justify-center items-center bg-gray-300 w-full h-[100vh]">
+        <nav className="fixed left-0 bg-slate-800 w-20 h-full overflow-hidden">
           <ul className="flex flex-col justify-center items-center gap-4 ">
             <li
               className="text-center cursor-pointer hover:bg-white hover:text-black py-1.5 px-3 "
@@ -383,8 +392,8 @@ function Test() {
         </nav>
 
         {/* edit nav */}
-        <nav className="fixed  top-0 left-20 bg-white text-black w-[95%] h-15 p-3 z-50">
-          <ul className="flex justify-start items-center gap-2 z-50">
+        <nav className="fixed top-0 left-20 bg-white text-black w-[95%] h-15 p-3 z-50">
+          <ul className="flex justify-start items-center gap-4 z-50">
             <Select
               options={options}
               defaultValue={options.find((option) => option.value === color)}
@@ -409,10 +418,27 @@ function Test() {
               onChange={handleHSizeChange}
               className="z-50 "
             />
+            <button
+              onClick={() => {
+                if (selectedId !== null) {
+                  handleDeleteElement(selectedId);
+                }
+              }}
+              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
+                selectedId === null ? "bg-gray-300 cursor-not-allowed" : ""
+              }`}
+              disabled={selectedId === null}
+            >
+              <i
+                className={`fa-solid fa-trash fa-xl ${
+                  selectedId === null ? "text-gray-500" : "text-rose-600"
+                }`}
+              />
+            </button>
           </ul>
         </nav>
 
-        <main className="flex justify-center items-center fixed top-20 left-60 bg-white w-[80%] h-[80%] overflow-hidden">
+        <main className=" bg-white w-[80%] h-[80%] overflow-hidden">
           {elements && elements.length > 0 ? (
             elements.map((canva, index) => (
               <div
@@ -427,7 +453,7 @@ function Test() {
                 onMouseDown={(e) => handleMouseDown(e, canva.id)}
               >
                 <div
-                  className="hover:border-2 border-blue-600 text-black cursor-pointer"
+                  className=" hover:border-2 border-blue-600 text-black cursor-pointer"
                   onClick={() => {
                     handleSetId(canva.id, index);
                   }}
