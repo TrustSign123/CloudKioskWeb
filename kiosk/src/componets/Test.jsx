@@ -17,6 +17,8 @@ function Test() {
   const [elements, setElements] = useState([]);
   const [files, setFiles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [editableText, setEditableText] = useState("");
+
 
   const useId = () => uuidv4();
 
@@ -134,16 +136,12 @@ function Test() {
     setId(newId);
     setData(data);
     setPosition({ positionX: 768, positionY: 286 });
-    setSize(0);
-    setColor("bg-gray-300");
 
     const newElement = {
       id: newId,
       data: data,
       positionX: position.positionX,
       positionY: position.positionY,
-      size: size,
-      color: color,
     };
 
     setElements((prevElements) => [...prevElements, newElement]);
@@ -152,8 +150,6 @@ function Test() {
     setId(null);
     setData("");
     setPosition({ positionX: 768, positionY: 286 });
-    setSize(0);
-    setColor("");
   };
 
   const handleSetId = (id, index) => {
@@ -258,7 +254,28 @@ function Test() {
     ></canvas>,
   ];
 
-  // console.log(elements[0].data.props.style.background);
+  const textCanvas = [
+    <p
+      contentEditable
+      suppressContentEditableWarning
+      onInput={(e) => setEditableText(e.target.innerText)}
+      style={{ color: "black" }}
+    >
+      Your Text Here
+    </p>,
+    <p
+      contentEditable
+      suppressContentEditableWarning
+      onInput={(e) => setEditableText(e.target.innerText)}
+      className="font-bold"
+      style={{ color: "black" }}
+    >
+      Your Text Here
+    </p>,
+  ];
+
+  // console.log(elements[0].data.props.children);
+  // console.log(elements[0].type); tag type like p,div,img
   // console.log(elements[0]);
 
   return (
@@ -272,10 +289,28 @@ function Test() {
         duration="300"
         enableOverlay={false}
         size="350px"
-        className="ml-20 p-2 shadow-sm overflow-hidden"
+        className="ml-20 p-2 shadow-sm overflow-scroll"
       >
         <div className="text-black">
           <button onClick={toggleDrawerClose}>close</button>
+          {mode === "text" && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  className="flex flex-col justify-center items-center text-6xl w-full bg-gray-100 hover:bg-gray-200 rounded cursor-pointer py-1.5 px-2"
+                  onClick={() => handleGetElements(textCanvas[0])}
+                >
+                  T <br /> <span className="text-sm">Normal</span>
+                </div>
+                <div
+                  className="flex flex-col justify-center items-center text-6xl w-full bg-gray-100 hover:bg-gray-200 rounded cursor-pointer py-1.5 px-2"
+                  onClick={() => handleGetElements(textCanvas[1])}
+                >
+                  T <br /> <span className="text-sm">Bold</span>
+                </div>
+              </div>
+            </>
+          )}
           {mode === "element" && (
             <>
               <div className="grid grid-cols-2 gap-4 ">
@@ -339,7 +374,7 @@ function Test() {
               </div>
             </>
           )}
-          {mode === "photo" && <>photo</>}
+          {mode === "photo" && <> </>}
           {mode === "frames" && <>frames</>}
           {mode === "templates" && <>templates</>}
         </div>
@@ -348,6 +383,14 @@ function Test() {
       <div className="flex justify-center items-center bg-gray-300 w-full h-[100vh]">
         <nav className="fixed left-0 bg-slate-800 w-20 h-full overflow-hidden">
           <ul className="flex flex-col justify-center items-center gap-4 ">
+            <li
+              className="text-center cursor-pointer hover:bg-white hover:text-black w-full py-1.5 px-3 "
+              onClick={() => handleModeChange("text")}
+            >
+              <i className="fa-solid fa-font fa-lg" />
+              <br />
+              <spna className="text-xs">Text</spna>
+            </li>
             <li
               className="text-center cursor-pointer hover:bg-white hover:text-black py-1.5 px-3 "
               onClick={() => handleModeChange("element")}
@@ -438,7 +481,7 @@ function Test() {
           </ul>
         </nav>
 
-        <main className=" bg-white w-[80%] h-[80%] overflow-hidden">
+        <main className="bg-white w-[80%] h-[80%] overflow-hidden">
           {elements && elements.length > 0 ? (
             elements.map((canva, index) => (
               <div
