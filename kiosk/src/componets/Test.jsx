@@ -8,6 +8,7 @@ import Select from "react-select";
 
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(false);
   const [id, setId] = useState(null);
   const [canvaData, setData] = useState(null);
   const [position, setPosition] = useState({ positionX: 768, positionY: 286 });
@@ -18,7 +19,6 @@ function Test() {
   const [files, setFiles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [editableText, setEditableText] = useState("");
-
 
   const useId = () => uuidv4();
 
@@ -33,21 +33,13 @@ function Test() {
     { value: "red", label: "Red" },
   ];
 
-  const wSizeOptions = [
+  const SizeOptions = [
     { value: "50px", label: "50px" },
     { value: "100px", label: "100px" },
     { value: "150px", label: "150px" },
     { value: "200px", label: "200px" },
     { value: "250px", label: "250px" },
     { value: "1230px", label: "Full Screen" },
-  ];
-
-  const hSizeOptions = [
-    { value: "50px", label: "50px" },
-    { value: "100px", label: "100px" },
-    { value: "150px", label: "150px" },
-    { value: "200px", label: "200px" },
-    { value: "250px", label: "250px" },
   ];
 
   const dragRef = useRef(null);
@@ -164,6 +156,33 @@ function Test() {
     setElements(newElements);
 
     setSelectedId(null);
+    setSelected(false);
+  };
+
+  const handleChangeIndex = (direction) => {
+    if (selectedId && elements.length > 1) {
+      const currentIndex = elements.findIndex(
+        (element) => element.id === selectedId
+      );
+
+      if (direction === "down" && currentIndex > 0) {
+        // Swap current element with the one above
+        const newElements = [...elements];
+        [newElements[currentIndex], newElements[currentIndex - 1]] = [
+          newElements[currentIndex - 1],
+          newElements[currentIndex],
+        ];
+        setElements(newElements);
+      } else if (direction === "up" && currentIndex < elements.length - 1) {
+        // Swap current element with the one below
+        const newElements = [...elements];
+        [newElements[currentIndex], newElements[currentIndex + 1]] = [
+          newElements[currentIndex + 1],
+          newElements[currentIndex],
+        ];
+        setElements(newElements);
+      }
+    }
   };
 
   const handleColorChange = (selectedOption) => {
@@ -190,7 +209,7 @@ function Test() {
     setElements(updatedElements);
   };
 
-  const handleWSizeChange = (selectedOption) => {
+  const handleSizeChange = (selectedOption) => {
     const updatedElements = elements.map((element) => {
       if (element.id === selectedId) {
         return {
@@ -202,27 +221,6 @@ function Test() {
               style: {
                 ...element.data.props.style,
                 width: selectedOption.value,
-              },
-            },
-          },
-        };
-      }
-      return element;
-    });
-
-    setElements(updatedElements);
-  };
-  const handleHSizeChange = (selectedOption) => {
-    const updatedElements = elements.map((element) => {
-      if (element.id === selectedId) {
-        return {
-          ...element,
-          data: {
-            ...element.data,
-            props: {
-              ...element.data.props,
-              style: {
-                ...element.data.props.style,
                 height: selectedOption.value,
               },
             },
@@ -234,6 +232,28 @@ function Test() {
 
     setElements(updatedElements);
   };
+
+  const handleTextChange = () => {
+    const updatedElements = elements.map((element) => {
+      if (element.id === selectedId) {
+        return {
+          ...element,
+          data: {
+            ...element.data,
+            props: {
+              ...element.data.props,
+              children: editableText,
+            },
+          },
+        };
+      }
+      return element;
+    });
+
+    setElements(updatedElements);
+  };
+
+  // console.log(editableText)
 
   const elementCanvas = [
     <canvas
@@ -250,7 +270,7 @@ function Test() {
     ></canvas>,
     <canvas
       className=" shadow-sm  cursor-pointer"
-      style={{ background: "gray", width: "100%", height: "150px" }}
+      style={{ background: "gray", width: "300px", height: "5px" }}
     ></canvas>,
   ];
 
@@ -259,24 +279,33 @@ function Test() {
       contentEditable
       suppressContentEditableWarning
       onInput={(e) => setEditableText(e.target.innerText)}
+      onChange={handleTextChange}
       style={{ color: "black" }}
     >
-      Your Text Here
+      Add a text
     </p>,
     <p
       contentEditable
       suppressContentEditableWarning
       onInput={(e) => setEditableText(e.target.innerText)}
+      onChange={handleTextChange}
       className="font-bold"
       style={{ color: "black" }}
     >
-      Your Text Here
+      Add a bold text
     </p>,
+  ];
+
+  const framesCanvas = [
+    <canvas
+      className="  cursor-pointer"
+      style={{ width: "150px", height: "150px", border: "2px solid black" }}
+    ></canvas>,
   ];
 
   // console.log(elements[0].data.props.children);
   // console.log(elements[0].type); tag type like p,div,img
-  // console.log(elements[0]);
+  // console.log(elements);
 
   return (
     <>
@@ -300,20 +329,20 @@ function Test() {
                   className="flex flex-col justify-center items-center text-6xl w-full bg-gray-100 hover:bg-gray-200 rounded cursor-pointer py-1.5 px-2"
                   onClick={() => handleGetElements(textCanvas[0])}
                 >
-                  T <br /> <span className="text-sm">Normal</span>
+                  A <br /> <span className="text-sm">Normal</span>
                 </div>
                 <div
                   className="flex flex-col justify-center items-center text-6xl w-full bg-gray-100 hover:bg-gray-200 rounded cursor-pointer py-1.5 px-2"
                   onClick={() => handleGetElements(textCanvas[1])}
                 >
-                  T <br /> <span className="text-sm">Bold</span>
+                  A <br /> <span className="text-sm">Bold</span>
                 </div>
               </div>
             </>
           )}
           {mode === "element" && (
             <>
-              <div className="grid grid-cols-2 gap-4 ">
+              <div className="grid grid-cols-2 items-center gap-4 ">
                 <canvas
                   onClick={() => handleGetElements(elementCanvas[0])}
                   className="w-[150px] h-[150px] bg-gray-300 shadow-sm cursor-pointer"
@@ -330,7 +359,7 @@ function Test() {
 
                 <canvas
                   onClick={() => handleGetElements(elementCanvas[3])}
-                  className="w-full h-[150px] bg-gray-300 shadow-sm  cursor-pointer"
+                  className="w-full h-[5px] bg-gray-300 shadow-sm  cursor-pointer"
                 ></canvas>
               </div>
             </>
@@ -375,7 +404,17 @@ function Test() {
             </>
           )}
           {mode === "photo" && <> </>}
-          {mode === "frames" && <>frames</>}
+          {mode === "frames" && (
+            <>
+              {" "}
+              <div className="grid grid-cols-2 items-center gap-4 ">
+                <canvas
+                  onClick={() => handleGetElements(framesCanvas[0])}
+                  className="w-[150px] h-[150px]  cursor-pointer border-2 border-black"
+                ></canvas>
+              </div>
+            </>
+          )}
           {mode === "templates" && <>templates</>}
         </div>
       </Drawer>
@@ -446,37 +485,55 @@ function Test() {
 
             <p>{color}</p>
             <Select
-              options={wSizeOptions}
-              defaultValue={wSizeOptions.find(
-                (option) => option.value === size
-              )}
-              onChange={handleWSizeChange}
+              options={SizeOptions}
+              defaultValue={SizeOptions.find((option) => option.value === size)}
+              onChange={handleSizeChange}
               className="z-50 "
             />
-            <Select
-              options={hSizeOptions}
-              defaultValue={hSizeOptions.find(
-                (option) => option.value === size
-              )}
-              onChange={handleHSizeChange}
-              className="z-50 "
-            />
+
             <button
               onClick={() => {
-                if (selectedId !== null) {
+                if (selected) {
                   handleDeleteElement(selectedId);
                 }
               }}
               className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
-                selectedId === null ? "bg-gray-300 cursor-not-allowed" : ""
+                !selected ? "bg-gray-300 cursor-not-allowed" : ""
               }`}
-              disabled={selectedId === null}
+              disabled={!selected}
             >
               <i
                 className={`fa-solid fa-trash fa-xl ${
-                  selectedId === null ? "text-gray-500" : "text-rose-600"
+                  !selected ? "text-gray-500" : "text-rose-600"
                 }`}
               />
+            </button>
+
+            <button
+              onClick={() => {
+                if (selected) {
+                  handleChangeIndex("up");
+                }
+              }}
+              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
+                !selected ? "bg-gray-300 cursor-not-allowed" : ""
+              }`}
+              disabled={!selected}
+            >
+              <i className="fa-solid fa-arrow-up fa-xl cursor-pointer" />
+            </button>
+            <button
+              onClick={() => {
+                if (selected) {
+                  handleChangeIndex("down");
+                }
+              }}
+              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
+                !selected ? "bg-gray-300 cursor-not-allowed" : ""
+              }`}
+              disabled={!selected}
+            >
+              <i className="fa-solid fa-arrow-down fa-xl cursor-pointer" />
             </button>
           </ul>
         </nav>
@@ -496,9 +553,10 @@ function Test() {
                 onMouseDown={(e) => handleMouseDown(e, canva.id)}
               >
                 <div
-                  className=" hover:border-2 border-blue-600 text-black cursor-pointer"
+                  className=" hover:border-2 border-blue-600 text-black cursor-pointer p-2"
                   onClick={() => {
                     handleSetId(canva.id, index);
+                    setSelected(true);
                   }}
                   data-tooltip-id={"id"}
                   data-tooltip-content={`X:${canva.positionX || 0}, Y:${
