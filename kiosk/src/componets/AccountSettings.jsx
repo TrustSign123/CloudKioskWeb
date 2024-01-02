@@ -6,7 +6,7 @@ function AccountSettings() {
     <>
       <nav className="font-semibold text-sm text-slate-400 mb-4 overflow-scroll">
         <ul className="flex justify-start items-center gap-4 py-3 px-5 border-b border-slate-700">
-          <Link to={"/dash"}>
+          <Link to={"/screens"}>
             <li className="bg-slate-900 hover:bg-slate-950 cursor-pointer py-2 px-3 rounded">
               Dashboard
             </li>

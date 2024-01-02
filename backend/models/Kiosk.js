@@ -1,29 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const KioskContentSchema = new Schema({
-  KioskContent: {
-    type: String,
-    required: true,
-  },
-  KioskContentName: {
-    type: String,
-  },
-  KioskContentFileName: {
-    type: String,
-  },
-  KioskContentFileSize: {
-    type: Number,
-  },
-  KioskContentFileType: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
 const KioskSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +14,7 @@ const KioskSchema = new Schema({
     type: String,
     require: true,
   },
-  kioskContent: [KioskContentSchema],
+  kioskContent: [String],
   groupDevices: [{ androidId: String }],
   date: {
     type: Date,

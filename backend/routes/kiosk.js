@@ -151,7 +151,7 @@ router.post("/kiosk", fetchUser, async (req, res) => {
       // Create a new Kiosk document
       const newKiosk = new Kiosk({
         user: req.user.id,
-        kioskName: req.body.kioskName,
+        kioskName: "Cloud Screen",
         kioskCode: kioskCode,
       });
 

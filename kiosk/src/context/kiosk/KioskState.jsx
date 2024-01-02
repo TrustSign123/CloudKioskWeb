@@ -9,11 +9,9 @@ const Kioskstate = (props) => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState({
-    status: false,
-    progress: 0,
-  });
+  const [uploadStatus, setUploadStatus] = useState(false);
   const [kiosks, setKiosks] = useState([]);
+  const [media, setMedia] = useState([]);
   const [fileSize, setFileSize] = useState(0);
   const [userProfile, setUserProfile] = useState([]);
 
@@ -78,7 +76,7 @@ const Kioskstate = (props) => {
         setLoading(false);
         // Save the auth token and redirect
         localStorage.setItem(`token`, json.authtoken);
-        navigate("/dash");
+        navigate("/screens");
       } else {
         setLoading(false);
         console.error("error");
@@ -132,7 +130,7 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const createKiosk = async (kioskName, kioskCode) => {
+  const createKiosk = async (kioskCode) => {
     try {
       const response = await fetch(`${host}kioskMachine/kiosk`, {
         method: "POST",
@@ -141,7 +139,6 @@ const Kioskstate = (props) => {
           "auth-token": token,
         },
         body: JSON.stringify({
-          kioskName,
           kioskCode,
         }),
       });
@@ -153,7 +150,7 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       setKiosks(kiosks.concat(json));
-      navigate("/dash");
+      navigate("/screens");
       notify(`${json.message}`, "success");
       setLoading(false);
     } catch (error) {
@@ -223,12 +220,35 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const addKioskContent = async (kioskContent, kioskCode) => {
-    setUploadStatus({ status: true, progress: 90 });
+  const fetchMedia = async () => {
+    try {
+      const response = await fetch(`${host}media/media-display`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      // console.log(media)
+      setMedia(json.media);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const addKioskContent = async (media) => {
+    setUploadStatus(true);
     try {
       const formData = new FormData();
-      formData.append("kioskContent", kioskContent);
-      const response = await fetch(`${host}kioskContent/content/${kioskCode}`, {
+      formData.append("media", media);
+      const response = await fetch(`${host}media/media-uploads`, {
         method: "POST",
         body: formData,
         headers: {
@@ -241,41 +261,16 @@ const Kioskstate = (props) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const json = await response.json();
-      setUploadStatus({ status: false, progress: 100 });
+      setUploadStatus(false);
       notify("add Successful", "success");
+      // setMedia(media.concat(json));
     } catch (error) {
-      setUploadStatus({ status: false, progress: 0 });
+      setUploadStatus(false);
       notify("add failed", "error");
       console.error(error);
     }
   };
-  const editKioskContent = async (kioskContent, id) => {
-    setUploadStatus({ status: true, progress: 90 });
-    try {
-      const formData = new FormData();
-      formData.append("kioskContent", kioskContent);
-      const response = await fetch(`${host}kioskContent/content/${id}`, {
-        method: "PUT",
-        body: formData,
-        headers: {
-          "auth-token": token,
-        },
-      });
 
-      if (!response.ok) {
-        notify(`Failed to edit this content`, "error");
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const json = await response.json();
-      setUploadStatus({ status: false, progress: 100 });
-      notify("edit Successful", "success");
-    } catch (error) {
-      setUploadStatus({ status: false, progress: 0 });
-      notify("edit failed", "error");
-      console.error(error);
-    }
-  };
   const deleteKioskContent = async (id) => {
     setLoading(true);
     try {
@@ -333,6 +328,7 @@ const Kioskstate = (props) => {
   useEffect(() => {
     profile();
     fetchKiosk();
+    fetchMedia();
   }, []);
   return (
     <KioskContext.Provider
@@ -342,6 +338,7 @@ const Kioskstate = (props) => {
         uploadStatus,
         userProfile,
         kiosks,
+        media,
         fileSize,
         logout,
         register,
@@ -351,8 +348,8 @@ const Kioskstate = (props) => {
         createKiosk,
         editKiosk,
         deleteKiosk,
+        fetchMedia,
         addKioskContent,
-        editKioskContent,
         deleteKioskContent,
         ungroupDevice,
       }}

@@ -91,7 +91,7 @@ function Admin() {
 
   return (
     <>
-      <Link to={"/dash"}>
+      <Link to={"/screens"}>
         <button className="bg-rose-700 hover:bg-rose-800 text-white py-1 px-3">
           Back
         </button>

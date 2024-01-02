@@ -5,6 +5,12 @@ import "react-tooltip/dist/react-tooltip.css";
 import { v4 as uuidv4 } from "uuid";
 import { Tooltip } from "react-tooltip";
 import Select from "react-select";
+import {
+  ContextMenu,
+  MenuItem,
+  ContextMenuTrigger,
+  showMenu,
+} from "react-contextmenu";
 
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
@@ -247,13 +253,12 @@ function Test() {
           },
         };
       }
+      // console.log(editableText);
       return element;
     });
 
     setElements(updatedElements);
   };
-
-  // console.log(editableText)
 
   const elementCanvas = [
     <canvas
@@ -298,7 +303,7 @@ function Test() {
 
   const framesCanvas = [
     <canvas
-      className="  cursor-pointer"
+      className="cursor-pointer"
       style={{ width: "150px", height: "150px", border: "2px solid black" }}
     ></canvas>,
   ];
@@ -541,31 +546,55 @@ function Test() {
         <main className="bg-white w-[80%] h-[80%] overflow-hidden">
           {elements && elements.length > 0 ? (
             elements.map((canva, index) => (
-              <div
-                key={canva.id}
-                className=" "
-                ref={dragRef}
-                style={{
-                  position: "fixed",
-                  left: `${canva.positionX}px`,
-                  top: `${canva.positionY}px`,
-                }}
-                onMouseDown={(e) => handleMouseDown(e, canva.id)}
-              >
+              <ContextMenuTrigger id={canva.id}>
                 <div
-                  className=" hover:border-2 border-blue-600 text-black cursor-pointer p-2"
-                  onClick={() => {
-                    handleSetId(canva.id, index);
-                    setSelected(true);
+                  key={canva.id}
+                  className=" "
+                  ref={dragRef}
+                  style={{
+                    position: "fixed",
+                    left: `${canva.positionX}px`,
+                    top: `${canva.positionY}px`,
                   }}
-                  data-tooltip-id={"id"}
-                  data-tooltip-content={`X:${canva.positionX || 0}, Y:${
-                    canva.positionY || 0
-                  } `}
+                  onMouseDown={(e) => handleMouseDown(e, canva.id)}
                 >
-                  {canva.data}
+                  <div
+                    className=" hover:border-2 border-blue-600 text-black cursor-pointer p-2"
+                    onClick={() => {
+                      handleSetId(canva.id, index);
+                      setSelected(true);
+                    }}
+                    data-tooltip-id={"id"}
+                    data-tooltip-content={`X:${canva.positionX || 0}, Y:${
+                      canva.positionY || 0
+                    } `}
+                  >
+                    {canva.data}
+                  </div>
+                  <ContextMenu
+                    id={canva.id}
+                    className="flex flex-col gap-2 bg-black rounded-md shadow cursor-default py-1"
+                  >
+                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                      <i className="fa-solid fa-paint-roller" /> Copy style
+                    </MenuItem>
+                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                      <i className="fa-solid fa-clone" /> Duplicate
+                    </MenuItem>
+                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                      <i className="fa-solid fa-arrow-up-from-bracket" /> Bring
+                      forward
+                    </MenuItem>
+                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                      <i className="fa-solid fa-arrow-up-from-bracket rotate-180" />{" "}
+                      Send backward
+                    </MenuItem>
+                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px]  px-3">
+                      <i className="fa-solid fa-trash" /> Delete
+                    </MenuItem>
+                  </ContextMenu>
                 </div>
-              </div>
+              </ContextMenuTrigger>
             ))
           ) : (
             <></>

@@ -1,56 +1,56 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Tooltip } from "react-tooltip";
-import "react-tooltip/dist/react-tooltip.css";
-import { Link } from "react-router-dom";
+import React, { useState, useContext, useRef } from "react";
 import KioskContext from "../context/kiosk/kioskContext";
 
 function CreateKiosk() {
   const { createKiosk, loading } = useContext(KioskContext);
-  const [newKioskName, setNewKisokName] = useState("");
-  const [newKioskCode, setNewKisokCode] = useState("");
+
+  const pinInputRefs = useRef(
+    Array(8)
+      .fill(null)
+      .map(() => React.createRef())
+  );
+
+  const [pinInputs, setPinInputs] = useState(Array(8).fill(""));
+
+  function handlePinInputChange(index, value) {
+    const newPinInputs = [...pinInputs];
+    newPinInputs[index] = value.toUpperCase().replace(/[^A-Z0-9]/g, ""); // Allow numbers and capitalize alphabet characters
+    setPinInputs(newPinInputs);
+
+    // Move to the next input if the current one is filled and a character is entered
+    if (value && index < pinInputs.length - 1) {
+      pinInputRefs.current[index + 1].focus();
+    }
+  }
 
   function handleSaveClick(e) {
     e.preventDefault();
-    createKiosk(newKioskName, newKioskCode);
+    const pin = pinInputs.join("");
+    createKiosk(pin);
   }
+
   return (
     <>
-      <Tooltip id="create-tip" place="right" />
-      <div className="flex flex-col justify-between items-start gap-5 dark:text-white p-5">
-        <div className="flex flex-row items-center gap-5 text-xl">
-          <Link to={"/dash"}>
-            {" "}
-            <i className="fa-solid fa-xmark hover:bg-gray-700 px-1 rounded-full cursor-pointer" />
-          </Link>
-          <h3> Create a kiosk </h3>
-        </div>
+      <div className="flex flex-col justify-center items-center gap-4 text-black p-5 h-[100vh]">
         <form onSubmit={handleSaveClick}>
           <div className="mb-4 flex flex-row items-center gap-3">
-            <h3 className="text-4xl">Let's start with a name for your kiosk</h3>
-            <span
-              className="scale-75 text-xs border-2 rounded-full py-1 px-2"
-              data-tooltip-id="create-tip"
-              data-tooltip-content="A Cloud Kiosk project is a Cloud project. "
-            >
-              <i className="fa-solid fa-question" />
-            </span>
+            <h3 className="text-4xl">Let's pair your screen</h3>
           </div>
-          <input
-            className="w-full bg-transparent text-2xl border-b py-2 mb-4"
-            type="text"
-            value={newKioskName}
-            onChange={(e) => setNewKisokName(e.target.value)}
-            placeholder={newKioskName || "Enter your kiosk name"}
-            required={true}
-          />
-          <input
-            className="w-full bg-transparent text-2xl border-b py-2 mb-5"
-            type="text"
-            value={newKioskCode}
-            onChange={(e) => setNewKisokCode(e.target.value)}
-            placeholder={newKioskCode || "Enter your kiosk code"}
-            required={true}
-          />
+          <h3 className="text-xl font-semibold mb-2">Enter your PIN:</h3>
+          <div className="flex gap-1">
+            {pinInputs.map((value, index) => (
+              <input
+                key={index}
+                ref={(el) => (pinInputRefs.current[index] = el)}
+                className="w-[50px] bg-transparent text-2xl border-2 border-black rounded text-center py-2 mb-5"
+                type="text"
+                value={value}
+                onChange={(e) => handlePinInputChange(index, e.target.value)}
+                maxLength={1}
+                required={true}
+              />
+            ))}
+          </div>
           <button
             type="submit"
             className="flex justify-center items-center text-white text-sm bg-blue-600 hover:bg-blue-700 py-2.5 px-5 rounded"

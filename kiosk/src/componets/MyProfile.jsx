@@ -48,7 +48,7 @@ function MyProfile() {
               </table>
               <div className="text-center my-3">
                 <Link
-                  to={"/dash"}
+                  to={"/screens"}
                   className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium cursor-pointer"
                 >
                   Back to dashboard
