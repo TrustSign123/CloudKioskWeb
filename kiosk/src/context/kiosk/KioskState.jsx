@@ -261,20 +261,24 @@ const Kioskstate = (props) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const json = await response.json();
+
       setUploadStatus(false);
       notify("add Successful", "success");
-      // setMedia(media.concat(json));
+      setMedia((prevMedia) =>
+        Array.isArray(prevMedia)
+          ? prevMedia.concat(json.newMedia)
+          : [json.newMedia]
+      );
     } catch (error) {
       setUploadStatus(false);
       notify("add failed", "error");
       console.error(error);
     }
   };
-
   const deleteKioskContent = async (id) => {
     setLoading(true);
     try {
-      const response = await fetch(`${host}kioskContent/content/${id}`, {
+      const response = await fetch(`${host}media/media-delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -289,10 +293,42 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       setLoading(false);
+      const newMedia = media.filter((media) => {
+        return media._id !== id;
+      });
+      setMedia(newMedia);
       notify("delete Successful", "success");
     } catch (error) {
       setLoading(false);
-      notify("edit failed", "error");
+      console.error(error);
+    }
+  };
+
+  const publishKioskContent = async (kioskCode, contentUrl, contentType) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}media/publish-media/${kioskCode}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          contentUrl,
+          contentType,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`Failed to publish`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const json = await response.json();
+
+      setLoading(false);
+      notify("add Successful", "success");
+    } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -351,6 +387,7 @@ const Kioskstate = (props) => {
         fetchMedia,
         addKioskContent,
         deleteKioskContent,
+        publishKioskContent,
         ungroupDevice,
       }}
     >

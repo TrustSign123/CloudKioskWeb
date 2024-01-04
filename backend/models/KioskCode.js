@@ -6,9 +6,6 @@ const KioskContentSchema = new Schema({
     type: String,
     required: true,
   },
-  KioskContentName: {
-    type: String,
-  },
   KioskContentFileType: {
     type: String,
   },

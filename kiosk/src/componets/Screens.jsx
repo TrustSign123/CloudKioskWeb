@@ -14,7 +14,6 @@ import {
   ContextMenuTrigger,
   showMenu,
 } from "react-contextmenu";
-import Media from "./Media";
 
 function Dashboard() {
   const {
@@ -38,7 +37,6 @@ function Dashboard() {
   const [kioskContent, setKioskContent] = useState([]);
   const [viewOpen, setViewOpen] = useState(false);
   const [overOpen, setOverOpen] = useState(false);
-  const [mediaOpen, setMediaOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [groupOpen, setGroupOpen] = useState(false);
 
@@ -63,10 +61,7 @@ function Dashboard() {
     setOverOpen(!overOpen);
     setViewOpen(false);
   };
-  const handleMediaOpen = () => {
-    setMediaOpen(!mediaOpen);
-    setViewOpen(false);
-  };
+
   const handleEditOpen = (index) => {
     setKioskId(kiosks[index]._id);
     setKioskName(kiosks[index].kioskName);
@@ -134,9 +129,7 @@ function Dashboard() {
               <ul className="flex justify-start items-center gap-4 text-black font-semibold">
                 <Link to={"/screens"}>Screens</Link>
                 <Link to={"/test"}>Studio</Link>
-                <li onClick={handleMediaOpen} className="cursor-pointer">
-                  Media
-                </li>
+                <Link to={"/media"}>Media</Link>
                 <li onClick={handleOverOpen} className="cursor-pointer">
                   Dashboard
                 </li>
@@ -423,9 +416,9 @@ function Dashboard() {
 
           {viewOpen && (
             <>
-              <div className="w-full absolute top-20 bg-slate-50 dark:bg-slate-900 ">
+              <div className="w-full absolute top-20 bg-slate-50 ">
                 <button
-                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
+                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200  px-3 py-1 rounded"
                   onClick={handleViewClose}
                 >
                   <i className="fa-solid fa-arrow-left" /> back
@@ -458,14 +451,7 @@ function Dashboard() {
               </div>
             </>
           )}
-          {mediaOpen && (
-            <>
-              <div className="absolute top-20 bg-slate-50  p-4 w-full h-full">
-                {" "}
-                <Media />
-              </div>
-            </>
-          )}
+
           {editOpen && (
             <div
               id="popup-modal"
