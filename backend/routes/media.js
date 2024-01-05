@@ -8,7 +8,6 @@ const Kiosk = require("../models/Kiosk");
 const Media = require("../models/Media");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
-const fetchuser = require("../middleware/fetchuser");
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Initialize Firebase Storage

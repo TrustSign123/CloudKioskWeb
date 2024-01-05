@@ -2,10 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
-import ViewKios from "./ViewKiosk";
-import Overview from "./Overview";
-import { Carousel } from "react-responsive-carousel";
-import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 import {
@@ -21,66 +17,69 @@ function Dashboard() {
     profile,
     userProfile,
     kiosks,
-    fileSize,
+    groups,
     fetchKiosk,
     editKiosk,
     deleteKiosk,
-    ungroupDevice,
+    fetchGroups,
+    createGroup,
+    editGroup,
+    deleteGroup,
     loading,
   } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
-  const [kioskCode, setKioskCode] = useState("");
-  const [groupData, setGroupData] = useState([]);
-  const [kioskContent, setKioskContent] = useState([]);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [overOpen, setOverOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [groupOpen, setGroupOpen] = useState(false);
+  const [moveToGroupOpen, setMoveToGroupOpen] = useState(false);
+  const [editGroupOpen, setEditGroupOpen] = useState(false);
+  const [groupName, setGroupName] = useState(null);
+  const [groupId, setGroupId] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     profile();
     fetchKiosk();
+    fetchGroups();
   }, []);
 
   const handleProfileOpen = () => {
     setProfileOpen(!profileOpen);
   };
 
-  const handleViewOpen = (index) => {
-    setKioskCode(kiosks[index].kioskCode);
-    setKioskContent(kiosks[index].kioskContent);
-    setViewOpen(true);
+  const handleGroupOpen = () => {
+    setGroupOpen(!groupOpen);
   };
-  const handleViewClose = () => {
-    setViewOpen(false);
+
+  const handleEditGroupOpen = (index) => {
+    setEditGroupOpen(!editGroupOpen);
+    setGroupId(groups[index]._id);
+    setGroupName(groups[index].groupName);
   };
-  const handleOverOpen = () => {
-    setOverOpen(!overOpen);
-    setViewOpen(false);
+
+  const handleMoveToGroupOpen = () => {
+    setMoveToGroupOpen(!moveToGroupOpen);
+  };
+
+  const handleCreateGroup = () => {
+    createGroup(groupName);
+    setGroupOpen(false);
+    setGroupName(null);
+  };
+
+  const handleGroupRename = () => {
+    editGroup(groupName, groupId);
+    setEditGroupOpen(false);
+  };
+
+  const handleDeleteGroup = (index) => {
+    deleteGroup(groups[index]._id);
   };
 
   const handleEditOpen = (index) => {
     setKioskId(kiosks[index]._id);
     setKioskName(kiosks[index].kioskName);
     setEditOpen(true);
-  };
-  const handleGroupOpen = (index) => {
-    setKioskCode(kiosks[index].kioskCode);
-    setGroupData(kiosks[index].groupDevices);
-    setGroupOpen(true);
-  };
-
-  const handleUngroupDevice = (id) => {
-    ungroupDevice(kioskCode, id);
-  };
-
-  const handleGroupClose = () => {
-    setKioskCode("");
-    setGroupData([]);
-    setGroupOpen(false);
   };
 
   const handleEditKiosk = () => {
@@ -115,8 +114,122 @@ function Dashboard() {
 
   return (
     <>
-      <Tooltip id="group" />
-      <div className="antialiased bg-gray-100 ">
+      {groupOpen && (
+        <>
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+            <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
+              <div className="flex  justify-center items-center">
+                <h3 className="font-semibold text-2xl">New Group</h3>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-500 ">
+                  GROUP NAME
+                </label>
+                <input
+                  type="text"
+                  className="bg-gray-50 border text-gray-900 text-lg h-10 rounded-md px-2 w-full"
+                  placeholder="Enter name"
+                  onChange={(e) => setGroupName(e.target.value)}
+                ></input>
+              </div>
+
+              <div className="flex justify-between items-center w-full h-10 bg-white">
+                <button
+                  className="border rounded py-2.5 px-4 hover:bg-gray-100"
+                  onClick={handleGroupOpen}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-blue-600 text-white rounded py-2.5 px-4 hover:bg-blue-700"
+                  onClick={handleCreateGroup}
+                >
+                  Create group
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {editGroupOpen && (
+        <>
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+            <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
+              <div className="flex  justify-center items-center">
+                <h3 className="font-semibold text-2xl">Rename group</h3>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-500 ">
+                  GROUP NAME
+                </label>
+                <input
+                  type="text"
+                  value={groupName}
+                  className="bg-gray-50 border text-gray-900 text-lg h-10 rounded-md px-2 w-full"
+                  placeholder="Enter name"
+                  onChange={(e) => setGroupName(e.target.value)}
+                ></input>
+              </div>
+
+              <div className="flex justify-between items-center w-full h-10 bg-white">
+                <button
+                  className="border rounded py-2.5 px-4 hover:bg-gray-100"
+                  onClick={() => handleEditGroupOpen(0)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-blue-600 text-white rounded py-2.5 px-4 hover:bg-blue-700"
+                  onClick={handleGroupRename}
+                >
+                  Rename group
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {moveToGroupOpen && (
+        <>
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+            <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
+              <div className="flex  justify-center items-center">
+                <h3 className="font-semibold text-2xl">Move to Group</h3>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-500 ">
+                  GROUP
+                </label>
+                <select className="bg-gray-50 border text-gray-900 text-lg h-10 rounded-md px-2 w-full">
+                  <option value="" disabled selected>
+                  Select group...
+                  </option>
+
+                  {groups.map((group) => (
+                    <option key={group._id} value={group._id}>
+                      {group.groupName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex justify-between items-center w-full h-10 bg-white">
+                <button
+                  className="border rounded py-2.5 px-4 hover:bg-gray-100"
+                  onClick={handleMoveToGroupOpen}
+                >
+                  Cancel
+                </button>
+                <button className="bg-blue-600 text-white rounded py-2.5 px-4 hover:bg-blue-700">
+                  Move
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className=" bg-gray-100 ">
         <nav className="bg-white border-b border-gray-200  px-4 py-2.5  fixed left-0 right-0 top-0 z-50 ">
           <div className="flex flex-wrap justify-between items-center">
             <div className="flex justify-start items-center">
@@ -130,18 +243,11 @@ function Dashboard() {
                 <Link to={"/screens"}>Screens</Link>
                 <Link to={"/test"}>Studio</Link>
                 <Link to={"/media"}>Media</Link>
-                <li onClick={handleOverOpen} className="cursor-pointer">
-                  Dashboard
-                </li>
+                {/* <Link to={"/over"}>Dashboard</Link> */}
               </ul>
             </div>
 
             <div className="flex items-center lg:order-2">
-              <Link to={"/create-kiosk"}>
-                <button className="text-white bg-blue-600 hover:bg-blue-700 font-semibold rounded py-2 px-2">
-                  Create Screen
-                </button>
-              </Link>
               <button
                 type="button"
                 className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 "
@@ -346,6 +452,19 @@ function Dashboard() {
         </aside> */}
 
         <main className=" h-auto pt-20 ">
+          <div className="flex justify-end items-center gap-2 bg-white w-full h-20 p-5">
+            <button
+              className="text-black border hover:bg-gray-100 rounded-md py-2.5 px-4"
+              onClick={handleGroupOpen}
+            >
+              New Group
+            </button>
+            <Link to={"/create-kiosk"}>
+              <button className="text-white bg-blue-600 hover:bg-blue-700 rounded-md py-2.5 px-4">
+                Create Screen
+              </button>
+            </Link>
+          </div>
           <div
             className="flex flex-col justifystart items-center gap-2 p-4"
             style={{ height: "100vh" }}
@@ -360,13 +479,6 @@ function Dashboard() {
                   <h3 className="font-semibold">{kiosk.kioskName}</h3>
 
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
-                  <h3
-                    data-tooltip-id="group"
-                    data-tooltip-content={`${kiosk.groupDevices.length} device connected`}
-                    className="text-sm text-gray-400"
-                  >
-                    {kiosk.groupDevices.length}
-                  </h3>
                 </div>
 
                 <div className="flex flex-row items-center ">
@@ -382,75 +494,69 @@ function Dashboard() {
                   className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50  "
                 >
                   <MenuItem
-                    onClick={() => handleViewOpen(index)}
-                    data={{ foo: "bar" }}
-                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
-                  >
-                    <i className="fa-solid fa-eye"></i> <h3>View</h3>
-                  </MenuItem>
-                  <MenuItem
-                    data={{ foo: "bar" }}
                     onClick={() => handleEditOpen(index)}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-gear" /> <h3>Setting</h3>
+                    <i className="fa-solid fa-gear" /> <h3>Edit</h3>
                   </MenuItem>
                   <MenuItem
-                    data={{ foo: "bar" }}
-                    onClick={() => handleGroupOpen(index)}
+                    onClick={handleMoveToGroupOpen}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-link" /> <h3>Group</h3>
+                    <i className="fa-solid fa-link" /> <h3>Move to Group</h3>
                   </MenuItem>
                   <MenuItem
-                    data={{ foo: "bar" }}
                     onClick={() => handleDeleteClick(index)}
-                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-rose-500 py-1.5 px-2"
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
                   >
-                    <i className="fa-solid fa-trash"></i> <h3>Delete</h3>
+                    <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
+                  </MenuItem>
+                </ContextMenu>
+              </div>
+            ))}
+            {groups.map((group, index) => (
+              <div
+                key={group._id}
+                className="flex flex-row justify-between items-center text-black w-full cursor-pointer"
+              >
+                <div className="flex flex-row items-center gap-96 w-full">
+                  <h3 className="font-semibold">
+                    {group.groupName}{" "}
+                    <span className="text-sm font-light">
+                      {group.groupScreens.length} Screen
+                    </span>
+                  </h3>
+                </div>
+
+                <div className="flex flex-row items-center ">
+                  <ContextMenuTrigger mouseButton={0} id={group._id}>
+                    <div onClick={handleMonuseClick} className="well">
+                      <i className="fa-solid fa-ellipsis" />
+                    </div>
+                  </ContextMenuTrigger>
+                </div>
+
+                <ContextMenu
+                  id={group._id}
+                  className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50  "
+                >
+                  <MenuItem
+                    onClick={() => handleEditGroupOpen(index)}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-gear" /> <h3>Rename</h3>
+                  </MenuItem>
+
+                  <MenuItem
+                    onClick={() => handleDeleteGroup(index)}
+                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
+                  >
+                    <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
                   </MenuItem>
                 </ContextMenu>
               </div>
             ))}
           </div>
-
-          {viewOpen && (
-            <>
-              <div className="w-full absolute top-20 bg-slate-50 ">
-                <button
-                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200  px-3 py-1 rounded"
-                  onClick={handleViewClose}
-                >
-                  <i className="fa-solid fa-arrow-left" /> back
-                </button>
-                <ViewKios
-                  getKioskContent={kioskContent}
-                  kioskCode={kioskCode}
-                />
-              </div>
-            </>
-          )}
-          {overOpen && (
-            <>
-              <div
-                className="absolute top-20 bg-slate-50  p-4 w-full"
-                style={{ height: "100vh" }}
-              >
-                <button
-                  className="flex justify-center items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 px-3 py-1 rounded"
-                  onClick={handleOverOpen}
-                >
-                  <i className="fa-solid fa-arrow-left" /> back
-                </button>
-                <Overview
-                  userStorage={fileSize}
-                  userCluster={kiosks.length}
-                  storage={userProfile.userSubscription[0].storage}
-                  cluster={userProfile.userSubscription[0].cluster}
-                />
-              </div>
-            </>
-          )}
 
           {editOpen && (
             <div
@@ -486,45 +592,6 @@ function Dashboard() {
                       data-modal-hide="popup-modal"
                       type="button"
                       className="  bg-slate-200 hover:bg-slate-300  font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {groupOpen && (
-            <div
-              id="popup-modal"
-              tabindex="-1"
-              className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-            >
-              <div className="relative p-4 w-full">
-                <div className=" relative bg-gray-100 rounded-lg shadow dark:bg-gray-700">
-                  <div className="p-4 md:p-5 text-center">
-                    <div className="grag-area flex flex-col justify-start items-start gap-3 rounded-lg overflow-scroll">
-                      {groupData.map((group, index) => (
-                        <div
-                          key={group._id}
-                          className="flex justify-center items-center gap-5"
-                        >
-                          <h3>Device ID: {group.androidId}</h3>
-                          <button
-                            className="bg-rose-700 hover:bg-rose-800 text-sm py-1 px-2 rounded"
-                            onClick={() => handleUngroupDevice(group._id)}
-                          >
-                            Ungroup
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={handleGroupClose}
-                      data-modal-hide="popup-modal"
-                      type="button"
-                      className="  bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-600 font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
                     >
                       Close
                     </button>

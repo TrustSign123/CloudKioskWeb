@@ -12,6 +12,7 @@ const Kioskstate = (props) => {
   const [uploadStatus, setUploadStatus] = useState(false);
   const [kiosks, setKiosks] = useState([]);
   const [media, setMedia] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [fileSize, setFileSize] = useState(0);
   const [userProfile, setUserProfile] = useState([]);
 
@@ -332,31 +333,118 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const ungroupDevice = async (kioskCode, id) => {
+
+  const fetchGroups = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${host}kioskMachine/group-kiosk/${kioskCode}/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": token,
-          },
-        }
-      );
+      const response = await fetch(`${host}group/get-groups`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
 
       if (!response.ok) {
-        notify(`Failed to ungroup`, "error");
+        notify(`Failed fetch group`, "error");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const json = await response.json();
+      setGroups(json.groups);
       setLoading(false);
-      notify("ungroup Successful", "success");
     } catch (error) {
       setLoading(false);
-      notify(`${error}`, "error");
+      console.error(error);
+    }
+  };
+  const createGroup = async (groupName) => {
+    try {
+      const response = await fetch(`${host}group/create-group`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          groupName,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setGroups(groups.concat(json));
+      notify(`${json.message}`, "success");
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const editGroup = async (groupName, id) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${host}group/update-group/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          groupName,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`Failed to rename`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      let newGroup = JSON.parse(JSON.stringify(groups));
+      // Logic to edit in client
+      for (let index = 0; index < newGroup.length; index++) {
+        const element = newGroup[index];
+        if (element._id === id) {
+          newGroup[index].groupName = groupName;
+          break;
+        }
+      }
+      setGroups(newGroup);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+  const deleteGroup = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}group/delete-group/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`Failed to remove this group`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      const newGroup = groups.filter((group) => {
+        return group._id !== id;
+      });
+      setGroups(newGroup);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -365,6 +453,7 @@ const Kioskstate = (props) => {
     profile();
     fetchKiosk();
     fetchMedia();
+    fetchGroups();
   }, []);
   return (
     <KioskContext.Provider
@@ -375,6 +464,7 @@ const Kioskstate = (props) => {
         userProfile,
         kiosks,
         media,
+        groups,
         fileSize,
         logout,
         register,
@@ -388,7 +478,10 @@ const Kioskstate = (props) => {
         addKioskContent,
         deleteKioskContent,
         publishKioskContent,
-        ungroupDevice,
+        fetchGroups,
+        createGroup,
+        editGroup,
+        deleteGroup,
       }}
     >
       {props.children}

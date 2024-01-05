@@ -29,7 +29,9 @@ const KioskSchema = new Schema({
     require: true,
   },
   kioskContent: [KioskContentSchema],
-  groupDevices: [{ androidId: String }],
+  groupName: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now,
