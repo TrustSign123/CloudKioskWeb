@@ -11,6 +11,7 @@ import {
   ContextMenuTrigger,
   showMenu,
 } from "react-contextmenu";
+import TabComponent from "./TabComponent";
 
 function Test() {
   const [isOpen, setIsOpen] = useState(false);
@@ -163,6 +164,25 @@ function Test() {
 
     setSelectedId(null);
     setSelected(false);
+  };
+
+  const handleDuplicateElement = (data, x, y) => {
+    const newId = useId();
+    setId(newId);
+    setData(data);
+
+    const newElement = {
+      id: newId,
+      data: data,
+      positionX: x + 50,
+      positionY: y + 50,
+    };
+
+    setElements((prevElements) => [...prevElements, newElement]);
+
+    // Reset state values
+    setId(null);
+    setData("");
   };
 
   const handleChangeIndex = (direction) => {
@@ -408,7 +428,12 @@ function Test() {
               </div>
             </>
           )}
-          {mode === "photo" && <> </>}
+          {mode === "photo" && (
+            <>
+              {" "}
+              <TabComponent />{" "}
+            </>
+          )}
           {mode === "frames" && (
             <>
               {" "}
@@ -426,7 +451,7 @@ function Test() {
 
       <div className="flex justify-center items-center bg-gray-300 w-full h-[100vh]">
         <nav className="fixed left-0 bg-slate-800 w-20 h-full overflow-hidden">
-          <ul className="flex flex-col justify-center items-center gap-4 ">
+          <ul className="flex flex-col justify-center items-center gap-4 text-white">
             <li
               className="text-center cursor-pointer hover:bg-white hover:text-black w-full py-1.5 px-3 "
               onClick={() => handleModeChange("text")}
@@ -495,51 +520,6 @@ function Test() {
               onChange={handleSizeChange}
               className="z-50 "
             />
-
-            <button
-              onClick={() => {
-                if (selected) {
-                  handleDeleteElement(selectedId);
-                }
-              }}
-              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
-                !selected ? "bg-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={!selected}
-            >
-              <i
-                className={`fa-solid fa-trash fa-xl ${
-                  !selected ? "text-gray-500" : "text-rose-600"
-                }`}
-              />
-            </button>
-
-            <button
-              onClick={() => {
-                if (selected) {
-                  handleChangeIndex("up");
-                }
-              }}
-              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
-                !selected ? "bg-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={!selected}
-            >
-              <i className="fa-solid fa-arrow-up fa-xl cursor-pointer" />
-            </button>
-            <button
-              onClick={() => {
-                if (selected) {
-                  handleChangeIndex("down");
-                }
-              }}
-              className={`hover:bg-gray-100 py-1.5 px-2 rounded ${
-                !selected ? "bg-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={!selected}
-            >
-              <i className="fa-solid fa-arrow-down fa-xl cursor-pointer" />
-            </button>
           </ul>
         </nav>
 
@@ -573,23 +553,41 @@ function Test() {
                   </div>
                   <ContextMenu
                     id={canva.id}
-                    className="flex flex-col gap-2 bg-black rounded-md shadow cursor-default py-1"
+                    className="flex flex-col gap-2 bg-black text-white rounded-md shadow cursor-default py-1"
                   >
                     <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
                       <i className="fa-solid fa-paint-roller" /> Copy style
                     </MenuItem>
-                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                    <MenuItem
+                      onClick={() =>
+                        handleDuplicateElement(
+                          canva.data,
+                          canva.positionX,
+                          canva.positionY
+                        )
+                      }
+                      className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3"
+                    >
                       <i className="fa-solid fa-clone" /> Duplicate
                     </MenuItem>
-                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                    <MenuItem
+                      onClick={() => handleChangeIndex("up")}
+                      className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3"
+                    >
                       <i className="fa-solid fa-arrow-up-from-bracket" /> Bring
                       forward
                     </MenuItem>
-                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3">
+                    <MenuItem
+                      onClick={() => handleChangeIndex("down")}
+                      className="flex items-center gap-2 hover:bg-blue-500 w-[180px] px-3"
+                    >
                       <i className="fa-solid fa-arrow-up-from-bracket rotate-180" />{" "}
                       Send backward
                     </MenuItem>
-                    <MenuItem className="flex items-center gap-2 hover:bg-blue-500 w-[180px]  px-3">
+                    <MenuItem
+                      onClick={() => handleDeleteElement(canva.id)}
+                      className="flex items-center gap-2 hover:bg-blue-500 w-[180px]  px-3"
+                    >
                       <i className="fa-solid fa-trash" /> Delete
                     </MenuItem>
                   </ContextMenu>

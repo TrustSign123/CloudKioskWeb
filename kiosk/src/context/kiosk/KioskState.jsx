@@ -334,6 +334,32 @@ const Kioskstate = (props) => {
     }
   };
 
+  const deletePublishContent = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}media/publish-delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`Failed to delete this content`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setLoading(false);
+
+      notify("delete Successful", "success");
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
   const fetchGroups = async () => {
     setLoading(true);
     try {
@@ -478,6 +504,7 @@ const Kioskstate = (props) => {
         addKioskContent,
         deleteKioskContent,
         publishKioskContent,
+        deletePublishContent,
         fetchGroups,
         createGroup,
         editGroup,

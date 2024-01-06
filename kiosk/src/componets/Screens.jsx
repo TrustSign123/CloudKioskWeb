@@ -25,11 +25,13 @@ function Dashboard() {
     createGroup,
     editGroup,
     deleteGroup,
+    deletePublishContent,
     loading,
   } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
   const [kioskName, setKioskName] = useState("");
   const [kioskId, setKioskId] = useState("");
+  const [contents, setContents] = useState([]);
   const [groupOpen, setGroupOpen] = useState(false);
   const [moveToGroupOpen, setMoveToGroupOpen] = useState(false);
   const [editGroupOpen, setEditGroupOpen] = useState(false);
@@ -57,6 +59,10 @@ function Dashboard() {
     setGroupName(groups[index].groupName);
   };
 
+  const handleDeletePublishContent = (id) => {
+    deletePublishContent(id);
+  };
+
   const handleMoveToGroupOpen = () => {
     setMoveToGroupOpen(!moveToGroupOpen);
   };
@@ -79,6 +85,7 @@ function Dashboard() {
   const handleEditOpen = (index) => {
     setKioskId(kiosks[index]._id);
     setKioskName(kiosks[index].kioskName);
+    setContents(kiosks[index].kioskContent);
     setEditOpen(true);
   };
 
@@ -202,7 +209,7 @@ function Dashboard() {
                 </label>
                 <select className="bg-gray-50 border text-gray-900 text-lg h-10 rounded-md px-2 w-full">
                   <option value="" disabled selected>
-                  Select group...
+                    Select group...
                   </option>
 
                   {groups.map((group) => (
@@ -576,6 +583,39 @@ function Dashboard() {
                         value={kioskName}
                         onChange={(e) => setKioskName(e.target.value)}
                       />
+                    </div>
+
+                    <div className="flex flex-col justify-center items-center gap-4 h-[500px] overflow-scroll">
+                      {contents.map((content, index) => (
+                        <div
+                          key={content._id}
+                          className="flex justify-between items-center bg-white w-full p-2 shadow-sm rounded"
+                        >
+                          <img
+                            src={content.KioskContent}
+                            className="w-[130px] h-20 rounded"
+                          />
+
+                          <ContextMenuTrigger mouseButton={0} id={content._id}>
+                            <div className="cursor-pointer">
+                              <i className="fa-solid fa-ellipsis fa-lg" />
+                            </div>
+                          </ContextMenuTrigger>
+                          <ContextMenu
+                            id={content._id}
+                            className="border-1 border-gray-200 py-2 rounded bg-gray-50  "
+                          >
+                            <MenuItem
+                              onClick={() =>
+                                handleDeletePublishContent(content._id)
+                              }
+                              className="flex justify-center items-center gap-2 w-20 hover:bg-gray-200 py-1.5 px-2 cursor-pointer"
+                            >
+                              <h3>Remove</h3>
+                            </MenuItem>
+                          </ContextMenu>
+                        </div>
+                      ))}
                     </div>
 
                     <button

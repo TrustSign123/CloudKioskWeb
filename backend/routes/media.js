@@ -6,6 +6,7 @@ const fetchUser = require("../middleware/fetchuser");
 const KioskCode = require("../models/KioskCode");
 const Kiosk = require("../models/Kiosk");
 const Media = require("../models/Media");
+const Playlist = require("../models/Playlist");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
@@ -165,6 +166,57 @@ router.delete("/publish-delete/:id", fetchUser, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.get("/playlist", fetchUser, async (req, res) => {
+  try {
+    const playlist = await Playlist.find({ user: req.user.id });
+    res.status(200).json({ playlist });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/create-playlist", fetchUser, async (req, res) => {
+  try {
+    const playlistName = req.body.playlistName;
+    const contents = req.body.contents;
+
+    // Add the new content to the Kiosk
+    const newPlaylist = new Playlist({
+      user: req.user.id,
+      playlistName: playlistName,
+      playlistContent: contents,
+    });
+
+    // Save the Kiosk to the database
+    await newPlaylist.save();
+
+    res.status(201).json({ newPlaylist });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.delete("/playlist-delete/:id", async (req, res) => {
+  try {
+    const conetntId = req.params.id;
+    // Find the Kiosk that contains the content
+    const playlist = await Playlist.findById(conetntId);
+
+    if (!playlist) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    await playlist.deleteOne();
+
+    res.status(200).json({ message: " deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete Kiosk content" });
   }
 });
 
