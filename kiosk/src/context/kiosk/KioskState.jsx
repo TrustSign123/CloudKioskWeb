@@ -13,6 +13,7 @@ const Kioskstate = (props) => {
   const [kiosks, setKiosks] = useState([]);
   const [media, setMedia] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
   const [fileSize, setFileSize] = useState(0);
   const [userProfile, setUserProfile] = useState([]);
 
@@ -475,11 +476,93 @@ const Kioskstate = (props) => {
     }
   };
 
+  const fetchPlaylist = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}media/playlist`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`Failed fetch playlist`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setPlaylists(json.playlist);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
+  const createPlaylist = async (playlistName, contents) => {
+    try {
+      const response = await fetch(`${host}media/create-playlist`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          playlistName,
+          contents,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`Playlist create successfully`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setPlaylists(playlists.concat(json));
+      notify(`${json.message}`, "success");
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deletePlaylist = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}media/playlist-delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`Failed to remove this playlist`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      const newPlaylist = playlists.filter((playlist) => {
+        return playlist._id !== id;
+      });
+      setPlaylists(newPlaylist);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     profile();
     fetchKiosk();
     fetchMedia();
     fetchGroups();
+    fetchPlaylist();
   }, []);
   return (
     <KioskContext.Provider
@@ -491,6 +574,7 @@ const Kioskstate = (props) => {
         kiosks,
         media,
         groups,
+        playlists,
         fileSize,
         logout,
         register,
@@ -509,6 +593,9 @@ const Kioskstate = (props) => {
         createGroup,
         editGroup,
         deleteGroup,
+        fetchPlaylist,
+        createPlaylist,
+        deletePlaylist,
       }}
     >
       {props.children}
