@@ -1,6 +1,20 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const PlaylistContentSchema = new Schema({
+  playlistContent: {
+    type: String,
+    required: true,
+  },
+  playlistContentFileType: {
+    type: String,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const PlaylistSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -10,10 +24,7 @@ const PlaylistSchema = new Schema({
     type: String,
     require: true,
   },
-  playlistContent: {
-    type: [String],
-    default: [],
-  },
+  playlistContent: [PlaylistContentSchema],
   date: {
     type: Date,
     default: Date.now,

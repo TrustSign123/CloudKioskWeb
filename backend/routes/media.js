@@ -183,15 +183,28 @@ router.post("/create-playlist", fetchUser, async (req, res) => {
   try {
     const playlistName = req.body.playlistName;
     const contents = req.body.contents;
+    const contentsType = req.body.contentsType;
 
-    // Add the new content to the Kiosk
+
+    // Create an array to store playlist contents
+    const playlistContents = [];
+
+    // Loop through contents and contentsType arrays to populate playlistContents
+    for (let i = 0; i < contents.length; i++) {
+      playlistContents.push({
+        playlistContent: contents[i],
+        playlistContentFileType: contentsType[i],
+      });
+    }
+
+    // Add the new content to the Playlist
     const newPlaylist = new Playlist({
       user: req.user.id,
       playlistName: playlistName,
-      playlistContent: contents,
+      playlistContent: playlistContents,
     });
 
-    // Save the Kiosk to the database
+    // Save the Playlist to the database
     await newPlaylist.save();
 
     res.status(201).json({ newPlaylist });

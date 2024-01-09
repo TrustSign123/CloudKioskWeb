@@ -501,7 +501,7 @@ const Kioskstate = (props) => {
     }
   };
 
-  const createPlaylist = async (playlistName, contents) => {
+  const createPlaylist = async (playlistName, contents, contentsType) => {
     try {
       const response = await fetch(`${host}media/create-playlist`, {
         method: "POST",
@@ -512,6 +512,7 @@ const Kioskstate = (props) => {
         body: JSON.stringify({
           playlistName,
           contents,
+          contentsType,
         }),
       });
 

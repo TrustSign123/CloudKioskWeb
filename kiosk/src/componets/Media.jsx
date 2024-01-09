@@ -30,9 +30,10 @@ function Media() {
   const [selectedKiosk, setSelectedKiosk] = useState(null);
   const [playlistName, setPlaylistName] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState([]);
+  const [selectedMediaType, setSelectedMediaType] = useState([]);
   const [kioskCode, setKioskCode] = useState(null);
-  const [mediaUrl, setMediaUrl] = useState(null);
-  const [mediaType, setMediaType] = useState(null);
+  const [mediaUrl, setMediaUrl] = useState([]);
+  const [mediaType, setMediaType] = useState([]);
 
   const convertBytes = (contentFileSize) => {
     if (contentFileSize === 0) return "0 Bytes";
@@ -68,6 +69,7 @@ function Media() {
   const handlePlaylistOpen = () => {
     setPlaylistOpen(!playlistOpen);
     setSelectedMedia([]);
+    setSelectedMediaType([]);
   };
 
   const handlePlaylistContentOpen = (content) => {
@@ -84,12 +86,17 @@ function Media() {
     publishKioskContent(kioskCode, mediaUrl, mediaType);
   };
 
+  const handlePublishPlaylist = () => {
+    publishKioskContent(kioskCode, mediaUrl, mediaType);
+  };
+
   const handleDeleteMedia = (index) => {
     deleteKioskContent(media[index]._id);
   };
 
   const handleImageClick = (index) => {
     const mediaContent = media[index]?.mediaContent;
+    const mediaContentType = media[index]?.mediaContentFileType;
 
     // Check if the image is already selected
     const isSelected = selectedMedia.includes(mediaContent);
@@ -102,6 +109,8 @@ function Media() {
           )
         : [...prevSelected, mediaContent]
     );
+
+    setSelectedMediaType((prevSelected) => [...prevSelected, mediaContentType]);
   };
   const handleSelectAll = () => {
     // If all images are already selected, clear the selection; otherwise, select all
@@ -110,13 +119,20 @@ function Media() {
         ? []
         : media.map((mediaItem) => mediaItem.mediaContent)
     );
+
+    setSelectedMediaType((prevSelected) =>
+      prevSelected.length === media.length
+        ? []
+        : media.map((mediaItem) => mediaItem.mediaContentFileType)
+    );
   };
 
   const handleCreatePlaylist = () => {
-    createPlaylist(playlistName, selectedMedia);
+    createPlaylist(playlistName, selectedMedia, selectedMediaType);
     setPlaylistOpen(false);
     setPlaylistName(null);
     setSelectedMedia([]);
+    // setSelectedMediaType([]);
   };
 
   const handleDeletePlaylist = (id) => {
@@ -301,7 +317,10 @@ function Media() {
                     className={` bg-white w-full rounded  
                     }`}
                   >
-                    <img src={content} className="w-full h-[100px]" />
+                    <img
+                      src={content.playlistContent}
+                      className="w-full h-[100px]"
+                    />
                   </div>
                 ))}
               </div>
@@ -350,15 +369,12 @@ function Media() {
             <div
               key={playlist._id}
               className="w-[300px] bg-blue-300 shadow-sm rounded-lg cursor-pointer p-1"
-              onClick={() =>
-                handlePlaylistContentOpen(playlist.playlistContent)
-              }
             >
               <div className="grid grid-cols-2 gap-2">
                 {playlist.playlistContent.slice(0, 3).map((imageSrc, index) => (
                   <img
                     key={index}
-                    src={imageSrc}
+                    src={imageSrc.playlistContent}
                     className="w-full h-[100px] rounded"
                   />
                 ))}
@@ -388,8 +404,16 @@ function Media() {
                 className="flex flex-col gap-1 bg-white shadow rounded py-2 duration-150"
               >
                 <MenuItem
+                  onClick={() =>
+                    handlePlaylistContentOpen(playlist.playlistContent)
+                  }
                   className="hover:bg-gray-100 py-1.5 px-3"
-                  // onClick={() => handlePublishOpen(index)}
+                >
+                  Open <span className="text-transparent">the playlist</span>
+                </MenuItem>
+                <MenuItem
+                  className="hover:bg-gray-100 py-1.5 px-3"
+                  onClick={() => handlePublishOpen(0)}
                 >
                   Publish
                 </MenuItem>
