@@ -98,8 +98,8 @@ router.delete("/media-delete/:id", async (req, res) => {
 router.post("/publish-media/:kioskCode", fetchUser, async (req, res) => {
   try {
     const kioskCode = req.params.kioskCode;
-    const contentUrl = req.body.contentUrl;
-    const contentType = req.body.contentType;
+    const contentUrlArray = req.body.contentUrl;
+    const contentTypeArray = req.body.contentType;
 
     // Find the Kiosk associated with the given Kiosk code
     const kiosk = await Kiosk.findOne({ kioskCode: kioskCode });
@@ -109,20 +109,23 @@ router.post("/publish-media/:kioskCode", fetchUser, async (req, res) => {
       return res.status(404).json({ message: "Not Found" });
     }
 
-    // Generate a unique _id for this content
-    const sharedId = new mongoose.Types.ObjectId();
+    // Iterate through the arrays and save each element individually
+    for (let i = 0; i < contentUrlArray.length; i++) {
+      const sharedId = new mongoose.Types.ObjectId();
 
-    // Add the new content to the Kiosk
-    kiosk.kioskContent.push({
-      KioskContent: contentUrl,
-      KioskContentFileType: contentType,
-      _id: sharedId,
-    });
-    kioskcode.kioskContent.push({
-      KioskContent: contentUrl,
-      KioskContentFileType: contentType,
-      _id: sharedId,
-    });
+      kiosk.kioskContent.push({
+        KioskContent: contentUrlArray[i],
+        KioskContentFileType: contentTypeArray[i],
+        _id: sharedId,
+      });
+
+      kioskcode.kioskContent.push({
+        KioskContent: contentUrlArray[i],
+        KioskContentFileType: contentTypeArray[i],
+        _id: sharedId,
+      });
+    }
+
     await kiosk.save();
     await kioskcode.save();
 
@@ -184,7 +187,6 @@ router.post("/create-playlist", fetchUser, async (req, res) => {
     const playlistName = req.body.playlistName;
     const contents = req.body.contents;
     const contentsType = req.body.contentsType;
-
 
     // Create an array to store playlist contents
     const playlistContents = [];

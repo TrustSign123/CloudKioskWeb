@@ -6,6 +6,7 @@ import {
   ContextMenuTrigger,
   showMenu,
 } from "react-contextmenu";
+import NavbarMain from "./NavbarMain";
 
 function Media() {
   const {
@@ -61,8 +62,24 @@ function Media() {
   };
 
   const handlePublishOpen = (index) => {
-    setMediaUrl(media[index].mediaContent);
-    setMediaType(media[index].mediaContentFileType);
+    setMediaUrl([media[index].mediaContent]);
+    setMediaType([media[index].mediaContentFileType]);
+    setPublishOpen(!publishOpen);
+  };
+
+  const handlePlaylistPublishOpen = (index) => {
+    const selectedPlaylist = playlists[index].playlistContent;
+
+    // Extracting the playlistContent and playlistContentFileType arrays
+    const playlistContentArray = selectedPlaylist.map(
+      (item) => item.playlistContent
+    );
+    const playlistContentFileTypeArray = selectedPlaylist.map(
+      (item) => item.playlistContentFileType
+    );
+
+    setMediaUrl(playlistContentArray);
+    setMediaType(playlistContentFileTypeArray);
     setPublishOpen(!publishOpen);
   };
 
@@ -83,10 +100,6 @@ function Media() {
   };
 
   const handlePublishMedia = () => {
-    publishKioskContent(kioskCode, mediaUrl, mediaType);
-  };
-
-  const handlePublishPlaylist = () => {
     publishKioskContent(kioskCode, mediaUrl, mediaType);
   };
 
@@ -138,6 +151,8 @@ function Media() {
   const handleDeletePlaylist = (id) => {
     deletePlaylist(id);
   };
+
+  // console.log(mediaUrl, mediaType);
 
   useEffect(() => {
     fetchMedia();
@@ -339,6 +354,7 @@ function Media() {
           </div>
         </>
       )}
+      <NavbarMain />
       <div className="flex flex-col gap-4 p-5 h-[100vh]">
         <div className="flex justify-end border-b-2 p-3">
           <div className="flex justify-end items-center gap-2">
@@ -413,7 +429,7 @@ function Media() {
                 </MenuItem>
                 <MenuItem
                   className="hover:bg-gray-100 py-1.5 px-3"
-                  onClick={() => handlePublishOpen(0)}
+                  onClick={() => handlePlaylistPublishOpen(index)}
                 >
                   Publish
                 </MenuItem>
