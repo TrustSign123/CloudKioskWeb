@@ -231,37 +231,81 @@ function Dashboard() {
       )}
       {editOpen && (
         <div className="fixed top-[53px] flex w-full h-[93vh] bg-gray-100">
-          <nav className="flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-14">
+          <nav className="flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-9">
             <li
               onClick={() => setEditOption("dashboard")}
-              className="flex justify-center items-center gap-2 font-semibold text-gray-400 hover:text-blue-600 cursor-pointer"
+              className="flex justify-start items-center gap-2 w-full font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer"
             >
-              <i className="fa-solid fa-gauge-simple-high fa-lg" /> Dashboard
+              <i className="fa-solid fa-gauge-simple-high fa-lg" />{" "}
+              <h3>Dashboard</h3>
             </li>
             <li
               onClick={() => setEditOption("library")}
-              className="flex justify-center items-center gap-2 font-semibold text-gray-400 hover:text-blue-600 cursor-pointer"
+              className="flex justify-start items-center gap-2 font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer"
             >
-              <i className="fa-solid fa-photo-film fa-lg" /> Library
+              <i className="fa-solid fa-photo-film fa-lg" /> <h3>Library</h3>
             </li>
             <li
               onClick={() => setEditOption("schedule")}
-              className="flex justify-center items-center gap-2 font-semibold text-gray-400 hover:text-blue-600 cursor-pointer"
+              className="flex justify-start items-center gap-2 font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer"
             >
               <i className="fa-solid fa-calendar-check fa-lg" />
-              Schedule
+              <h3>Schedule</h3>
             </li>
             <li
               onClick={() => setEditOption("settings")}
-              className="flex justify-center items-center gap-2 font-semibold text-gray-400 hover:text-blue-600 cursor-pointer"
+              className="flex justify-start items-center gap-2 font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer"
             >
-              <i className="fa-solid fa-gear fa-lg" /> Settings
+              <i className="fa-solid fa-gear fa-lg" /> <h3>Settings</h3>
             </li>
           </nav>
-          <main className="w-full h-full">
+          <main className="w-full h-full p-4">
             {editOption === "dashboard" && (
               <>
-                <div className="">Dashboard</div>
+                <div className="flex items-center w-full h-20 font-sans  bg-white rounded shadow-md p- mb-4">
+                  <div className="flex flex-col gap-1 border-r border-gray-300 px-4">
+                    <h3 className="text-sm">STATUS</h3>
+                    <h3 className="font-bold text-lg text-yellow-600">
+                      ONLINE
+                    </h3>
+                  </div>
+                  <div className="flex flex-col gap-1 border-r border-gray-300 px-4">
+                    <h3 className="text-sm">GROUP</h3>
+                    <h3 className="font-bold text-lg">NONE</h3>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 border-r border-gray-300 px-4">
+                    <h3 className="text-sm">MEDIA</h3>
+                    <h3 className="font-bold text-lg">0</h3>
+                  </div>
+                  <div className="flex flex-col gap-1 px-4">
+                    <h3 className="text-sm">DEVICE</h3>
+                    <h3 className="font-bold text-lg">ANDROID</h3>
+                  </div>
+                </div>
+
+                <div className="flex justify-around items-center  w-full h-[200px] font-sans  bg-white rounded shadow-md p-4">
+                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
+                    <i className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150" />
+                  </div>
+                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
+                    <i
+                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-90
+"
+                    />
+                  </div>
+                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
+                    <i
+                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-180
+"
+                    />
+                  </div>
+                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
+                    <i
+                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-[-90deg]
+"
+                    />
+                  </div>
+                </div>
               </>
             )}
             {editOption === "library" && (
