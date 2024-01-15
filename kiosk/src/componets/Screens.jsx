@@ -230,8 +230,8 @@ function Dashboard() {
         </>
       )}
       {editOpen && (
-        <div className="fixed top-[53px] flex w-full h-[93vh] bg-gray-100">
-          <nav className="flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-9">
+        <div className="fixed top-[53px] flex w-full h-[93vh] bg-gray-100 overflow-scroll">
+          <nav className="fixed flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-9">
             <li
               onClick={() => setEditOption("dashboard")}
               className="flex justify-start items-center gap-2 w-full font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer"
@@ -259,6 +259,12 @@ function Dashboard() {
               <i className="fa-solid fa-gear fa-lg" /> <h3>Settings</h3>
             </li>
           </nav>
+          <nav className="flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-9">
+            <li className="flex justify-start items-center gap-2 w-full font-semibold hover:bg-blue-600 hover:text-white py-1.5 px-12 rounded cursor-pointer">
+              <i className="fa-solid fa-gauge-simple-high fa-lg" />{" "}
+              <h3>Dashboard</h3>
+            </li>
+          </nav>
           <main className="w-full h-full p-4">
             {editOption === "dashboard" && (
               <>
@@ -275,7 +281,9 @@ function Dashboard() {
                   </div>
                   <div className="flex flex-col items-center gap-1 border-r border-gray-300 px-4">
                     <h3 className="text-sm">MEDIA</h3>
-                    <h3 className="font-bold text-lg">0</h3>
+                    <h3 className="font-bold text-lg">
+                      {contents.length || "0"}
+                    </h3>
                   </div>
                   <div className="flex flex-col gap-1 px-4">
                     <h3 className="text-sm">DEVICE</h3>
@@ -310,7 +318,30 @@ function Dashboard() {
             )}
             {editOption === "library" && (
               <>
-                <div className="">Library</div>
+                <div className="">
+                  {" "}
+                  <div className="flex flex-col justify-start items-center gap-4  ">
+                    {contents.map((content, index) => (
+                      <div
+                        key={content._id}
+                        className="flex justify-between items-center bg-white w-full h-[80px] py-2 px-3 shadow-sm rounded"
+                      >
+                        <img
+                          src={content.KioskContent}
+                          className="w-20 h-[50px] rounded"
+                        />
+
+                        <button
+                          onClick={() =>
+                            handleDeletePublishContent(content._id)
+                          }
+                        >
+                          <i className="fa-solid fa-trash" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </>
             )}
             {editOption === "schedule" && (
@@ -456,38 +487,7 @@ export default Dashboard;
                   />
                 </div>
 
-                <div className="flex flex-col justify-center items-center gap-4 h-[500px] overflow-scroll">
-                  {contents.map((content, index) => (
-                    <div
-                      key={content._id}
-                      className="flex justify-between items-center bg-white w-full p-2 shadow-sm rounded"
-                    >
-                      <img
-                        src={content.KioskContent}
-                        className="w-[130px] h-20 rounded"
-                      />
-
-                      <ContextMenuTrigger mouseButton={0} id={content._id}>
-                        <div className="cursor-pointer">
-                          <i className="fa-solid fa-ellipsis fa-lg" />
-                        </div>
-                      </ContextMenuTrigger>
-                      <ContextMenu
-                        id={content._id}
-                        className="border-1 border-gray-200 py-2 rounded bg-gray-50  "
-                      >
-                        <MenuItem
-                          onClick={() =>
-                            handleDeletePublishContent(content._id)
-                          }
-                          className="flex justify-center items-center gap-2 w-20 hover:bg-gray-200 py-1.5 px-2 cursor-pointer"
-                        >
-                          <h3>Remove</h3>
-                        </MenuItem>
-                      </ContextMenu>
-                    </div>
-                  ))}
-                </div>
+               
 
                 <button
                   onClick={handleEditKiosk}

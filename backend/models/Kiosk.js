@@ -15,6 +15,21 @@ const KioskContentSchema = new Schema({
   },
 });
 
+const KioskSettingsSchema = new Schema({
+  orientation: {
+    type: String,
+    default: "0",
+  },
+  interval: {
+    type: String,
+    default: "30",
+  },
+  transition: {
+    type: Boolean,
+    default: true,
+  },
+});
+
 const KioskSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +43,7 @@ const KioskSchema = new Schema({
     type: String,
     require: true,
   },
+  settings: [KioskSettingsSchema],
   kioskContent: [KioskContentSchema],
   groupName: {
     type: String,

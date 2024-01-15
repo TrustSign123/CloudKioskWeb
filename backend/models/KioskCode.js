@@ -15,6 +15,21 @@ const KioskContentSchema = new Schema({
   },
 });
 
+const KioskSettingsSchema = new Schema({
+  orientation: {
+    type: String,
+    default: "0",
+  },
+  interval: {
+    type: String,
+    default: "30",
+  },
+  transition: {
+    type: Boolean,
+    default: true,
+  },
+});
+
 const KioskCodeSchema = new Schema({
   KioskCode: {
     type: String,
@@ -23,6 +38,7 @@ const KioskCodeSchema = new Schema({
   androidId: {
     type: String,
   },
+  settings: [KioskSettingsSchema],
   lastSynced: {
     type: Date,
     default: Date.now,

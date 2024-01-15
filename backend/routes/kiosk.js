@@ -65,6 +65,7 @@ router.post("/kiosk-code", async (req, res) => {
         status: kioskCode.status,
         androidId: kioskCode.androidId,
         kioskContent: [],
+        settings: [],
       });
     } else {
       res.status(200).json({
@@ -72,6 +73,7 @@ router.post("/kiosk-code", async (req, res) => {
         status: existingCode.status,
         androidId: existingCode.androidId,
         kioskContent: existingCode.kioskContent,
+        settings: existingCode.settings,
       });
     }
   } catch (error) {
@@ -84,18 +86,9 @@ router.post("/kiosk-code", async (req, res) => {
 router.get("/get-kiosk", fetchUser, async (req, res) => {
   try {
     const kiosks = await Kiosk.find({ user: req.user.id });
-    // Calculate the sum of all kiosk content file sizes
-    const totalFileSize = kiosks.reduce((sum, kiosk) => {
-      const kioskContent = kiosk.kioskContent || [];
-      const contentFileSizeSum = kioskContent.reduce((contentSum, content) => {
-        return contentSum + (content.KioskContentFileSize || 0);
-      }, 0);
 
-      return sum + contentFileSizeSum;
-    }, 0);
-    const fileSize = convertBytes(totalFileSize);
     // Send the total file size in the response
-    res.json({ fileSize, kiosks });
+    res.json({ kiosks });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch Kiosks" });
@@ -117,6 +110,7 @@ router.post("/kiosk", fetchUser, async (req, res) => {
         user: req.user.id,
         kioskName: "Cloud Screen",
         kioskCode: kioskCode,
+        settings: [{ orientation: "0", interval: "30", transition: true }],
       });
 
       // Save the Kiosk to the database
@@ -124,6 +118,12 @@ router.post("/kiosk", fetchUser, async (req, res) => {
 
       // Update the KioskCode status to true
       kioskCodeDocument.status = true;
+      kioskCodeDocument.settings.push({
+        orientation: "0",
+        interval: "30",
+        transition: true,
+      });
+
       await kioskCodeDocument.save();
 
       res.status(201).json({ message: "Kiosk created successfully" });
