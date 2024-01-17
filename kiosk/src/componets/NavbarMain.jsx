@@ -21,7 +21,7 @@ function NavbarMain() {
   return (
     <>
       {" "}
-      <nav className="bg-white border-b border-gray-200  px-4 py-2.5  fixed left-0 right-0 top-0 z-50 ">
+      <nav className="bg-white px-4 py-3.5  fixed left-0 right-0 top-0 z-50">
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex justify-start items-center">
             <a className="flex items-center justify-between mr-4">

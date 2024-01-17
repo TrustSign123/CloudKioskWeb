@@ -109,6 +109,8 @@ function Dashboard() {
     setKioskId("");
   };
 
+  // console.log(orientation);
+
   function handleDeleteClick(index) {
     deleteKiosk(kiosks[index]._id);
   }
@@ -290,30 +292,6 @@ function Dashboard() {
                     <h3 className="font-bold text-lg">ANDROID</h3>
                   </div>
                 </div>
-
-                <div className="flex justify-around items-center  w-full h-[200px] font-sans  bg-white rounded shadow-md p-4">
-                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
-                    <i className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150" />
-                  </div>
-                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
-                    <i
-                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-90
-"
-                    />
-                  </div>
-                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
-                    <i
-                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-180
-"
-                    />
-                  </div>
-                  <div className="flex justify-center items-center gap-1 h-full w-[200px] rounded border-4 border-gray-300 hover:border-blue-600 p-4 cursor-pointer">
-                    <i
-                      className="fa-solid fa-mobile-screen fa-2xl text-gray-300 hover:text-blue-600 scale-150 rotate-[-90deg]
-"
-                    />
-                  </div>
-                </div>
               </>
             )}
             {editOption === "library" && (
@@ -359,23 +337,96 @@ function Dashboard() {
       )}
       <NavbarMain />
 
-      <div className=" bg-gray-100 ">
-        <main className=" h-auto pt-20 ">
-          <div className="flex justify-end items-center gap-2 bg-white w-full h-20 p-5">
-            <button
-              className="text-black border hover:bg-gray-100 rounded-md py-2.5 px-4"
-              onClick={handleGroupOpen}
-            >
-              New Group
-            </button>
-            <Link to={"/create-kiosk"}>
-              <button className="text-white bg-blue-600 hover:bg-blue-700 rounded-md py-2.5 px-4">
-                Create Screen
+      <div className=" bg-white">
+        <main className=" h-auto pt-14 ">
+          <div className="flex justify-between items-center gap-2 bg-white w-full h-20 px-5 pb-14 pt-20">
+            <div className="flex gap-4">
+              <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
+                <div className="bg-blue-200 rounded-full p-3">
+                  {" "}
+                  <svg
+                    width="26"
+                    height="26"
+                    fill="currentColor"
+                    className=""
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM13.991 3l.024.001a1.46 1.46 0 0 1 .538.143.757.757 0 0 1 .302.254c.067.1.145.277.145.602v5.991l-.001.024a1.464 1.464 0 0 1-.143.538.758.758 0 0 1-.254.302c-.1.067-.277.145-.602.145H2.009l-.024-.001a1.464 1.464 0 0 1-.538-.143.758.758 0 0 1-.302-.254C1.078 10.502 1 10.325 1 10V4.009l.001-.024a1.46 1.46 0 0 1 .143-.538.758.758 0 0 1 .254-.302C1.498 3.078 1.675 3 2 3h11.991zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"></path>
+                  </svg>
+                </div>
+
+                <div className="text-center">
+                  <h3 className="font-semibold text-3xl">
+                    {kiosks.length || 0}
+                  </h3>
+                  <h3>Total screens</h3>
+                </div>
+              </div>
+              <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
+                <div className="grid grid-cols-2 gap-1 bg-blue-200 rounded-full p-3">
+                  {" "}
+                  <svg
+                    width="12"
+                    height="12"
+                    fill="currentColor"
+                    className=""
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM13.991 3l.024.001a1.46 1.46 0 0 1 .538.143.757.757 0 0 1 .302.254c.067.1.145.277.145.602v5.991l-.001.024a1.464 1.464 0 0 1-.143.538.758.758 0 0 1-.254.302c-.1.067-.277.145-.602.145H2.009l-.024-.001a1.464 1.464 0 0 1-.538-.143.758.758 0 0 1-.302-.254C1.078 10.502 1 10.325 1 10V4.009l.001-.024a1.46 1.46 0 0 1 .143-.538.758.758 0 0 1 .254-.302C1.498 3.078 1.675 3 2 3h11.991zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"></path>
+                  </svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    fill="currentColor"
+                    className=""
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM13.991 3l.024.001a1.46 1.46 0 0 1 .538.143.757.757 0 0 1 .302.254c.067.1.145.277.145.602v5.991l-.001.024a1.464 1.464 0 0 1-.143.538.758.758 0 0 1-.254.302c-.1.067-.277.145-.602.145H2.009l-.024-.001a1.464 1.464 0 0 1-.538-.143.758.758 0 0 1-.302-.254C1.078 10.502 1 10.325 1 10V4.009l.001-.024a1.46 1.46 0 0 1 .143-.538.758.758 0 0 1 .254-.302C1.498 3.078 1.675 3 2 3h11.991zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"></path>
+                  </svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    fill="currentColor"
+                    className=""
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM13.991 3l.024.001a1.46 1.46 0 0 1 .538.143.757.757 0 0 1 .302.254c.067.1.145.277.145.602v5.991l-.001.024a1.464 1.464 0 0 1-.143.538.758.758 0 0 1-.254.302c-.1.067-.277.145-.602.145H2.009l-.024-.001a1.464 1.464 0 0 1-.538-.143.758.758 0 0 1-.302-.254C1.078 10.502 1 10.325 1 10V4.009l.001-.024a1.46 1.46 0 0 1 .143-.538.758.758 0 0 1 .254-.302C1.498 3.078 1.675 3 2 3h11.991zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"></path>
+                  </svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    fill="currentColor"
+                    className=""
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM13.991 3l.024.001a1.46 1.46 0 0 1 .538.143.757.757 0 0 1 .302.254c.067.1.145.277.145.602v5.991l-.001.024a1.464 1.464 0 0 1-.143.538.758.758 0 0 1-.254.302c-.1.067-.277.145-.602.145H2.009l-.024-.001a1.464 1.464 0 0 1-.538-.143.758.758 0 0 1-.302-.254C1.078 10.502 1 10.325 1 10V4.009l.001-.024a1.46 1.46 0 0 1 .143-.538.758.758 0 0 1 .254-.302C1.498 3.078 1.675 3 2 3h11.991zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"></path>
+                  </svg>
+                </div>
+
+                <div className="text-center">
+                  <h3 className="font-semibold text-3xl">
+                    {groups.length || 0}
+                  </h3>
+                  <h3>Total groups</h3>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 ">
+              <button
+                className="text-black border hover:bg-gray-100 rounded-md py-2.5 px-4"
+                onClick={handleGroupOpen}
+              >
+                New Group
               </button>
-            </Link>
+              <Link to={"/create-kiosk"}>
+                <button className="text-white bg-blue-600 hover:bg-blue-700 rounded-md py-2.5 px-4">
+                  Create Screen
+                </button>
+              </Link>
+            </div>
           </div>
           <div
-            className="flex flex-col justifystart items-center gap-2 p-4"
+            className="flex flex-col justifystart items-center gap-2 bg-gray-100 p-4"
             style={{ height: "100vh" }}
           >
             {" "}
@@ -384,10 +435,47 @@ function Dashboard() {
                 key={kiosk._id}
                 className="flex flex-row justify-between items-center text-black bg-white rounded p-6 w-full h-20 cursor-pointer"
               >
-                <div className="flex flex-row items-center gap-96 w-full">
-                  <h3 className="font-semibold">{kiosk.kioskName}</h3>
+                <div className="flex flex-row justify-between items-center gap-4 w-50">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-200 rounded-full py-1.5 px-2">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ color: "rgb(107, 70, 193)" }}
+                        class="h-7"
+                      >
+                        <path
+                          d="M22.25 2.875H1.75C1.19772 2.875 0.75 3.32272 0.75 3.875V16.875C0.75 17.4273 1.19772 17.875 1.75 17.875H22.25C22.8023 17.875 23.25 17.4273 23.25 16.875V3.875C23.25 3.32272 22.8023 2.875 22.25 2.875Z"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                        <path
+                          d="M7.5 21.625H16.5"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                        <path
+                          d="M12 17.875V21.625"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold">{kiosk.kioskName}</h3>
+                  </div>
 
                   <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
+                  <h3 className="text-sm text-gray-400">
+                    Laxmi Nagar, Delhi, India
+                  </h3>
+                  <h3 className="text-sm text-gray-400">Active just now</h3>
                 </div>
 
                 <div className="flex flex-row items-center ">

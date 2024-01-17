@@ -125,7 +125,6 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       setKiosks(json.kiosks);
-      setFileSize(json.fileSize);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -159,7 +158,7 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const editKiosk = async (kioskName, id) => {
+  const editKiosk = async (kioskName, orientation, id) => {
     setLoading(true);
     try {
       const response = await fetch(`${host}kioskMachine/kiosk/${id}`, {
@@ -170,6 +169,7 @@ const Kioskstate = (props) => {
         },
         body: JSON.stringify({
           kioskName,
+          orientation,
         }),
       });
 
@@ -185,10 +185,14 @@ const Kioskstate = (props) => {
         const element = newkiosk[index];
         if (element._id === id) {
           newkiosk[index].kioskName = kioskName;
+          newkiosk[index].settings[0].orientation = orientation;
           break;
         }
       }
       setKiosks(newkiosk);
+      console.log(kiosks);
+      notify(`${json.message}`, "success");
+
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -240,6 +244,7 @@ const Kioskstate = (props) => {
       const json = await response.json();
       // console.log(media)
       setMedia(json.media);
+      setFileSize(json.fileSize);
     } catch (error) {
       console.error(error);
     }

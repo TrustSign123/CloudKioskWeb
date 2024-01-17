@@ -141,6 +141,8 @@ router.put("/kiosk/:id", async (req, res) => {
   try {
     // Get the Kiosk ID from the request
     const kioskId = req.params.id;
+    const kioskName = req.body.kioskName;
+    const orientation = req.body.orientation;
 
     // Find the Kiosk document by ID
     const kiosk = await Kiosk.findById(kioskId);
@@ -148,7 +150,13 @@ router.put("/kiosk/:id", async (req, res) => {
     if (!kiosk) {
       res.status(404).json({ message: "Kiosk not found" });
     } else {
-      kiosk.kioskName = req.body.kioskName;
+      if (kioskName) {
+        kiosk.kioskName = kioskName;
+      }
+      if (orientation) {
+        kiosk.settings[0].orientation = orientation;
+      }
+
       await kiosk.save();
       res.status(200).json({ message: "Kiosk updated successfully" });
     }

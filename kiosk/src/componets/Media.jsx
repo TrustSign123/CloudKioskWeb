@@ -21,6 +21,7 @@ function Media() {
     fetchPlaylist,
     createPlaylist,
     deletePlaylist,
+    fileSize,
     loading,
     uploadStatus,
   } = useContext(KioskContext);
@@ -355,9 +356,90 @@ function Media() {
         </>
       )}
       <NavbarMain />
-      <div className="flex flex-col gap-4 p-5 h-[100vh]">
-        <div className="flex justify-end border-b-2 p-3">
-          <div className="flex justify-end items-center gap-2">
+      <div className="flex flex-col gap-4 p-5 h-[100vh] mt-4">
+        <div className="flex justify-between items-center gap-4 border-b-2 p-3 ">
+          <div className="flex gap-4">
+            <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
+              <div className="bg-blue-200 rounded-full p-3">
+                {" "}
+                <svg
+                  width="26"
+                  height="26"
+                  fill="currentColor"
+                  className=""
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M14 10a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1h12zM2 9a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2H2z"></path>
+                  <path d="M5 11.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-2 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM14 3a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12zM2 2a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"></path>
+                  <path d="M5 4.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-2 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"></path>
+                </svg>
+              </div>
+
+              <div className="text-center">
+                <h3 className="font-semibold text-3xl">{fileSize}</h3>
+                <h3>Storgae used</h3>
+              </div>
+            </div>
+            <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
+              <div className="bg-blue-200 rounded-full p-3">
+                <i className="fas fa-photo-video fa-lg" />
+              </div>
+
+              <div className="text-center">
+                <h3 className="font-semibold text-3xl">{media.length || 0}</h3>
+                <h3>Total media</h3>
+              </div>
+            </div>
+            <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
+              <div className="bg-blue-200 rounded-full p-3">
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className=""
+                >
+                  <path
+                    d="M25 9V7C25 6.46957 24.7893 5.96086 24.4142 5.58579C24.0391 5.21071 23.5304 5 23 5H11V3C11 2.46957 10.7893 1.96086 10.4142 1.58579C10.0391 1.21071 9.53043 1 9 1H3C2.46957 1 1.96086 1.21071 1.58579 1.58579C1.21071 1.96086 1 2.46957 1 3V24.7333"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M5 27V11C5 10.4696 5.21071 9.96086 5.58579 9.58579C5.96086 9.21071 6.46957 9 7 9H27C27.5304 9 28.0391 9.21071 28.4142 9.58579C28.7893 9.96086 29 10.4696 29 11V13"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M29 13H11C9.89543 13 9 13.8954 9 15V29C9 30.1046 9.89543 31 11 31H29C30.1046 31 31 30.1046 31 29V15C31 13.8954 30.1046 13 29 13Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M16.6507 26.88C16.4767 26.9667 16.2834 27.0076 16.0891 26.9987C15.8949 26.9898 15.7062 26.9314 15.5408 26.8291C15.3755 26.7268 15.239 26.584 15.1443 26.4141C15.0497 26.2443 15 26.0531 15 25.8586V18.1413C15 17.9468 15.0497 17.7556 15.1443 17.5858C15.239 17.4159 15.3755 17.2731 15.5408 17.1708C15.7062 17.0685 15.8949 17.0101 16.0891 17.0012C16.2834 16.9923 16.4767 17.0332 16.6507 17.12L24.3693 20.98C24.5589 21.0746 24.7183 21.2201 24.8297 21.4003C24.9412 21.5804 25.0002 21.7881 25.0002 22C25.0002 22.2118 24.9412 22.4195 24.8297 22.5996C24.7183 22.7798 24.5589 22.9253 24.3693 23.02L16.6507 26.88Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </div>
+
+              <div className="text-center">
+                <h3 className="font-semibold text-3xl">
+                  {playlists.length || 0}
+                </h3>
+                <h3>Total playlits</h3>
+              </div>
+            </div>
+          </div>
+          <div>
             <button
               onClick={handlePlaylistOpen}
               className="text-black border hover:bg-gray-100 rounded-md py-2.5 px-4"

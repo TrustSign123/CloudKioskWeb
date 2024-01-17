@@ -14,10 +14,33 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Initialize Firebase Storage
 const storage = admin.storage();
 
+const convertBytes = (contentFileSize) => {
+  if (contentFileSize === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+
+  const i = parseInt(Math.floor(Math.log(contentFileSize) / Math.log(k)));
+
+  return (
+    Math.round(100 * (contentFileSize / Math.pow(k, i))) / 100 + " " + sizes[i]
+  );
+};
+
 router.get("/media-display", fetchUser, async (req, res) => {
   try {
     const media = await Media.find({ user: req.user.id });
-    res.status(200).json({ media });
+    // Calculate the sum of all kiosk content file sizes
+    const totalFileSize = media.reduce((sum, kiosk) => {
+      const kioskContent = [kiosk] || [];
+      const contentFileSizeSum = kioskContent.reduce((contentSum, content) => {
+        return contentSum + (content.mediaContentFileSize || 0);
+      }, 0);
+
+      return sum + contentFileSizeSum;
+    }, 0);
+    const fileSize = convertBytes(totalFileSize);
+
+    res.status(200).json({ fileSize, media });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

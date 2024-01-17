@@ -7,7 +7,12 @@ const navigation = [
   { name: "Community", href: "#", current: false },
   { name: "Learn", href: "#", current: false },
   { name: "Pricing", href: "#", current: false },
-  { name: "Get Started", href: "http://localhost:5173/login", current: true, target: "_blank" },
+  {
+    name: "Get Started",
+    href: "http://localhost:5173/login",
+    current: true,
+    target: "_blank",
+  },
 ];
 
 function classNames(...classes) {
@@ -17,7 +22,7 @@ function classNames(...classes) {
 function Navbar() {
   return (
     <>
-      <Disclosure as="nav" className="bg-zinc-800 border-b border-zinc-700">
+      <Disclosure as="nav" className="bg-white">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -51,8 +56,8 @@ function Navbar() {
                           target={item.target}
                           className={classNames(
                             item.current
-                              ? " bg-gradient-to-r from-pink-600 to-pink-500 py-1.5 px-3 rounded-full active:scale-75 duration-150"
-                              : "text-gray-400 font-semibold hover:text-white",
+                              ? " bg-blue-600 text-white py-1.5 px-3 rounded-full active:scale-75 duration-150"
+                              : " font-semibold ",
                             "rounded-md px-3  font-medium"
                           )}
                           aria-current={item.current ? "page" : undefined}
@@ -67,7 +72,7 @@ function Navbar() {
             </div>
 
             <Disclosure.Panel className="">
-              <div className="space-y-1 px-2 pb-3 pt-2">
+              <div className=" shadow rounded-b w-full h-[50vh] space-y-1 px-2 pb-3 pt-2">
                 {navigation.map((item) => (
                   <Disclosure.Button
                     key={item.name}
@@ -76,7 +81,7 @@ function Navbar() {
                     className={classNames(
                       item.current
                         ? "bg-gray-900 text-white hidden"
-                        : "text-gray-400 font-semibold hover:text-white",
+                        : " font-semibold",
                       "block rounded-md px-3 py-2 text-base font-medium"
                     )}
                     aria-current={item.current ? "page" : undefined}
