@@ -31,7 +31,7 @@ function CreateKiosk() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center gap-4 text-black p-5 h-[100vh]">
+      <div className="flex flex-col justify-center items-center gap-4 text-black bg-white p-5 h-[100vh]">
         <form onSubmit={handleSaveClick}>
           <div className="mb-4 flex flex-row items-center gap-3">
             <h3 className="text-4xl">Let's pair your screen</h3>

@@ -164,7 +164,7 @@ function Media() {
     <>
       {publishOpen && (
         <>
-          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
               <div className="flex justify-between items-center p-4">
                 <h3>Select screens to start publishing your content</h3>
@@ -254,7 +254,7 @@ function Media() {
       )}
       {playlistOpen && (
         <>
-          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
               <div className="flex justify-center items-center p-4">
                 <h3 className="font-semibold text-xl">New Playlist</h3>
@@ -322,7 +322,7 @@ function Media() {
       )}
       {playlistContentOpen && (
         <>
-          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
               <div className="flex justify-center items-center p-4">
                 <h3 className="font-bold text-xl">Playlist</h3>
@@ -356,7 +356,7 @@ function Media() {
         </>
       )}
       <NavbarMain />
-      <div className="flex flex-col gap-4 p-5 h-[100vh] mt-4">
+      <div className="flex flex-col gap-4 bg-white text-black p-5 h-[100vh] mt-4">
         <div className="flex justify-between items-center gap-4 border-b-2 p-3 ">
           <div className="flex gap-4">
             <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">

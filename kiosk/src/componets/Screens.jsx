@@ -119,7 +119,7 @@ function Dashboard() {
     <>
       {groupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">New Group</h3>
@@ -156,7 +156,7 @@ function Dashboard() {
       )}
       {editGroupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">Rename group</h3>
@@ -194,7 +194,7 @@ function Dashboard() {
       )}
       {moveToGroupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] bg-black/30 p-4">
+          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">Move to Group</h3>
@@ -232,7 +232,7 @@ function Dashboard() {
         </>
       )}
       {editOpen && (
-        <div className="fixed top-[53px] flex w-full h-[93vh] bg-gray-100 overflow-scroll">
+        <div className="fixed top-[53px] flex w-full h-[93vh] text-black bg-gray-100 overflow-scroll">
           <nav className="fixed flex flex-col justify-start items-start gap-4 list-none bg-white w-[250px] h-full py-4 px-9">
             <li
               onClick={() => setEditOption("dashboard")}
@@ -337,7 +337,7 @@ function Dashboard() {
       )}
       <NavbarMain />
 
-      <div className=" bg-white">
+      <div className="text-black bg-white">
         <main className=" h-auto pt-14 ">
           <div className="flex justify-between items-center gap-2 bg-white w-full h-20 px-5 pb-14 pt-20">
             <div className="flex gap-4">

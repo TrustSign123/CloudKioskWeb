@@ -22,7 +22,7 @@ function classNames(...classes) {
 function Navbar() {
   return (
     <>
-      <Disclosure as="nav" className="bg-white">
+      <Disclosure as="nav" className="bg-black">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -48,7 +48,7 @@ function Navbar() {
                     />
                   </div>
                   <div className="hidden sm:ml-6 sm:block">
-                    <div className="flex space-x-4">
+                    <div className="flex items-center space-x-4">
                       {navigation.map((item) => (
                         <a
                           key={item.name}
