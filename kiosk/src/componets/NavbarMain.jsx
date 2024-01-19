@@ -21,7 +21,7 @@ function NavbarMain() {
   return (
     <>
       {" "}
-      <nav className="bg-white px-4 py-3.5  fixed left-0 right-0 top-0 z-50">
+      <nav className="bg-white px-4 py-3.5  fixed left-0 right-0 top-0 z-40">
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex justify-start items-center">
             <a className="flex items-center justify-between mr-4">
@@ -32,7 +32,7 @@ function NavbarMain() {
             </a>
             <ul className="flex justify-start items-center gap-4 text-black font-semibold">
               <Link to={"/screens"}>Screens</Link>
-              <Link to={"/test"}>Studio</Link>
+              <Link to={"/studio"}>Studio</Link>
               <Link to={"/media"}>Media</Link>
               {/* <Link to={"/over"}>Dashboard</Link> */}
             </ul>

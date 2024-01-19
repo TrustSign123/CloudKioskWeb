@@ -1,6 +1,7 @@
 import { useState } from "react";
 import KioskState from "./context/kiosk/KioskState";
 import { Route, Routes } from "react-router-dom";
+import "../src/App.css"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Home from "./componets/Home";
@@ -16,6 +17,8 @@ import MyProfile from "./componets/MyProfile";
 import AccountSettings from "./componets/AccountSettings";
 import Test from "./componets/Test";
 import Media from "./componets/Media";
+import Studio from "./componets/Studio";
+import Notification from "./componets/Notification";
 
 function App() {
   return (
@@ -31,6 +34,7 @@ function App() {
           pauseOnHover={false}
           theme="dark"
         />
+        <Notification />
         <>
           <Routes>
             <Route exact path="/" element={<Home />} />
@@ -40,8 +44,9 @@ function App() {
             <Route exact path="/sub" element={<Subscription />} />
             <Route exact path="/login" element={<LoginUser />} />
             <Route exact path="/screens" element={<Screens />} />
+            <Route exact path="/studio" element={<Studio />} />
             <Route exact path="/over" element={<Overview />} />
-            <Route exact path="/media" element={<Media/>} />
+            <Route exact path="/media" element={<Media />} />
             <Route exact path="/create-kiosk" element={<CreateKiosk />} />
             <Route exact path="/view" element={<ViewKiosk />} />
             <Route exact path="/admin" element={<Admin />} />

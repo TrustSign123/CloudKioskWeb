@@ -4,6 +4,7 @@ import "../banners/banner.css";
 import { ArrowRightCircle } from "react-bootstrap-icons";
 import "animate.css";
 import TrackVisibility from "react-on-screen";
+import { Link } from "react-router-dom";
 
 export const Banner = () => {
   const [loopNum, setLoopNum] = useState(0);
@@ -75,9 +76,11 @@ export const Banner = () => {
                       <span className="wrap text-blue">{text}</span>
                     </span>
                   </h1>
-                  <button>
-                    Let’s Connect <ArrowRightCircle size={25} />
-                  </button>
+                  <Link to={"/login"}>
+                    <button>
+                      Let’s Connect <ArrowRightCircle size={25} />
+                    </button>
+                  </Link>
                 </div>
               )}
             </TrackVisibility>
