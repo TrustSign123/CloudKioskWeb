@@ -513,7 +513,7 @@ function Dashboard() {
                     role="button"
                   >
                     <div className="flex-cols flex h-full items-center justify-center">
-                      Schedule a content
+                      {/* Schedule a content */} Coming soon
                     </div>
                   </div>
                 </div>
@@ -521,7 +521,84 @@ function Dashboard() {
             )}
             {editOption === "settings" && (
               <>
-                <div className="">Settings</div>
+                <div className="flex flex-row justify-center items-center gap-2 h-full ">
+                  <div className="flex flex-col gap-4 w-50 h-full bg-white rounded shadow-sm p-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-gray-500 text-sm">
+                        SCREEN NAME
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none"
+                        value={kioskName}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-gray-500 text-sm">
+                        SCREEN LOCATION
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none"
+                        value="Laxmi Nagar, Delhi, India"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-gray-500 text-sm">
+                        ORIENTATION
+                      </label>
+                      <div className=" flex flex-1 space-x-1.5">
+                        <div className="hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                          <span className="text-lg sm:text-2xl font-extrabold">
+                            0
+                          </span>
+                          <span className="text-xl">°</span>
+                        </div>
+                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150  flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                          <span className="text-lg sm:text-2xl font-extrabold">
+                            90
+                          </span>
+                          <span className="text-xl">°</span>
+                        </div>
+                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                          <span className="text-lg sm:text-2xl font-extrabold">
+                            180
+                          </span>
+                          <span className="text-xl">°</span>
+                        </div>
+                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150  flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                          <span className="text-lg sm:text-2xl font-extrabold">
+                            270
+                          </span>
+                          <span className="text-xl">°</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-4 w-50 h-full bg-white rounded shadow-sm p-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-gray-500 text-sm">
+                        INTERVAL (SECONDS)
+                      </label>
+                      <div className="flex gap-2">
+                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          name="interval"
+                          className="border-1 border-blue-600 h-10 w-full bg-transparent text-center align-middle outline-none"
+                          value={30}
+                        />
+                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </main>
@@ -712,7 +789,7 @@ function Dashboard() {
                   <h3 className="font-semibold">
                     {group.groupName}{" "}
                     <span className="text-sm font-light">
-                      {group.groupScreens.length} Screen
+                      {group.groupScreens.length || 0} Screen
                     </span>
                   </h3>
                 </div>
