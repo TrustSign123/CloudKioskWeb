@@ -158,7 +158,7 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const editKiosk = async (kioskName, orientation, id) => {
+  const editKiosk = async (kioskName, orientation, interval, kioskCode, id) => {
     setLoading(true);
     try {
       const response = await fetch(`${host}kioskMachine/kiosk/${id}`, {
@@ -170,6 +170,8 @@ const Kioskstate = (props) => {
         body: JSON.stringify({
           kioskName,
           orientation,
+          interval,
+          kioskCode,
         }),
       });
 
@@ -186,11 +188,12 @@ const Kioskstate = (props) => {
         if (element._id === id) {
           newkiosk[index].kioskName = kioskName;
           newkiosk[index].settings[0].orientation = orientation;
+          newkiosk[index].settings[0].interval = interval;
           break;
         }
       }
       setKiosks(newkiosk);
-      console.log(kiosks);
+      // console.log(kiosks);
       notify(`${json.message}`, "success");
 
       setLoading(false);

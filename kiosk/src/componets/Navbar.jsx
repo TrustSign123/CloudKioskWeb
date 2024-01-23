@@ -9,7 +9,7 @@ const navigation = [
   { name: "Pricing", href: "#", current: false },
   {
     name: "Get Started",
-    href: "http://localhost:5173/login",
+    href: "https://cloudkiosk.netlify.app/login",
     current: true,
     target: "_blank",
   },

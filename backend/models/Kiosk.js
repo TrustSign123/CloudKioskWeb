@@ -43,6 +43,9 @@ const KioskSchema = new Schema({
     type: String,
     require: true,
   },
+  androidId: {
+    type: String,
+  },
   settings: [KioskSettingsSchema],
   kioskContent: [KioskContentSchema],
   groupName: {

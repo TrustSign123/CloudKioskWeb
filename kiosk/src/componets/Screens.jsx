@@ -31,7 +31,10 @@ function Dashboard() {
   } = useContext(KioskContext);
 
   const [kioskName, setKioskName] = useState("");
+  const [orientation, setOrientation] = useState("0");
+  const [interval, setInterval] = useState(30);
   const [kioskId, setKioskId] = useState("");
+  const [kioskCode, setKioskCode] = useState(null);
   const [contents, setContents] = useState([]);
   const [groupOpen, setGroupOpen] = useState(false);
   const [moveToGroupOpen, setMoveToGroupOpen] = useState(false);
@@ -82,16 +85,16 @@ function Dashboard() {
 
   const handleEditOpen = (index) => {
     setKioskId(kiosks[index]._id);
+    setKioskCode(kiosks[index].kioskCode);
     setKioskName(kiosks[index].kioskName);
     setContents(kiosks[index].kioskContent);
+    setOrientation(kiosks[index].settings[0].orientation);
+    setInterval(kiosks[index].settings[0].interval);
     setEditOpen(true);
   };
 
   const handleEditKiosk = () => {
-    editKiosk(kioskName, kioskId);
-    setKioskName("");
-    setEditOpen(false);
-    setKioskId("");
+    editKiosk(kioskName, orientation, interval, kioskCode, kioskId);
   };
   const handleEditClose = () => {
     setKioskName("");
@@ -114,6 +117,18 @@ function Dashboard() {
   function handleDeleteClick(index) {
     deleteKiosk(kiosks[index]._id);
   }
+
+  const handleDecrease = () => {
+    if (interval - 5 >= 0) {
+      setInterval(interval - 5);
+    }
+  };
+
+  const handleIncrease = () => {
+    if (interval + 5 <= 60) {
+      setInterval(interval + 5);
+    }
+  };
 
   return (
     <>
@@ -270,26 +285,38 @@ function Dashboard() {
           <main className="w-full h-full p-4">
             {editOption === "dashboard" && (
               <>
-                <div className="flex items-center w-full h-20 font-sans  bg-white rounded shadow-md p- mb-4">
+                <div className="flex items-center w-full h-20 font-sans  bg-white rounded shadow-md mb-4">
                   <div className="flex flex-col gap-1 border-r border-gray-300 px-4">
-                    <h3 className="text-sm">STATUS</h3>
-                    <h3 className="font-bold text-lg text-yellow-600">
+                    <div className=" text-xs uppercase text-gray-700 tracking-widest">
+                      Status
+                    </div>
+                    <h3 className="font-bold uppercase tracking-widest text-yellow-600">
                       ONLINE
                     </h3>
                   </div>
                   <div className="flex flex-col gap-1 border-r border-gray-300 px-4">
-                    <h3 className="text-sm">GROUP</h3>
-                    <h3 className="font-bold text-lg">NONE</h3>
+                    <h3 className="text-xs uppercase text-gray-700 tracking-widest">
+                      GROUP
+                    </h3>
+                    <h3 className="uppercase tracking-widest font-bold">
+                      NONE
+                    </h3>
                   </div>
                   <div className="flex flex-col items-center gap-1 border-r border-gray-300 px-4">
-                    <h3 className="text-sm">MEDIA</h3>
-                    <h3 className="font-bold text-lg">
+                    <h3 className="text-xs uppercase text-gray-700 tracking-widest">
+                      MEDIA
+                    </h3>
+                    <h3 className="uppercase tracking-widest font-bold">
                       {contents.length || "0"}
                     </h3>
                   </div>
                   <div className="flex flex-col gap-1 px-4">
-                    <h3 className="text-sm">DEVICE</h3>
-                    <h3 className="font-bold text-lg">ANDROID</h3>
+                    <h3 className="text-xs uppercase text-gray-700 tracking-widest">
+                      DEVICE
+                    </h3>
+                    <div className="uppercase tracking-widest font-bold">
+                      Android
+                    </div>
                   </div>
                 </div>
               </>
@@ -521,21 +548,30 @@ function Dashboard() {
             )}
             {editOption === "settings" && (
               <>
+                <div className="flex justify-end items-center p-2">
+                  {" "}
+                  <button
+                    onClick={handleEditKiosk}
+                    className="flex justify-center items-center bg-blue-600 hover:bg-blue-700  text-white rounded py-2.5 px-3"
+                  >
+                    Save changes
+                  </button>
+                </div>
                 <div className="flex flex-row justify-center items-center gap-2 h-full ">
                   <div className="flex flex-col gap-4 w-50 h-full bg-white rounded shadow-sm p-4">
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm">
+                      <label className="text-gray-500 text-sm uppercase tracking-widest">
                         SCREEN NAME
                       </label>
                       <input
                         type="text"
-                        name="name"
                         className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none"
                         value={kioskName}
+                        onChange={(e) => setKioskName(e.target.value)}
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm">
+                      <label className="text-gray-500 text-sm uppercase tracking-widest">
                         SCREEN LOCATION
                       </label>
                       <input
@@ -546,29 +582,49 @@ function Dashboard() {
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm">
+                      <label className="text-gray-500 text-sm uppercase tracking-widest">
                         ORIENTATION
                       </label>
-                      <div className=" flex flex-1 space-x-1.5">
-                        <div className="hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                      <div className="flex flex-1 space-x-1.5">
+                        <div
+                          onClick={() => setOrientation("0")}
+                          className={`${
+                            orientation === "0" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                        >
                           <span className="text-lg sm:text-2xl font-extrabold">
                             0
                           </span>
                           <span className="text-xl">°</span>
                         </div>
-                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150  flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                        <div
+                          onClick={() => setOrientation("90")}
+                          className={`${
+                            orientation === "90" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                        >
                           <span className="text-lg sm:text-2xl font-extrabold">
                             90
                           </span>
                           <span className="text-xl">°</span>
                         </div>
-                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                        <div
+                          onClick={() => setOrientation("180")}
+                          className={`${
+                            orientation === "180" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                        >
                           <span className="text-lg sm:text-2xl font-extrabold">
                             180
                           </span>
                           <span className="text-xl">°</span>
                         </div>
-                        <div className="opacity-25 hover:opacity-100 cursor-pointer transition-opacity duration-150  flex flex-1 items-center justify-center border border-gray-900 rounded p-1">
+                        <div
+                          onClick={() => setOrientation("270")}
+                          className={`${
+                            orientation === "270" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                        >
                           <span className="text-lg sm:text-2xl font-extrabold">
                             270
                           </span>
@@ -579,20 +635,26 @@ function Dashboard() {
                   </div>
                   <div className="flex flex-col gap-4 w-50 h-full bg-white rounded shadow-sm p-4">
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm">
+                      <label className="text-gray-500 text-sm uppercase tracking-widest">
                         INTERVAL (SECONDS)
                       </label>
                       <div className="flex gap-2">
-                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                        <button
+                          onClick={handleDecrease}
+                          className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
+                        >
                           -
                         </button>
                         <input
                           type="text"
-                          name="interval"
                           className="border-1 border-blue-600 h-10 w-full bg-transparent text-center align-middle outline-none"
-                          value={30}
+                          value={interval}
+                          disabled
                         />
-                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                        <button
+                          onClick={handleIncrease}
+                          className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
+                        >
                           +
                         </button>
                       </div>

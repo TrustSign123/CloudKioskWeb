@@ -1,5 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import KioskContext from "../context/kiosk/kioskContext";
+import NavbarMain from "./NavbarMain";
 
 function CreateKiosk() {
   const { createKiosk, loading } = useContext(KioskContext);
@@ -31,8 +32,9 @@ function CreateKiosk() {
 
   return (
     <>
+      <NavbarMain />
       <div className="flex flex-col justify-center items-center gap-4 text-black bg-white p-5 h-[100vh]">
-        <form onSubmit={handleSaveClick}>
+        <form onSubmit={handleSaveClick} className="">
           <div className="mb-4 flex flex-row items-center gap-3">
             <h3 className="text-4xl">Let's pair your screen</h3>
           </div>

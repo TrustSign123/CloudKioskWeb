@@ -1,13 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
+import { FeedbackFish } from "@feedback-fish/react";
 
 function NavbarMain() {
-  const {
-    logout,
-
-    userProfile,
-  } = useContext(KioskContext);
+  const { logout, userProfile } = useContext(KioskContext);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const handleProfileOpen = () => {
@@ -39,6 +36,11 @@ function NavbarMain() {
           </div>
 
           <div className="flex items-center lg:order-2">
+            <FeedbackFish projectId={userProfile._id}>
+              <button className=" tracking-widest text-black font-semibold hover:underline duration-150">
+                Send feedback
+              </button>
+            </FeedbackFish>
             <button
               type="button"
               className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 "

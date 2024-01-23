@@ -5,18 +5,6 @@ const KioskCode = require("../models/KioskCode");
 const fetchUser = require("../middleware/fetchuser");
 const checkSubscription = require("../middleware/checkSubscription");
 
-const convertBytes = (contentFileSize) => {
-  if (contentFileSize === 0) return "0 Bytes";
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-
-  const i = parseInt(Math.floor(Math.log(contentFileSize) / Math.log(k)));
-
-  return (
-    Math.round(100 * (contentFileSize / Math.pow(k, i))) / 100 + " " + sizes[i]
-  );
-};
-
 // Function to generate a unique Kiosk code
 function generateUniqueKioskCode() {
   const characters =
@@ -87,7 +75,6 @@ router.get("/get-kiosk", fetchUser, async (req, res) => {
   try {
     const kiosks = await Kiosk.find({ user: req.user.id });
 
-    // Send the total file size in the response
     res.json({ kiosks });
   } catch (error) {
     console.error(error);
@@ -103,13 +90,15 @@ router.post("/kiosk", fetchUser, async (req, res) => {
 
     // Find the KioskCode document with the provided code
     const kioskCodeDocument = await KioskCode.findOne({ KioskCode: kioskCode });
+    const kiosks = await Kiosk.find({ user: req.user.id });
 
     if (kioskCodeDocument && !kioskCodeDocument.status) {
       // Create a new Kiosk document
       const newKiosk = new Kiosk({
         user: req.user.id,
-        kioskName: "Cloud Screen",
+        kioskName: `Cloud Screen ${kiosks.length + 1}`,
         kioskCode: kioskCode,
+        androidId: kioskCodeDocument.androidId,
         settings: [{ orientation: "0", interval: "30", transition: true }],
       });
 
@@ -143,9 +132,12 @@ router.put("/kiosk/:id", async (req, res) => {
     const kioskId = req.params.id;
     const kioskName = req.body.kioskName;
     const orientation = req.body.orientation;
+    const interval = req.body.interval;
+    const kioskCode = req.body.kioskCode;
 
     // Find the Kiosk document by ID
     const kiosk = await Kiosk.findById(kioskId);
+    const kioskCodeData = await KioskCode.findOne({ KioskCode: kioskCode });
 
     if (!kiosk) {
       res.status(404).json({ message: "Kiosk not found" });
@@ -155,9 +147,15 @@ router.put("/kiosk/:id", async (req, res) => {
       }
       if (orientation) {
         kiosk.settings[0].orientation = orientation;
+        kioskCodeData.settings[0].orientation = orientation;
+      }
+      if (interval) {
+        kiosk.settings[0].interval = interval;
+        kioskCodeData.settings[0].interval = interval;
       }
 
       await kiosk.save();
+      await kioskCodeData.save();
       res.status(200).json({ message: "Kiosk updated successfully" });
     }
   } catch (error) {
