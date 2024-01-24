@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 const Kioskstate = (props) => {
-  // const host = "http://localhost:5000/api/";
-  const host = "https://cloudkiosk-2-0.onrender.com/api/";
+  const host = "http://localhost:5000/api/";
+  // const host = "https://cloudkiosk-2-0.onrender.com/api/";
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);

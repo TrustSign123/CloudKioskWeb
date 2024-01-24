@@ -3,7 +3,8 @@ import kioskIcon from "./asstes/kiosk.png";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
 import "react-tooltip/dist/react-tooltip.css";
-
+import { RangeDatePicker } from "react-google-flight-datepicker";
+import "react-google-flight-datepicker/dist/main.css";
 import {
   ContextMenu,
   MenuItem,
@@ -43,6 +44,7 @@ function Dashboard() {
   const [groupId, setGroupId] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const [editOption, setEditOption] = useState("dashboard");
+  const [schedule, setSchedule] = useState(false);
 
   useEffect(() => {
     profile();
@@ -52,6 +54,10 @@ function Dashboard() {
 
   const handleGroupOpen = () => {
     setGroupOpen(!groupOpen);
+  };
+
+  const handleScheduleOpen = () => {
+    setSchedule(!schedule);
   };
 
   const handleEditGroupOpen = (index) => {
@@ -351,6 +357,66 @@ function Dashboard() {
             )}
             {editOption === "schedule" && (
               <>
+                {schedule && (
+                  <>
+                    <div className="fixed w-[81%] h-[85%] flex flex-col gap-2 bg-white z-50 rounded-sm shadow-sm overflow-scroll">
+                      <div className="p-2">
+                        <button
+                          onClick={handleScheduleOpen}
+                          className="text-white bg-blue-600 hover:bg-blue-700 rounded-sm py-1.5 px-4"
+                        >
+                          Back
+                        </button>
+                      </div>
+                      <div className="">
+                        <div className="w-full h-[300px] bg-white shadow-sm p-2">
+                          <div className="flex flex-col justify-between  p-2">
+                            <div className="flex justify-between items-center p-2">
+                              <h3 className="font-semibold text-xl">Content</h3>
+                              <button className="text-white bg-blue-600 hover:bg-blue-700 rounded py-1.5 px-3">
+                                Add Content
+                              </button>
+                            </div>
+                            <div className="flex flex-col justify-center items-center gap-2 w-full h-[220px] bg-gray-100 rounded">
+                              <h3 className="font-semibold text-gray-600">
+                                You haven’t chosen any content yet
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="w-full h-[300px] bg-white shadow-sm p-2">
+                          <div className="flex flex-col justify-between  p-2">
+                            <div className="flex justify-between items-center p-2">
+                              <h3 className="font-semibold text-xl">
+                                Schedule
+                              </h3>
+                            </div>
+                            <div className="flex flex-col justify-start items-start gap-2 w-full h-[220px] bg-white">
+                              <div className="w-full">
+                              <RangeDatePicker
+                                startDate={new Date()}
+                                endDate={new Date()}
+                                onChange={(startDate, endDate) => {
+                                  onDateChange(startDate, endDate);
+                                  startDatePlaceholder = `${startDate}`;
+                                  endDatePlaceholder = `${endDate}`;
+                                }}
+                                minDate={new Date(1900, 0, 1)}
+                                maxDate={new Date(2100, 0, 1)}
+                                dateFormat="D"
+                                monthFormat="MMM YYYY"
+                                disabled={false}
+                                className=""
+                                startWeekDay="monday"
+                              />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div className="flex flex-col justify-center items-center h-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -539,7 +605,10 @@ function Dashboard() {
                     className="inline-block h-12 py-3 px-4 font-semibold select-none whitespace-nowrap rounded leading-none focus:shadow-lg focus:outline-none text-white bg-purple-600 hover:bg-purple-700 "
                     role="button"
                   >
-                    <div className="flex-cols flex h-full items-center justify-center">
+                    <div
+                      onClick={handleScheduleOpen}
+                      className="flex-cols flex h-full items-center justify-center"
+                    >
                       {/* Schedule a content */} Coming soon
                     </div>
                   </div>
