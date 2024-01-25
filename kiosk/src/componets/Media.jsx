@@ -537,9 +537,9 @@ function Media() {
                   className="w-full h-[200px] rounded-t-lg"
                 />
                 <div className="flex justify-between p-2">
-                  <div>
+                  <div className="overflow-hidden">
                     <h3
-                      className="font-semibold overflow-hidden line-clamp-1"
+                      className="font-semibold  line-clamp-1"
                       style={{ fontSize: "0.8rem" }}
                     >
                       {media.mediaContentFileName}

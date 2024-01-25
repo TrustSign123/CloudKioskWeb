@@ -45,6 +45,8 @@ function Dashboard() {
   const [editOpen, setEditOpen] = useState(false);
   const [editOption, setEditOption] = useState("dashboard");
   const [schedule, setSchedule] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
     profile();
@@ -102,11 +104,6 @@ function Dashboard() {
   const handleEditKiosk = () => {
     editKiosk(kioskName, orientation, interval, kioskCode, kioskId);
   };
-  const handleEditClose = () => {
-    setKioskName("");
-    setEditOpen(false);
-    setKioskId("");
-  };
 
   const handleMonuseClick = (e) => {
     const x = e.clientX;
@@ -134,6 +131,11 @@ function Dashboard() {
     if (interval + 5 <= 60) {
       setInterval(interval + 5);
     }
+  };
+
+  const onDateChange = (startDate, endDate) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
 
   return (
@@ -377,14 +379,14 @@ function Dashboard() {
                                 Add Content
                               </button>
                             </div>
-                            <div className="flex flex-col justify-center items-center gap-2 w-full h-[220px] bg-gray-100 rounded">
+                            <div className="flex flex-col justify-center items-center gap-2 w-full h-[220px] bg-gray-50 rounded">
                               <h3 className="font-semibold text-gray-600">
                                 You haven’t chosen any content yet
                               </h3>
                             </div>
                           </div>
                         </div>
-                        <div className="w-full h-[300px] bg-white shadow-sm p-2">
+                        <div className="w-full h-[300px] bg-white p-2">
                           <div className="flex flex-col justify-between  p-2">
                             <div className="flex justify-between items-center p-2">
                               <h3 className="font-semibold text-xl">
@@ -393,24 +395,33 @@ function Dashboard() {
                             </div>
                             <div className="flex flex-col justify-start items-start gap-2 w-full h-[220px] bg-white">
                               <div className="w-full">
-                              <RangeDatePicker
-                                startDate={new Date()}
-                                endDate={new Date()}
-                                onChange={(startDate, endDate) => {
-                                  onDateChange(startDate, endDate);
-                                  startDatePlaceholder = `${startDate}`;
-                                  endDatePlaceholder = `${endDate}`;
-                                }}
-                                minDate={new Date(1900, 0, 1)}
-                                maxDate={new Date(2100, 0, 1)}
-                                dateFormat="D"
-                                monthFormat="MMM YYYY"
-                                disabled={false}
-                                className=""
-                                startWeekDay="monday"
-                              />
+                                <div className="flex justify-between w-[320px] p-2">
+                                  <h3>Start Date</h3>
+                                  <h3>End Date</h3>
+                                </div>
+                                <RangeDatePicker
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  onChange={(startDate, endDate) =>
+                                    onDateChange(startDate, endDate)
+                                  }
+                                  minDate={new Date(1900, 0, 1)}
+                                  maxDate={new Date(2100, 0, 1)}
+                                  dateFormat="DD/MM/YYYY"
+                                  monthFormat="MMMM - YYYY"
+                                  startDatePlaceholder="-- / -- / ----"
+                                  endDatePlaceholder="-- / -- / ----"
+                                  disabled={false}
+                                  className="w-[500px] text-gray-500 text-2xl"
+                                  startWeekDay="monday"
+                                  highlightToday={true}
+                                />
                               </div>
                             </div>
+
+                            <button className="fixed right-10 bottom-10 bg-blue-600 hover:bg-blue-700 text-white rounded-sm py-2.5 px-3">
+                              Publish
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -961,38 +972,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-{
-  /* <div className="p-4 md:p-5 text-center">
-                <div className="flex flex-col justify-center items-center gap-3 rounded-lg ">
-                  {" "}
-                  <input
-                    className="text-sm bg-slate-200 hover:bg-slate-300 w-50 p-1 px-2 rounded"
-                    type="text"
-                    placeholder={kioskName}
-                    value={kioskName}
-                    onChange={(e) => setKioskName(e.target.value)}
-                  />
-                </div>
-
-               
-
-                <button
-                  onClick={handleEditKiosk}
-                  data-modal-hide="popup-modal"
-                  type="button"
-                  className="mb-2 bg-slate-200 hover:bg-slate-300  font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
-                >
-                  Save{" "}
-                </button>
-
-                <button
-                  onClick={handleEditClose}
-                  data-modal-hide="popup-modal"
-                  type="button"
-                  className="  bg-slate-200 hover:bg-slate-300  font-medium rounded text-sm inline-flex items-center px-4 py-2.5 text-center me-2"
-                >
-                  Close
-                </button>
-              </div> */
-}
