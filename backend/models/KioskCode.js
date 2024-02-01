@@ -15,6 +15,18 @@ const KioskContentSchema = new Schema({
   },
 });
 
+const KioskScheduleSchema = new Schema({
+  kioskContent: [KioskContentSchema],
+  startDate: {
+    type: String,
+    default: "DD/MM/YYYY",
+  },
+  endDate: {
+    type: String,
+    default: "DD/MM/YYYY",
+  },
+});
+
 const KioskSettingsSchema = new Schema({
   orientation: {
     type: String,
@@ -48,6 +60,7 @@ const KioskCodeSchema = new Schema({
     default: false,
   },
   kioskContent: [KioskContentSchema],
+  kioskSchedule: [KioskScheduleSchema],
   date: {
     type: Date,
     default: Date.now,

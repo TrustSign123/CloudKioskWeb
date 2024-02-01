@@ -286,11 +286,17 @@ function Media() {
                       }`}
                       onClick={() => handleImageClick(index)}
                     >
-                      <img
-                        src={media.mediaContent}
-                        className="w-full h-[200px] rounded"
-                        alt={`Media ${index}`}
-                      />
+                      {media.mediaContentFileType.startsWith("image") ? (
+                        <img
+                          src={media.mediaContent}
+                          className="w-full h-[200px] rounded"
+                        />
+                      ) : (
+                        <video
+                          src={media.mediaContent}
+                          className="w-full h-[200px] rounded"
+                        />
+                      )}
                       {selectedMedia.includes(media.mediaContent) && (
                         <div className="absolute top-0 right-0 text-green-500">
                           &#10004;
@@ -333,10 +339,20 @@ function Media() {
                     className={` bg-white w-full rounded  
                     }`}
                   >
-                    <img
-                      src={content.playlistContent}
-                      className="w-full h-[100px]"
-                    />
+                    {["image/jpeg", "image/png", "image/gif"].includes(
+                      content.playlistContentFileType
+                    ) && (
+                      <img
+                        src={content.playlistContent}
+                        className="w-full h-[100px]"
+                      />
+                    )}
+                    {content.playlistContentFileType === "video/mp4" && (
+                      <video
+                        src={content.playlistContent}
+                        className="w-full h-[100px]"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -470,11 +486,22 @@ function Media() {
             >
               <div className="grid grid-cols-2 gap-2">
                 {playlist.playlistContent.slice(0, 3).map((imageSrc, index) => (
-                  <img
-                    key={index}
-                    src={imageSrc.playlistContent}
-                    className="w-full h-[100px] rounded"
-                  />
+                  <>
+                    {["image/jpeg", "image/png", "image/gif"].includes(
+                      imageSrc.playlistContentFileType
+                    ) && (
+                      <img
+                        src={imageSrc.playlistContent}
+                        className="w-full h-[100px] rounded"
+                      />
+                    )}
+                    {imageSrc.playlistContentFileType === "video/mp4" && (
+                      <video
+                        src={imageSrc.playlistContent}
+                        className="w-full h-[100px] rounded"
+                      />
+                    )}
+                  </>
                 ))}
                 <div className="flex justify-center items-center w-full h-[100px] rounded bg-gray-500 text-white text-xl font-semibold">
                   {playlist.playlistContent.length - 3}
@@ -532,10 +559,27 @@ function Media() {
                 key={media._id}
                 className="w-[300px] bg-white shadow-sm rounded-lg cursor-pointer"
               >
-                <img
-                  src={media.mediaContent}
-                  className="w-full h-[200px] rounded-t-lg"
-                />
+                {media.mediaContentFileType.startsWith("image/") ? (
+                  <img
+                    src={media.mediaContent}
+                    className="w-full h-[200px] rounded-t-lg"
+                  />
+                ) : media.mediaContentFileType.startsWith("video/") ? (
+                  <video
+                    width="100%"
+                    height="200"
+                    className="w-full h-[200px] rounded-t-lg"
+                  >
+                    <source
+                      src={media.mediaContent}
+                      type={media.mediaContentFileType}
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  // You can handle other types (e.g., documents) or fallback logic here
+                  <p>Unsupported media type</p>
+                )}
                 <div className="flex justify-between p-2">
                   <div className="overflow-hidden">
                     <h3

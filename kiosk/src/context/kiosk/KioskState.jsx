@@ -566,6 +566,69 @@ const Kioskstate = (props) => {
     }
   };
 
+  const scheduleKioskContent = async (
+    kioskCode,
+    kioskContent,
+    kioskContentType,
+    startDate,
+    endDate
+  ) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}schedule/schedule/${kioskCode}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          kioskContent,
+          kioskContentType,
+          startDate,
+          endDate,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`Failed to publish`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const json = await response.json();
+
+      setLoading(false);
+      notify("add Successful", "success");
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
+  const deleteScheduleKioskContent = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${host}schedule/schedule/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        notify(`Failed to delete this content`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setLoading(false);
+
+      notify("delete Successful", "success");
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     profile();
     fetchKiosk();
@@ -605,6 +668,8 @@ const Kioskstate = (props) => {
         fetchPlaylist,
         createPlaylist,
         deletePlaylist,
+        scheduleKioskContent,
+        deleteScheduleKioskContent,
       }}
     >
       {props.children}

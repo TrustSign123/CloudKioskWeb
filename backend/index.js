@@ -17,6 +17,7 @@ connectToMongo()
     app.use("/api/subscription", require("./routes/subscription"));
     app.use("/api/kioskMachine", require("./routes/kiosk"));
     app.use("/api/media", require("./routes/media"));
+    app.use("/api/schedule", require("./routes/kioskSchedule"));
     app.use("/api/group", require("./routes/group"));
     app.use("/api/offlineMode", require("./routes/offlineKiosk"));
 

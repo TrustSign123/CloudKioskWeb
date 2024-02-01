@@ -54,6 +54,7 @@ router.post("/kiosk-code", async (req, res) => {
         androidId: kioskCode.androidId,
         kioskContent: [],
         settings: [],
+        kioskSchedule: [],
       });
     } else {
       res.status(200).json({
@@ -62,6 +63,7 @@ router.post("/kiosk-code", async (req, res) => {
         androidId: existingCode.androidId,
         kioskContent: existingCode.kioskContent,
         settings: existingCode.settings,
+        kioskSchedule: existingCode.kioskSchedule,
       });
     }
   } catch (error) {
