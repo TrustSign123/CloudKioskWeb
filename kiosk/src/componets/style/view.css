@@ -12,6 +12,15 @@
 }
 
 .file-dics {
-
   width: 300px;
+}
+
+.sm-hide {
+  visibility: visible;
+}
+
+@media (max-width: 640px) {
+  .sm-hide {
+    visibility: hidden;
+  }
 }

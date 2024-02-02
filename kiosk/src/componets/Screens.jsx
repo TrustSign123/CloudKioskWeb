@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import kioskIcon from "./asstes/kiosk.png";
+import "./style/view.css";
 import { Link } from "react-router-dom";
 import KioskContext from "../context/kiosk/kioskContext";
 import "react-tooltip/dist/react-tooltip.css";
@@ -211,7 +212,7 @@ function Dashboard() {
     <>
       {groupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
+          <div className=" fixed flex justify-center md:items-center sm:items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">New Group</h3>
@@ -248,7 +249,7 @@ function Dashboard() {
       )}
       {editGroupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
+          <div className="fixed flex justify-center md:items-center sm:items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">Rename group</h3>
@@ -286,7 +287,7 @@ function Dashboard() {
       )}
       {moveToGroupOpen && (
         <>
-          <div className="fixed flex justify-center items-center w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
+          <div className="fixed flex justify-center md:items-center sm:items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
             <div className="flex flex-col justify-between  bg-white w-[400px] h-[250px] shadow-sm rounded p-4">
               <div className="flex  justify-center items-center">
                 <h3 className="font-semibold text-2xl">Move to Group</h3>
@@ -385,6 +386,14 @@ function Dashboard() {
                     </h3>
                     <h3 className="uppercase tracking-widest font-bold">
                       {contents.length || "0"}
+                    </h3>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 border-r border-gray-300 px-4">
+                    <h3 className="text-xs uppercase text-gray-700 tracking-widest">
+                      SCHEDULE
+                    </h3>
+                    <h3 className="uppercase tracking-widest font-bold">
+                      {kioskSchedule.length || "0"}
                     </h3>
                   </div>
                   <div className="flex flex-col gap-1 px-4">
@@ -1083,7 +1092,7 @@ function Dashboard() {
             {kiosks.map((kiosk, index) => (
               <div
                 key={kiosk._id}
-                className="flex flex-row justify-between items-center text-black bg-white rounded p-6 w-full h-20 cursor-pointer"
+                className="flex flex-row justify-between items-center text-black bg-white rounded p-6 w-full h-20 cursor-pointer overflow-hidden"
               >
                 <div className="flex flex-row justify-between items-center gap-4 w-50">
                   <div className="flex items-center gap-4">
@@ -1118,14 +1127,20 @@ function Dashboard() {
                         ></path>
                       </svg>
                     </div>
-                    <h3 className="font-semibold">{kiosk.kioskName}</h3>
+                    <h3 className="text-xs sm:text-sm font-semibold sm:w-full w-[100px]">
+                      {kiosk.kioskName}
+                    </h3>
                   </div>
 
-                  <h3 className="text-sm text-gray-400">{kiosk.kioskCode}</h3>
-                  <h3 className="text-sm text-gray-400">
+                  <h3 className="text-xs sm:text-sm text-gray-400">
+                    {kiosk.kioskCode}
+                  </h3>
+                  <h3 className="sm-hide text-sm text-gray-400">
                     Laxmi Nagar, Delhi, India
                   </h3>
-                  <h3 className="text-sm text-gray-400">Active just now</h3>
+                  <h3 className="sm-hide text-sm text-gray-400">
+                    Active just now
+                  </h3>
                 </div>
 
                 <div className="flex flex-row items-center ">

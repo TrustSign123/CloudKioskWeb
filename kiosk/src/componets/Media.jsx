@@ -165,7 +165,7 @@ function Media() {
       {publishOpen && (
         <>
           <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
-            <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
+            <div className="bg-white md:w-50 h-[500px] shadow-sm rounded mt-3">
               <div className="flex justify-between items-center p-4">
                 <h3>Select screens to start publishing your content</h3>
                 <div className="relative">
@@ -255,7 +255,7 @@ function Media() {
       {playlistOpen && (
         <>
           <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
-            <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
+            <div className="bg-white md:w-2/4 sm:w-full  md:h-[500px] sm:h-[450px] shadow-sm rounded mt-3">
               <div className="flex justify-center items-center p-4">
                 <h3 className="font-semibold text-xl">New Playlist</h3>
               </div>
@@ -275,7 +275,7 @@ function Media() {
                 >
                   All
                 </button>
-                <div className="grid grid-cols-3 gap-2 py-4">
+                <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-2 py-4">
                   {media.map((media, index) => (
                     <div
                       key={media._id}
@@ -328,12 +328,12 @@ function Media() {
       )}
       {playlistContentOpen && (
         <>
-          <div className="fixed flex justify-center items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
-            <div className="bg-white w-50 h-[500px] shadow-sm rounded ">
+          <div className="fixed flex justify-center md:items-center sm:items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
+            <div className="bg-white md:w-2/4 sm:w-full h-[500px]  shadow-sm rounded">
               <div className="flex justify-center items-center p-4">
                 <h3 className="font-bold text-xl">Playlist</h3>
               </div>
-              <div className="grid grid-cols-4 gap-2 p-4 h-[350px] overflow-scroll">
+              <div className="grid md:grid-cols-4 sm:grid-cols-3  gap-2 p-4 h-[350px] overflow-scroll">
                 {playlistContent.map((content, index) => (
                   <div
                     className={` bg-white w-full rounded  
@@ -373,7 +373,7 @@ function Media() {
       )}
       <NavbarMain />
       <div className="flex flex-col gap-4 bg-white text-black p-5 h-[100vh] mt-4">
-        <div className="flex justify-between items-center gap-4 border-b-2 p-3 ">
+        <div className="flex md:flex-row sm:flex-col justify-between items-center gap-4 border-b-2 p-3 ">
           <div className="flex gap-4">
             <div className="flex justify-around items-center w-[300px] h-20 shadow-md rounded">
               <div className="bg-blue-200 rounded-full p-3">
@@ -478,7 +478,7 @@ function Media() {
             />
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-2 py-4">
+        <div className="grid md:grid-cols-4 sm:grid-cols-1 gap-2 py-4">
           {playlists.map((playlist, index) => (
             <div
               key={playlist._id}
@@ -562,7 +562,7 @@ function Media() {
                 {media.mediaContentFileType.startsWith("image/") ? (
                   <img
                     src={media.mediaContent}
-                    className="w-full h-[200px] rounded-t-lg"
+                    className="w-full h-[200px] rounded-t-lg object-cover"
                   />
                 ) : media.mediaContentFileType.startsWith("video/") ? (
                   <video

@@ -15,6 +15,16 @@ function NavbarMain() {
     logout();
   };
 
+  window.Intercom("boot", {
+    api_base: "https://api-iam.intercom.io",
+    app_id: "cqq3xzds",
+    name: userProfile.name, // Full name
+    email: userProfile.email, // the email for your user
+    created_at: userProfile.date, // Signup date as a Unix timestamp
+  });
+
+  window.Intercom("update");
+
   return (
     <>
       {" "}

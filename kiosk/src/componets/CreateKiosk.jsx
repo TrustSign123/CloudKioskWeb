@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef } from "react";
 import KioskContext from "../context/kiosk/kioskContext";
 import NavbarMain from "./NavbarMain";
+import { Link } from "react-router-dom";
 
 function CreateKiosk() {
   const { createKiosk, loading } = useContext(KioskContext);
@@ -53,12 +54,20 @@ function CreateKiosk() {
               />
             ))}
           </div>
-          <button
-            type="submit"
-            className="flex justify-center items-center text-white text-sm bg-blue-600 hover:bg-blue-700 py-2.5 px-5 rounded"
-          >
-            Continue
-          </button>
+          <div className="flex justify-between">
+            <Link
+              to={"/screens"}
+              className="flex justify-center items-center text-sm border hover:bg-gray-50 py-2.5 px-5 rounded cursor-pointer"
+            >
+              Back
+            </Link>
+            <button
+              type="submit"
+              className="flex justify-center items-center text-white text-sm bg-blue-600 hover:bg-blue-700 py-2.5 px-5 rounded"
+            >
+              Continue
+            </button>
+          </div>
         </form>
       </div>
     </>

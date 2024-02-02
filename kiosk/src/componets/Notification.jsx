@@ -10,7 +10,7 @@ function Notification() {
           onClick={() => setNotiHide(true)}
         >
           <h3 className="text-black text-xl ">
-            🌟 Welcome to TrustSign CMS Beta Version - 1.1.0 🌟
+            🌟 Welcome to TrustSign CMS Beta Version - 1.2.0 🌟
           </h3>
         </div>
       )}
