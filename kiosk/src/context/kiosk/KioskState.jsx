@@ -483,6 +483,58 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
+  const moveToGroup = async (groupId, kioskId) => {
+    try {
+      const response = await fetch(`${host}group/move-to-group`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          groupId,
+          kioskId,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      notify(`${json.message}`, "success");
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const ungroup = async (groupId, kioskId) => {
+    try {
+      const response = await fetch(`${host}group/ungroup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({
+          groupId,
+          kioskId,
+        }),
+      });
+
+      if (!response.ok) {
+        notify(`${response.statusText}`, "error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      notify(`${json.message}`, "success");
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchPlaylist = async () => {
     setLoading(true);
@@ -665,6 +717,8 @@ const Kioskstate = (props) => {
         createGroup,
         editGroup,
         deleteGroup,
+        moveToGroup,
+        ungroup,
         fetchPlaylist,
         createPlaylist,
         deletePlaylist,

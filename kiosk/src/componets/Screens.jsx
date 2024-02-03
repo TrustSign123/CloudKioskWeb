@@ -39,6 +39,8 @@ function Dashboard() {
     createGroup,
     editGroup,
     deleteGroup,
+    moveToGroup,
+    ungroup,
     deletePublishContent,
     media,
     scheduleKioskContent,
@@ -54,6 +56,7 @@ function Dashboard() {
   const [contents, setContents] = useState([]);
   const [kioskSchedule, setKioskSchedule] = useState([]);
   const [groupOpen, setGroupOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState([]);
   const [moveToGroupOpen, setMoveToGroupOpen] = useState(false);
   const [editGroupOpen, setEditGroupOpen] = useState(false);
   const [groupName, setGroupName] = useState(null);
@@ -73,6 +76,8 @@ function Dashboard() {
     fetchKiosk();
     fetchGroups();
   }, []);
+
+  // console.log(groupId, kioskId)
 
   const handleGroupOpen = () => {
     setGroupOpen(!groupOpen);
@@ -101,6 +106,17 @@ function Dashboard() {
 
   const handleMoveToGroupOpen = () => {
     setMoveToGroupOpen(!moveToGroupOpen);
+  };
+
+  const handleMoveToGroup = () => {
+    moveToGroup(groupId, kioskId);
+    handleMoveToGroupOpen();
+    setGroupId(null);
+    setKioskId(null);
+  };
+
+  const handleUngroup = (groupId, kioskId) => {
+    ungroup(groupId, kioskId);
   };
 
   const handleCreateGroup = () => {
@@ -145,8 +161,8 @@ function Dashboard() {
 
   // console.log(kioskSchedule);
 
-  function handleDeleteClick(index) {
-    deleteKiosk(kiosks[index]._id);
+  function handleDeleteClick(id) {
+    deleteKiosk(id);
   }
 
   const handleDecrease = () => {
@@ -206,6 +222,14 @@ function Dashboard() {
   const onDateChange = (startDate, endDate) => {
     setStartDate(startDate);
     setEndDate(endDate);
+  };
+
+  const toggleDropdown = (index) => {
+    setIsDropdownOpen((prevIsOpen) => {
+      const updatedIsOpen = [...prevIsOpen];
+      updatedIsOpen[index] = !updatedIsOpen[index];
+      return updatedIsOpen;
+    });
   };
 
   return (
@@ -302,7 +326,11 @@ function Dashboard() {
                   </option>
 
                   {groups.map((group) => (
-                    <option key={group._id} value={group._id}>
+                    <option
+                      key={group._id}
+                      value={group._id}
+                      onClick={() => setGroupId(group._id)}
+                    >
                       {group.groupName}
                     </option>
                   ))}
@@ -316,7 +344,10 @@ function Dashboard() {
                 >
                   Cancel
                 </button>
-                <button className="bg-blue-600 text-white rounded py-2.5 px-4 hover:bg-blue-700">
+                <button
+                  onClick={handleMoveToGroup}
+                  className="bg-blue-600 text-white rounded py-2.5 px-4 hover:bg-blue-700"
+                >
                   Move
                 </button>
               </div>
@@ -1016,7 +1047,10 @@ function Dashboard() {
 
                 <div className="text-center">
                   <h3 className="font-semibold text-3xl">
-                    {kiosks.length || 0}
+                    {kiosks.length +
+                      groups
+                        .map((group) => group.groupScreens.length)
+                        .reduce((acc, curr) => acc + curr, 0) || 0}
                   </h3>
                   <h3>Total screens</h3>
                 </div>
@@ -1162,13 +1196,16 @@ function Dashboard() {
                     <i className="fa-solid fa-gear" /> <h3>Edit</h3>
                   </MenuItem>
                   <MenuItem
-                    onClick={handleMoveToGroupOpen}
+                    onClick={() => {
+                      handleMoveToGroupOpen();
+                      setKioskId(kiosk._id);
+                    }}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
                   >
                     <i className="fa-solid fa-link" /> <h3>Move to Group</h3>
                   </MenuItem>
                   <MenuItem
-                    onClick={() => handleDeleteClick(index)}
+                    onClick={() => handleDeleteClick(kiosk._id)}
                     className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
                   >
                     <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
@@ -1179,43 +1216,162 @@ function Dashboard() {
             {groups.map((group, index) => (
               <div
                 key={group._id}
-                className="flex flex-row justify-between items-center text-black w-full cursor-pointer"
+                className="flex flex-col justify-between items-center text-black w-full cursor-pointer"
               >
-                <div className="flex flex-row items-center gap-96 w-full">
-                  <h3 className="font-semibold">
-                    {group.groupName}{" "}
-                    <span className="text-sm font-light">
-                      {group.groupScreens.length || 0} Screen
-                    </span>
-                  </h3>
-                </div>
-
-                <div className="flex flex-row items-center ">
-                  <ContextMenuTrigger mouseButton={0} id={group._id}>
-                    <div onClick={handleMonuseClick} className="well">
-                      <i className="fa-solid fa-ellipsis" />
-                    </div>
-                  </ContextMenuTrigger>
-                </div>
-
-                <ContextMenu
-                  id={group._id}
-                  className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50  "
+                <button
+                  id={`dropdownButton-${index}`}
+                  data-dropdown-toggle="dropdown"
+                  className=" flex justify-between items-center w-full    font-medium rounded-t text-sm px-5 py-4 text-center"
+                  type="button"
+                  onClick={() => toggleDropdown(index)}
                 >
-                  <MenuItem
-                    onClick={() => handleEditGroupOpen(index)}
-                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
+                  <svg
+                    className={`w-2.5 h-2.5 mr-4 ${
+                      isDropdownOpen[index] ? "rotate-180" : ""
+                    }`}
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
                   >
-                    <i className="fa-solid fa-gear" /> <h3>Rename</h3>
-                  </MenuItem>
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 4 4 4-4"
+                    />
+                  </svg>
+                  <div className="flex flex-row items-center gap-96 w-full">
+                    <h3 className="font-semibold">
+                      {group.groupName}{" "}
+                      <span className="text-sm font-light">
+                        {group.groupScreens.length || 0} Screen
+                      </span>
+                    </h3>
+                  </div>
 
-                  <MenuItem
-                    onClick={() => handleDeleteGroup(index)}
-                    className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
+                  <div className="flex flex-row items-center ">
+                    <ContextMenuTrigger mouseButton={0} id={group._id}>
+                      <div onClick={handleMonuseClick} className="well">
+                        <i className="fa-solid fa-ellipsis" />
+                      </div>
+                    </ContextMenuTrigger>
+                  </div>
+
+                  <ContextMenu
+                    id={group._id}
+                    className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50  "
                   >
-                    <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
-                  </MenuItem>
-                </ContextMenu>
+                    <MenuItem
+                      onClick={() => handleEditGroupOpen(index)}
+                      className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
+                    >
+                      <i className="fa-solid fa-gear" /> <h3>Rename</h3>
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => handleDeleteGroup(index)}
+                      className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
+                    >
+                      <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
+                    </MenuItem>
+                  </ContextMenu>
+                </button>
+                <div
+                  id="dropdown"
+                  className={`${
+                    isDropdownOpen[index] ? "block" : "hidden"
+                  } flex flex-col justify-between items-center gap-4 text-black rounded p-6 w-full cursor-pointer `}
+                >
+                  {group.groupScreens.map((kiosk, index) => (
+                    <div
+                      key={kiosk._id}
+                      className="flex flex-row justify-between items-center text-black bg-white rounded p-6 w-full h-20 cursor-pointer overflow-hidden "
+                    >
+                      <div className="flex flex-row justify-between items-center gap-4 w-50">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-blue-200 rounded-full py-1.5 px-2">
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              xmlns="http://www.w3.org/2000/svg"
+                              style={{ color: "rgb(107, 70, 193)" }}
+                              className="h-7"
+                            >
+                              <path
+                                d="M22.25 2.875H1.75C1.19772 2.875 0.75 3.32272 0.75 3.875V16.875C0.75 17.4273 1.19772 17.875 1.75 17.875H22.25C22.8023 17.875 23.25 17.4273 23.25 16.875V3.875C23.25 3.32272 22.8023 2.875 22.25 2.875Z"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                              <path
+                                d="M7.5 21.625H16.5"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                              <path
+                                d="M12 17.875V21.625"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                            </svg>
+                          </div>
+                          <h3 className="text-xs sm:text-sm font-semibold sm:w-full w-[100px]">
+                            {kiosk.kioskName}
+                          </h3>
+                        </div>
+
+                        <h3 className="text-xs sm:text-sm text-gray-400">
+                          {kiosk.kioskCode}
+                        </h3>
+                        <h3 className="sm-hide text-sm text-gray-400">
+                          Laxmi Nagar, Delhi, India
+                        </h3>
+                        <h3 className="sm-hide text-sm text-gray-400">
+                          Active just now
+                        </h3>
+                      </div>
+
+                      <div className="flex flex-row items-center ">
+                        <ContextMenuTrigger mouseButton={0} id={kiosk._id}>
+                          <div onClick={handleMonuseClick} className="well">
+                            <i className="fa-solid fa-ellipsis" />
+                          </div>
+                        </ContextMenuTrigger>
+                      </div>
+
+                      <ContextMenu
+                        id={kiosk._id}
+                        className="border-1 border-gray-200 rounded px-1 py-2.5 bg-gray-50  "
+                      >
+                        <MenuItem
+                          // onClick={() => handleEditOpen(index)}
+                          className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
+                        >
+                          <i className="fa-solid fa-gear" /> <h3>Edit</h3>
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => handleUngroup(group._id, kiosk._id)}
+                          className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200  py-1.5 px-2"
+                        >
+                          <i className="fa-solid fa-link" /> <h3>Ungroup</h3>
+                        </MenuItem>
+                        <MenuItem
+                          // onClick={() => handleDeleteClick(kiosk._id)}
+                          className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
+                        >
+                          <i className="fa-solid fa-trash"></i> <h3>Remove</h3>
+                        </MenuItem>
+                      </ContextMenu>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

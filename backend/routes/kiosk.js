@@ -3,6 +3,7 @@ const router = express.Router();
 const Kiosk = require("../models/Kiosk");
 const KioskCode = require("../models/KioskCode");
 const fetchUser = require("../middleware/fetchuser");
+const Group = require("../models/Group");
 const checkSubscription = require("../middleware/checkSubscription");
 
 // Function to generate a unique Kiosk code

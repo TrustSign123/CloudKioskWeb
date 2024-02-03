@@ -41,7 +41,7 @@ function NavbarMain() {
               <Link to={"/screens"}>Screens</Link>
               <Link to={"/studio"}>Studio</Link>
               <Link to={"/media"}>Media</Link>
-              {/* <Link to={"/over"}>Dashboard</Link> */}
+              <Link to={"/admin"}>offline</Link>
             </ul>
           </div>
 

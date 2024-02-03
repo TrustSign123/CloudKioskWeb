@@ -102,7 +102,7 @@ function Admin() {
           style={{ height: "100vh" }}
         >
           <div className="flex flex-row justify-center items-center gap-2">
-            <p className=" border-2 border-rose-700 py-1 px-5">
+            <p className=" border-2 border-rose-700 py-1 px-5 text-black">
               {code || "Code Generator"}
             </p>
             <button
