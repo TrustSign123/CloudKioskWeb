@@ -13,6 +13,8 @@ import {
   showMenu,
 } from "react-contextmenu";
 import NavbarMain from "./NavbarMain";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 const formatDate = (dateString) => {
   const originalDate = new Date(dateString);
@@ -51,6 +53,7 @@ function Dashboard() {
   const [kioskName, setKioskName] = useState("");
   const [orientation, setOrientation] = useState("0");
   const [interval, setInterval] = useState(30);
+  const [isToggled, setToggled] = useState(false);
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState(null);
   const [contents, setContents] = useState([]);
@@ -232,8 +235,13 @@ function Dashboard() {
     });
   };
 
+  const handleToggle = () => {
+    setToggled(!isToggled);
+  };
+
   return (
     <>
+      <Tooltip id="help" className=" z-50" />
       {groupOpen && (
         <>
           <div className=" fixed flex justify-center md:items-center sm:items-start w-full h-[100vh] backdrop-blur-[1px] text-black bg-black/30 p-4">
@@ -443,35 +451,267 @@ function Dashboard() {
                 <div className="">
                   {" "}
                   <div className="flex flex-col justify-start items-center gap-4  ">
-                    {contents.map((content, index) => (
-                      <div
-                        key={content._id}
-                        className="flex justify-between items-center bg-white w-full h-[80px] py-2 px-3 shadow-sm rounded"
-                      >
-                        {["image/jpeg", "image/png", "image/gif"].includes(
-                          content.KioskContentFileType
-                        ) && (
-                          <img
-                            src={content.KioskContent}
-                            className="w-20 h-[50px] rounded"
-                          />
-                        )}
-                        {content.KioskContentFileType === "video/mp4" && (
-                          <video
-                            src={content.KioskContent}
-                            className="w-20 h-[50px] rounded"
-                          />
-                        )}
-
-                        <button
-                          onClick={() =>
-                            handleDeletePublishContent(content._id)
-                          }
+                    {contents.length === 0 ? (
+                      <div className="flex flex-col justify-center items-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="400"
+                          height="240"
+                          fill="none"
+                          viewBox="0 0 400 240"
+                          className="w-full opacity-40"
                         >
-                          <i className="fa-solid fa-trash" />
-                        </button>
+                          <path
+                            fill="url(#prefix__paint0_linear)"
+                            d="M206.16 200.34c79.634 0 144.19-19.081 144.19-42.619s-64.556-42.619-144.19-42.619c-79.633 0-144.19 19.081-144.19 42.619s64.557 42.619 144.19 42.619z"
+                            opacity="0.7"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint1_linear)"
+                            d="M206.161 39.728v75.374c-.006 2.311-.926 4.526-2.56 6.161-1.633 1.636-3.846 2.559-6.158 2.568h-75.385c-2.311-.009-4.524-.932-6.158-2.568-1.633-1.635-2.553-3.85-2.559-6.161V39.728c.006-2.31.926-4.526 2.559-6.16 1.634-1.636 3.847-2.559 6.158-2.568h75.363c2.315.003 4.534.923 6.172 2.56 1.638 1.635 2.562 3.853 2.568 6.168z"
+                            opacity="0.7"
+                          ></path>
+                          <path
+                            fill="#F1EDFD"
+                            stroke="#fff"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="6.44"
+                            d="M222.788 53.174v78.977c-.006 2.415-.964 4.73-2.667 6.443-1.702 1.712-4.011 2.685-6.426 2.706H134.56c-2.415-.021-4.724-.994-6.426-2.706-1.702-1.713-2.66-4.028-2.666-6.443V53.174c.006-2.414.964-4.73 2.666-6.442 1.702-1.713 4.011-2.686 6.426-2.707h79.033c1.205-.003 2.398.232 3.512.69 1.114.458 2.126 1.131 2.98 1.98.854.85 1.532 1.86 1.996 2.971.463 1.112.704 2.304.707 3.508z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint2_linear)"
+                            d="M218.662 55.719v12.615l-88.967.17V55.89c0-4.819.341-8.956 8.354-8.763l72.259-.124c8.354-.091 8.354 3.898 8.354 8.717z"
+                          ></path>
+                          <path
+                            fill="#F1EDFD"
+                            d="M165.121 47.059l-5.728 22.775-8.365.023 5.728-22.787 8.365-.011zM198.113 47.002l-5.716 22.776-8.388.022 5.728-22.787 8.376-.011z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint3_linear)"
+                            d="M190.817 103.363c.028 1.111-.237 2.211-.767 3.188-.531.977-1.308 1.798-2.256 2.381l-24.117 13.74c-.744.436-1.591.668-2.454.671-1.036-.004-2.045-.33-2.887-.932-.826-.609-1.494-1.406-1.948-2.326-.455-.919-.683-1.934-.666-2.959v-27.39c-.032-1.025.181-2.042.622-2.967.441-.925 1.097-1.732 1.912-2.352.768-.559 1.681-.883 2.629-.933.948-.05 1.89.175 2.713.649l24.174 13.638c.954.582 1.739 1.405 2.274 2.387.534.981.801 2.087.771 3.205z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint4_linear)"
+                            d="M233.3 165.551v1.83h-3.057c1.046-.58 2.057-1.137 3.057-1.83z"
+                            opacity="0.3"
+                          ></path>
+                          <g opacity="0.25">
+                            <path
+                              fill="url(#prefix__paint5_linear)"
+                              d="M172.065 176.179c-5.365 3.802-11.593 6.209-18.121 7.002-6.528.794-13.15-.05-19.27-2.456-5.637-2.175-10.694-5.626-14.775-10.081l-33.686 24.015c-1.073.632-2.345.838-3.563.575-1.217-.263-2.291-.974-3.008-1.993-.716-1.019-1.023-2.27-.858-3.505.164-1.235.788-2.362 1.746-3.158l33.766-23.98c-3.614-6.72-5.211-14.341-4.598-21.946.612-7.605 3.407-14.872 8.05-20.927 4.643-6.055 10.935-10.641 18.121-13.206 7.186-2.565 14.959-3.001 22.387-1.255 7.427 1.747 14.193 5.6 19.483 11.099 5.29 5.498 8.88 12.407 10.338 19.896 1.459 7.489.723 15.24-2.117 22.322-2.841 7.082-7.665 13.192-13.895 17.598z"
+                              opacity="0.65"
+                            ></path>
+                          </g>
+                          <path
+                            fill="#fff"
+                            stroke="#00D8D6"
+                            stroke-miterlimit="10"
+                            stroke-width="7.8"
+                            d="M175.174 181.39c16.244-11.383 20.184-33.778 8.802-50.022-11.382-16.243-33.778-20.184-50.021-8.802-16.244 11.383-20.185 33.778-8.802 50.022 11.382 16.243 33.777 20.184 50.021 8.802z"
+                          ></path>
+                          <path
+                            stroke="#00D8D6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="7.8"
+                            d="M123.865 173.508l-38.8 27.174"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint6_linear)"
+                            d="M186.84 153.744c-.17 6.585-2.392 12.952-6.355 18.212-3.964 5.261-9.471 9.152-15.753 11.131-6.282 1.979-13.026 1.947-19.289-.093-6.263-2.039-11.732-5.983-15.645-11.281 0 0 48.7-38.71 49.427-39.369 5.111 5.938 7.826 13.568 7.615 21.4z"
+                          ></path>
+                          <path
+                            fill="#00D8D6"
+                            d="M151.88 157.153c-.517-.755-.784-1.654-.761-2.569-.1-1.457.133-2.919.682-4.273.58-1.271 1.309-2.469 2.17-3.569.563-.75 1.065-1.544 1.501-2.375.334-.677.49-1.428.454-2.182.004-.35-.066-.697-.205-1.018-.139-.321-.344-.61-.602-.846-.576-.472-1.316-.697-2.057-.625-.723.03-1.432.212-2.08.534-.796.405-1.556.876-2.273 1.409l-1.136.694c-.711.598-1.571.991-2.489 1.136-.403-.001-.799-.106-1.15-.306-.35-.199-.643-.485-.85-.83-.588-.819-.905-1.8-.91-2.808-.064-.635.025-1.276.26-1.87.235-.593.61-1.121 1.093-1.539 1.356-1.25 2.922-2.25 4.625-2.955 1.678-.697 3.469-1.082 5.285-1.137 1.852-.099 3.701.252 5.387 1.023 1.539.705 2.855 1.818 3.808 3.217.95 1.417 1.475 3.078 1.511 4.784.059 1.258-.138 2.515-.579 3.694-.392 1.05-.94 2.035-1.626 2.921-.644.818-1.485 1.803-2.523 2.955-.82.806-1.58 1.672-2.273 2.591-.491.673-.818 1.451-.954 2.273-.052.699-.345 1.358-.83 1.864-.443.439-1.036.691-1.659.705-.354.009-.704-.067-1.021-.224-.317-.156-.591-.388-.798-.674zm-.739 12.979c-.427-.377-.771-.838-1.012-1.355-.24-.516-.372-1.076-.385-1.646-.038-.566.043-1.134.239-1.666.196-.533.501-1.018.897-1.425.4-.422.881-.758 1.414-.988.533-.231 1.108-.351 1.689-.353.59-.036 1.181.045 1.739.241.559.195 1.072.499 1.511.895.427.377.772.838 1.012 1.355.241.516.372 1.076.386 1.646.038.566-.044 1.134-.239 1.666-.196.533-.502 1.018-.897 1.425-.842.822-1.961 1.3-3.137 1.337-1.176.038-2.324-.366-3.217-1.132z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint7_linear)"
+                            d="M287.99 77.232v75.374c-.006 2.311-.926 4.526-2.559 6.161-1.634 1.636-3.847 2.558-6.158 2.567h-75.386c-2.311-.009-4.524-.931-6.157-2.567-1.634-1.635-2.554-3.85-2.56-6.161V77.232c.006-2.31.926-4.526 2.56-6.161 1.633-1.635 3.846-2.558 6.157-2.567h75.363c2.315.003 4.534.923 6.172 2.559 1.639 1.636 2.562 3.854 2.568 6.17z"
+                            opacity="0.7"
+                          ></path>
+                          <path
+                            fill="#F1EDFD"
+                            d="M304.31 90.246l-.25 78.75c0 2.411-.958 4.724-2.663 6.429-1.705 1.705-4.018 2.663-6.429 2.663l-78.749-.25c-2.412 0-4.724-.958-6.43-2.663-1.705-1.705-2.663-4.018-2.663-6.429l.25-78.75c0-2.411.958-4.724 2.664-6.429 1.705-1.705 4.017-2.663 6.429-2.663l78.749.25c1.194 0 2.376.236 3.479.692 1.103.457 2.106 1.127 2.95 1.971.844.845 1.514 1.847 1.971 2.95.457 1.103.692 2.285.692 3.48z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint8_linear)"
+                            d="M304.162 137.833l-.102 31.197c-.004 1.474-.366 2.924-1.055 4.227-.689 1.303-1.685 2.419-2.9 3.251l-53.587.762-6.819-32.72 29.822-32.959s4.375-4.546 6.887-4.467c2.273 0 5.512 3.853 5.512 3.853l22.242 26.856z"
+                          ></path>
+                          <path
+                            fill="url(#prefix__paint9_linear)"
+                            d="M250.375 105.441c.015-4.551-3.663-8.251-8.213-8.266-4.551-.014-8.252 3.664-8.266 8.214-.014 4.551 3.663 8.251 8.214 8.266 4.55.014 8.251-3.663 8.265-8.214z"
+                          ></path>
+                          <path
+                            fill="#fff"
+                            d="M295.241 77.461l-78.761-.25c-3.386-.01-6.637 1.327-9.039 3.713-2.402 2.387-3.757 5.63-3.77 9.016l-.25 78.738c-.009 3.386 1.327 6.637 3.714 9.039 2.387 2.401 5.629 3.757 9.015 3.769l78.761.25c3.381 0 6.625-1.339 9.021-3.724 2.396-2.386 3.75-5.624 3.765-9.005l.25-78.738c.009-3.382-1.324-6.63-3.706-9.03-2.382-2.401-5.618-3.76-9-3.778zm5.171 91.524c-.004.885-.223 1.757-.639 2.539-.416.782-1.016 1.452-1.748 1.95-.906.634-1.986.972-3.091.966l-27.402-.091-29.913-40.324s-2.011-2.58-3.409-2.693c-1.626-.125-4.615 2.659-4.615 2.659l-18.718 18.662.193-62.713c.009-1.45.592-2.837 1.62-3.86 1.028-1.022 2.42-1.595 3.87-1.595l78.76.25c1.449.009 2.835.591 3.856 1.62 1.02 1.029 1.591 2.42 1.588 3.87l-.352 78.76z"
+                          ></path>
+                          <defs>
+                            <linearGradient
+                              id="prefix__paint0_linear"
+                              x1="56.14"
+                              x2="327.768"
+                              y1="151.47"
+                              y2="167.381"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop
+                                stop-color="#F1EDFD"
+                                stop-opacity="0.5"
+                              ></stop>
+                              <stop offset="1" stop-color="#B7A3F3"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint1_linear"
+                              x1="113.353"
+                              x2="206.161"
+                              y1="77.404"
+                              y2="77.404"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop
+                                stop-color="#B7A3F3"
+                                stop-opacity="0.5"
+                              ></stop>
+                              <stop
+                                offset="1"
+                                stop-color="#F1EDFD"
+                                stop-opacity="0.5"
+                              ></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint2_linear"
+                              x1="214.116"
+                              x2="132.287"
+                              y1="56.003"
+                              y2="57.139"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#7048E8"></stop>
+                              <stop offset="1" stop-color="#B7A3F3"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint3_linear"
+                              x1="173.269"
+                              x2="173.269"
+                              y1="83.477"
+                              y2="123.343"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#B7A3F3"></stop>
+                              <stop offset="1" stop-color="#7048E8"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint4_linear"
+                              x1="905.83"
+                              x2="909.452"
+                              y1="476.249"
+                              y2="480.338"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#B7A3F3"></stop>
+                              <stop offset="1" stop-color="#5028C6"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint5_linear"
+                              x1="3171.15"
+                              x2="11194"
+                              y1="18226.9"
+                              y2="21356.5"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#B7A3F3"></stop>
+                              <stop offset="1" stop-color="#5028C6"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint6_linear"
+                              x1="130.385"
+                              x2="186.949"
+                              y1="155.952"
+                              y2="157.649"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#E6FBFB"></stop>
+                              <stop offset="1" stop-color="#E6FBFB"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint7_linear"
+                              x1="17769.6"
+                              x2="25349.2"
+                              y1="11656.5"
+                              y2="11656.5"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop
+                                stop-color="#B7A3F3"
+                                stop-opacity="0.5"
+                              ></stop>
+                              <stop
+                                offset="1"
+                                stop-color="#F1EDFD"
+                                stop-opacity="0.5"
+                              ></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint8_linear"
+                              x1="271.93"
+                              x2="271.93"
+                              y1="107.123"
+                              y2="177.27"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#B7A3F3"></stop>
+                              <stop offset="0.745" stop-color="#6A47D1"></stop>
+                              <stop offset="1" stop-color="#5028C6"></stop>
+                            </linearGradient>
+                            <linearGradient
+                              id="prefix__paint9_linear"
+                              x1="244.234"
+                              x2="242.529"
+                              y1="113.965"
+                              y2="99.19"
+                              gradientUnits="userSpaceOnUse"
+                            >
+                              <stop stop-color="#7048E8"></stop>
+                              <stop offset="1" stop-color="#B7A3F3"></stop>
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <h2 class="text-2xl font-semibold mt-6 opacity-40">
+                          You have no content at the moment
+                        </h2>
                       </div>
-                    ))}
+                    ) : (
+                      contents.map((content, index) => (
+                        <div
+                          key={content._id}
+                          className="flex justify-between items-center bg-white w-full h-[80px] py-2 px-3 shadow-sm rounded"
+                        >
+                          {["image/jpeg", "image/png", "image/gif"].includes(
+                            content.KioskContentFileType
+                          ) && (
+                            <img
+                              src={content.KioskContent}
+                              className="w-20 h-[50px] rounded"
+                            />
+                          )}
+                          {content.KioskContentFileType === "video/mp4" && (
+                            <video
+                              src={content.KioskContent}
+                              className="w-20 h-[50px] rounded"
+                            />
+                          )}
+
+                          <button
+                            onClick={() =>
+                              handleDeletePublishContent(content._id)
+                            }
+                          >
+                            <i className="fa-solid fa-trash" />
+                          </button>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </>
@@ -941,8 +1181,28 @@ function Dashboard() {
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm uppercase tracking-widest">
-                        ORIENTATION
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        ORIENTATION{" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="Orientation options: 0° is default, 90° clockwise, 180° upside-down, 270° counterclockwise."
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
                       </label>
                       <div className="flex flex-1 space-x-1.5">
                         <div
@@ -994,8 +1254,28 @@ function Dashboard() {
                   </div>
                   <div className="flex flex-col gap-4 w-50 h-full bg-white rounded shadow-sm p-4">
                     <div className="flex flex-col gap-2">
-                      <label className="text-gray-500 text-sm uppercase tracking-widest">
-                        INTERVAL (SECONDS)
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        INTERVAL (SECONDS){" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="Interval in seconds to automatically go to the next content when autoPlay is true, defaults to 30sec."
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
                       </label>
                       <div className="flex gap-2">
                         <button
@@ -1017,6 +1297,112 @@ function Dashboard() {
                           +
                         </button>
                       </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        transitionTime (SECONDS){" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="Duration of the animation of changing slides."
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
+                      </label>
+                      <div className="flex gap-2">
+                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          className="border-1 border-blue-600 h-10 w-full bg-transparent text-center align-middle outline-none"
+                          value={interval}
+                          disabled
+                        />
+                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        AXIS{" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="Define the direction of the slider, defaults to 'horizontal'."
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
+                      </label>
+                      <select className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none text-sm uppercase tracking-widest">
+                        <option>horizontal (recommended)</option>
+                        <option>vertical</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        AUTO PLAY{" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="Change the slide automatically based on interval"
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
+                      </label>
+                      <span
+                        data-testid="toggler"
+                        className={`relative inline-block h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent cursor-pointer focus:shadow-outlinetransition-colors duration-200 ease-in-out focus:outline-none ${
+                          isToggled ? "bg-blue-500" : "bg-gray-300"
+                        }`}
+                        onClick={handleToggle}
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out translate-x-${
+                            isToggled ? "5" : "0"
+                          }`}
+                        ></span>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1271,7 +1657,7 @@ function Dashboard() {
                     </MenuItem>
 
                     <MenuItem
-                      onClick={() => handleDeleteGroup(index)}
+                      // onClick={() => handleDeleteGroup(index)}
                       className="flex justify-start items-center gap-2 rounded mb-2 w-40 hover:bg-gray-200 py-1.5 px-2"
                     >
                       <i className="fa-solid fa-trash"></i> <h3>Remove</h3>

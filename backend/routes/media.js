@@ -118,39 +118,46 @@ router.delete("/media-delete/:id", async (req, res) => {
   }
 });
 
-router.post("/publish-media/:kioskCode", fetchUser, async (req, res) => {
+router.post("/publish-media", fetchUser, async (req, res) => {
   try {
-    const kioskCode = req.params.kioskCode;
+    const kioskCodeArray = req.body.kioskCode;
     const contentUrlArray = req.body.contentUrl;
     const contentTypeArray = req.body.contentType;
 
-    // Find the Kiosk associated with the given Kiosk code
-    const kiosk = await Kiosk.findOne({ kioskCode: kioskCode });
-    const kioskcode = await KioskCode.findOne({ KioskCode: kioskCode });
+    // Iterate through each kiosk code
+    for (let j = 0; j < kioskCodeArray.length; j++) {
+      const kioskCode = kioskCodeArray[j];
 
-    if (!kiosk || !kioskcode) {
-      return res.status(404).json({ message: "Not Found" });
+      // Find the Kiosk associated with the given Kiosk code
+      const kiosk = await Kiosk.findOne({ kioskCode: kioskCode });
+      const kioskcode = await KioskCode.findOne({ KioskCode: kioskCode });
+
+      if (!kiosk || !kioskcode) {
+        return res
+          .status(404)
+          .json({ message: `Kiosk with code ${kioskCode} not found` });
+      }
+
+      // Iterate through the arrays and save each element individually
+      for (let i = 0; i < contentUrlArray.length; i++) {
+        const sharedId = new mongoose.Types.ObjectId();
+
+        kiosk.kioskContent.push({
+          KioskContent: contentUrlArray[i],
+          KioskContentFileType: contentTypeArray[i],
+          _id: sharedId,
+        });
+
+        kioskcode.kioskContent.push({
+          KioskContent: contentUrlArray[i],
+          KioskContentFileType: contentTypeArray[i],
+          _id: sharedId,
+        });
+      }
+
+      await kiosk.save();
+      await kioskcode.save();
     }
-
-    // Iterate through the arrays and save each element individually
-    for (let i = 0; i < contentUrlArray.length; i++) {
-      const sharedId = new mongoose.Types.ObjectId();
-
-      kiosk.kioskContent.push({
-        KioskContent: contentUrlArray[i],
-        KioskContentFileType: contentTypeArray[i],
-        _id: sharedId,
-      });
-
-      kioskcode.kioskContent.push({
-        KioskContent: contentUrlArray[i],
-        KioskContentFileType: contentTypeArray[i],
-        _id: sharedId,
-      });
-    }
-
-    await kiosk.save();
-    await kioskcode.save();
 
     res.status(201).json({ message: "Kiosk content added successfully" });
   } catch (error) {

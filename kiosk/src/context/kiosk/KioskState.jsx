@@ -317,13 +317,14 @@ const Kioskstate = (props) => {
   const publishKioskContent = async (kioskCode, contentUrl, contentType) => {
     setLoading(true);
     try {
-      const response = await fetch(`${host}media/publish-media/${kioskCode}`, {
+      const response = await fetch(`${host}media/publish-media`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "auth-token": token,
         },
         body: JSON.stringify({
+          kioskCode,
           contentUrl,
           contentType,
         }),
@@ -504,6 +505,10 @@ const Kioskstate = (props) => {
 
       const json = await response.json();
       notify(`${json.message}`, "success");
+      const newKiosks = kiosks.filter((kiosk) => {
+        return kiosk._id !== kioskId;
+      });
+      setKiosks(newKiosks);
       setLoading(false);
     } catch (error) {
       console.error(error);

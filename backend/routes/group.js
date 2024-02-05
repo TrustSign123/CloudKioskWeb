@@ -127,6 +127,7 @@ router.post("/ungroup", fetchUser, async (req, res) => {
 
     // Create a new Kiosk document using the kiosk data
     const newKiosk = new Kiosk({
+      _id: kioskInGroup._id,
       user: kioskInGroup.user,
       kioskName: kioskInGroup.kioskName,
       kioskCode: kioskInGroup.kioskCode,

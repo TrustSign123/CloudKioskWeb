@@ -33,7 +33,7 @@ function Media() {
   const [playlistName, setPlaylistName] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [selectedMediaType, setSelectedMediaType] = useState([]);
-  const [kioskCode, setKioskCode] = useState(null);
+  const [kioskCode, setKioskCode] = useState([]);
   const [mediaUrl, setMediaUrl] = useState([]);
   const [mediaType, setMediaType] = useState([]);
 
@@ -66,6 +66,7 @@ function Media() {
     setMediaUrl([media[index].mediaContent]);
     setMediaType([media[index].mediaContentFileType]);
     setPublishOpen(!publishOpen);
+    setKioskCode([]);
   };
 
   const handlePlaylistPublishOpen = (index) => {
@@ -96,8 +97,18 @@ function Media() {
   };
 
   const handleRadioChange = (index) => {
-    setKioskCode(kiosks[index].kioskCode);
-    setSelectedKiosk(index === selectedKiosk ? null : index);
+    const isSelected = kioskCode.includes(kiosks[index].kioskCode);
+
+    if (isSelected) {
+      // If the kiosk is already selected, deselect it
+      const updatedSelectedKiosks = kioskCode.filter(
+        (code) => code !== kiosks[index].kioskCode
+      );
+      setKioskCode(updatedSelectedKiosks);
+    } else {
+      // Add the selected kiosk's kioskCode to the array
+      setKioskCode([...kioskCode, kiosks[index].kioskCode]);
+    }
   };
 
   const handlePublishMedia = () => {
@@ -153,7 +164,7 @@ function Media() {
     deletePlaylist(id);
   };
 
-  // console.log(mediaUrl, mediaType);
+  // console.log(kioskCode);
 
   useEffect(() => {
     fetchMedia();
@@ -199,17 +210,19 @@ function Media() {
                 {kiosks.map((kiosk, index) => (
                   <div
                     key={kiosk._id}
-                    className={`flex justify-between items-center gap-4 bg-white w-full rounded h-[70px] mb-3 p-4 ${
-                      index === selectedKiosk ? "border-2 border-blue-500" : ""
+                    className={`flex justify-between items-center gap-4 bg-white w-full rounded h-[70px] mb-3 p-4 cursor-pointer ${
+                      kioskCode.includes(kiosk.kioskCode)
+                        ? "border-[1px] border-blue-500"
+                        : ""
                     }`}
+                    onClick={() => handleRadioChange(index)}
                   >
-                    {" "}
                     <h3 className="font-semibold">{kiosk.kioskName}</h3>
                     <input
-                      type="radio"
-                      className="w-5 h-5 p-0 cursor-pointer"
-                      checked={index === selectedKiosk}
-                      onChange={() => handleRadioChange(index)}
+                      type="checkbox"
+                      className="w-5 h-5 rounded-full p-0 cursor-pointer"
+                      checked={kioskCode.includes(kiosk.kioskCode)}
+                      onChange={() => {}}
                     />
                   </div>
                 ))}
@@ -281,7 +294,7 @@ function Media() {
                       key={media._id}
                       className={`cursor-pointer ${
                         selectedMedia.includes(media.mediaContent)
-                          ? "border-4 border-blue-500 rounded"
+                          ? "border-[3px] border-blue-500 rounded"
                           : ""
                       }`}
                       onClick={() => handleImageClick(index)}
