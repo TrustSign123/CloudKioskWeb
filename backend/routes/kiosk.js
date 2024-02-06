@@ -112,8 +112,11 @@ router.post("/kiosk", fetchUser, async (req, res) => {
       kioskCodeDocument.status = true;
       kioskCodeDocument.settings.push({
         orientation: "0",
+        splitScreen: "1",
         interval: "30",
-        transition: true,
+        transitionTime: "30",
+        axis: "horizontal",
+        autoPlay: true,
       });
 
       await kioskCodeDocument.save();
@@ -135,8 +138,14 @@ router.put("/kiosk/:id", async (req, res) => {
     const kioskId = req.params.id;
     const kioskName = req.body.kioskName;
     const orientation = req.body.orientation;
+    const splitScreen = req.body.splitScreen;
     const interval = req.body.interval;
+    const transitionTime = req.body.transitionTime;
+    const axis = req.body.axis;
+    const autoPlay = req.body.autoPlay;
     const kioskCode = req.body.kioskCode;
+
+    // console.log(autoPlay)
 
     // Find the Kiosk document by ID
     const kiosk = await Kiosk.findById(kioskId);
@@ -152,9 +161,25 @@ router.put("/kiosk/:id", async (req, res) => {
         kiosk.settings[0].orientation = orientation;
         kioskCodeData.settings[0].orientation = orientation;
       }
+      if (splitScreen) {
+        kiosk.settings[0].splitScreen = splitScreen;
+        kioskCodeData.settings[0].splitScreen = splitScreen;
+      }
       if (interval) {
         kiosk.settings[0].interval = interval;
         kioskCodeData.settings[0].interval = interval;
+      }
+      if (transitionTime) {
+        kiosk.settings[0].transitionTime = transitionTime;
+        kioskCodeData.settings[0].transitionTime = transitionTime;
+      }
+      if (axis) {
+        kiosk.settings[0].axis = axis;
+        kioskCodeData.settings[0].axis = axis;
+      }
+      if (autoPlay) {
+        kiosk.settings[0].autoPlay = autoPlay;
+        kioskCodeData.settings[0].autoPlay = autoPlay;
       }
 
       await kiosk.save();

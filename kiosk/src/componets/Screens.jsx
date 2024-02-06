@@ -52,8 +52,11 @@ function Dashboard() {
 
   const [kioskName, setKioskName] = useState("");
   const [orientation, setOrientation] = useState("0");
+  const [splitScreen, setSplitScreen] = useState("1");
   const [interval, setInterval] = useState(30);
-  const [isToggled, setToggled] = useState(false);
+  const [transitionTime, setTransitionTime] = useState(30);
+  const [axis, setAxis] = useState("horizontal");
+  const [autoPlay, setAutoPlay] = useState(true);
   const [kioskId, setKioskId] = useState("");
   const [kioskCode, setKioskCode] = useState(null);
   const [contents, setContents] = useState([]);
@@ -144,12 +147,26 @@ function Dashboard() {
     setContents(kiosks[index].kioskContent);
     setKioskSchedule(kiosks[index].kioskSchedule);
     setOrientation(kiosks[index].settings[0].orientation);
+    setSplitScreen(kiosks[index].settings[0].splitScreen);
     setInterval(kiosks[index].settings[0].interval);
+    setTransitionTime(kiosks[index].settings[0].transitionTime);
+    setAxis(kiosks[index].settings[0].axis);
+    setAutoPlay(kiosks[index].settings[0].autoPlay);
     setEditOpen(true);
   };
 
   const handleEditKiosk = () => {
-    editKiosk(kioskName, orientation, interval, kioskCode, kioskId);
+    editKiosk(
+      kioskName,
+      orientation,
+      splitScreen,
+      interval,
+      transitionTime,
+      axis,
+      autoPlay,
+      kioskCode,
+      kioskId
+    );
   };
 
   const handleMonuseClick = (e) => {
@@ -168,15 +185,29 @@ function Dashboard() {
     deleteKiosk(id);
   }
 
-  const handleDecrease = () => {
-    if (interval - 5 >= 0) {
-      setInterval(interval - 5);
+  const handleDecrease = (type) => {
+    if (type === "interval") {
+      if (interval - 5 >= 0) {
+        setInterval(interval - 5);
+      }
+    }
+    if (type === "transition") {
+      if (transitionTime - 5 >= 0) {
+        setTransitionTime(transitionTime - 5);
+      }
     }
   };
 
-  const handleIncrease = () => {
-    if (interval + 5 <= 60) {
-      setInterval(interval + 5);
+  const handleIncrease = (type) => {
+    if (type === "interval") {
+      if (interval + 5 <= 60) {
+        setInterval(interval + 5);
+      }
+    }
+    if (type === "transition") {
+      if (transitionTime + 5 <= 60) {
+        setTransitionTime(transitionTime + 5);
+      }
     }
   };
 
@@ -235,8 +266,8 @@ function Dashboard() {
     });
   };
 
-  const handleToggle = () => {
-    setToggled(!isToggled);
+  const handleAutoPlayToggle = () => {
+    setAutoPlay(!autoPlay);
   };
 
   return (
@@ -743,7 +774,7 @@ function Dashboard() {
                                     key={media._id}
                                     className={`w-[200px] bg-white shadow-sm rounded-lg cursor-pointer ${
                                       selectedMedia.includes(media.mediaContent)
-                                        ? "border-4 border-blue-500 rounded"
+                                        ? "border-[3px] border-blue-500 rounded"
                                         : ""
                                     }`}
                                     onClick={() => handleSelectMedia(index)}
@@ -1113,12 +1144,34 @@ function Dashboard() {
                         key={schedule._id}
                         className="flex justify-between bg-white w-full shadow-sm rounded py-2 px-3"
                       >
-                        <img
-                          src={schedule.kioskContent[0].KioskContent}
-                          className="w-20 h-[50px] rounded"
-                        />
+                        <div className="flex justify-center items-center overflow-hidden">
+                          {schedule.kioskContent.length >= 1 && (
+                            <img
+                              src={schedule.kioskContent[0].KioskContent}
+                              className="inset-0 w-full h-12 rounded px-1 md:h-16 md:w-24"
+                            />
+                          )}
+                          {schedule.kioskContent.length >= 2 && (
+                            <img
+                              src={schedule.kioskContent[1].KioskContent || ""}
+                              className="inset-0 w-full h-12 rounded px-1 md:h-16 md:w-24"
+                            />
+                          )}
+                          {schedule.kioskContent.length >= 3 && (
+                            <img
+                              src={schedule.kioskContent[2].KioskContent || ""}
+                              className="inset-0 w-full h-12 rounded px-1 md:h-16 md:w-24"
+                            />
+                          )}
 
-                        <div className="flex justify-center items-center gap-4 text-blue-600 font-semibold">
+                          {schedule.kioskContent.length - 3 > 0 && (
+                            <strong className="w-8 truncate pl-1 ">
+                              + {schedule.kioskContent.length - 3}
+                            </strong>
+                          )}
+                        </div>
+
+                        <div className="flex justify-start items-center gap-4 text-blue-600 font-semibold">
                           <h3>{schedule.startDate}</h3>
                           <h3>To</h3>
                           <h3>{schedule.endDate}</h3>
@@ -1209,45 +1262,101 @@ function Dashboard() {
                           onClick={() => setOrientation("0")}
                           className={`${
                             orientation === "0" ? "opacity-100" : "opacity-25"
-                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center h-16 border-2 border-blue-600 rounded p-1`}
                         >
-                          <span className="text-lg sm:text-2xl font-extrabold">
+                          <span className="text-blue-600 text-lg sm:text-2xl font-extrabold">
                             0
                           </span>
-                          <span className="text-xl">°</span>
+                          <span className="text-blue-600 text-xl">°</span>
                         </div>
                         <div
                           onClick={() => setOrientation("90")}
                           className={`${
                             orientation === "90" ? "opacity-100" : "opacity-25"
-                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border-2 border-blue-600 rounded p-1`}
                         >
-                          <span className="text-lg sm:text-2xl font-extrabold">
+                          <span className="text-blue-600 text-lg sm:text-2xl font-extrabold">
                             90
                           </span>
-                          <span className="text-xl">°</span>
+                          <span className="text-blue-600 text-xl">°</span>
                         </div>
                         <div
                           onClick={() => setOrientation("180")}
                           className={`${
                             orientation === "180" ? "opacity-100" : "opacity-25"
-                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border-2 border-blue-600 rounded p-1`}
                         >
-                          <span className="text-lg sm:text-2xl font-extrabold">
+                          <span className="text-blue-600 text-lg sm:text-2xl font-extrabold">
                             180
                           </span>
-                          <span className="text-xl">°</span>
+                          <span className="text-blue-600 text-xl">°</span>
                         </div>
                         <div
                           onClick={() => setOrientation("270")}
                           className={`${
                             orientation === "270" ? "opacity-100" : "opacity-25"
-                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border border-gray-900 rounded p-1`}
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border-2 border-blue-600 rounded p-1`}
                         >
-                          <span className="text-lg sm:text-2xl font-extrabold">
+                          <span className="text-blue-600 text-lg sm:text-2xl font-extrabold">
                             270
                           </span>
-                          <span className="text-xl">°</span>
+                          <span className="text-blue-600 text-xl">°</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
+                        split screen{" "}
+                        <a
+                          data-tooltip-id="help"
+                          data-tooltip-content="A split-screen refers to a display technique where the screen is divided into two or more sections"
+                          data-tooltip-place="right"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-gray-500 transition-colors hover:text-blue-600"
+                            data-state="closed"
+                          >
+                            <path
+                              d="M9.16663 5.83332H10.8333V7.49999H9.16663V5.83332ZM9.16663 9.16666H10.8333V14.1667H9.16663V9.16666ZM9.99996 1.66666C5.39996 1.66666 1.66663 5.39999 1.66663 9.99999C1.66663 14.6 5.39996 18.3333 9.99996 18.3333C14.6 18.3333 18.3333 14.6 18.3333 9.99999C18.3333 5.39999 14.6 1.66666 9.99996 1.66666ZM9.99996 16.6667C6.32496 16.6667 3.33329 13.675 3.33329 9.99999C3.33329 6.32499 6.32496 3.33332 9.99996 3.33332C13.675 3.33332 16.6666 6.32499 16.6666 9.99999C16.6666 13.675 13.675 16.6667 9.99996 16.6667Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </a>
+                      </label>
+                      <div className="flex flex-1 space-x-1.5">
+                        <div
+                          onClick={() => setSplitScreen("1")}
+                          className={`${
+                            splitScreen === "1" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center h-16 border-2 border-blue-600 rounded p-1`}
+                        >
+                          <div className="border-2 border-blue-600 rounded w-50 h-full"></div>
+                        </div>
+                        <div
+                          onClick={() => setSplitScreen("2")}
+                          className={`${
+                            splitScreen === "2" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border-2 border-blue-600 rounded p-1`}
+                        >
+                          <div className="border-2 border-blue-600 rounded w-50 h-full">
+                            <div className="border-b border-blue-600 w-full h-50"></div>
+                          </div>
+                        </div>
+                        <div
+                          onClick={() => setSplitScreen("3")}
+                          className={`${
+                            splitScreen === "3" ? "opacity-100" : "opacity-25"
+                          } hover:opacity-100 cursor-pointer transition-opacity duration-150 flex flex-1 items-center justify-center border-2 border-blue-600 rounded p-1`}
+                        >
+                          <div className="flex flex-col gap-3 border-2 border-blue-600 rounded w-50 h-full">
+                            <div className="border-b border-blue-600 w-full h-50"></div>
+                            <div className="border-t border-blue-600 w-full h-50"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1258,7 +1367,7 @@ function Dashboard() {
                         INTERVAL (SECONDS){" "}
                         <a
                           data-tooltip-id="help"
-                          data-tooltip-content="Interval in seconds to automatically go to the next content when autoPlay is true, defaults to 30sec."
+                          data-tooltip-content="Interval in seconds to automatically go to the next content when auto play is on, defaults to 30sec."
                           data-tooltip-place="right"
                         >
                           <svg
@@ -1279,7 +1388,7 @@ function Dashboard() {
                       </label>
                       <div className="flex gap-2">
                         <button
-                          onClick={handleDecrease}
+                          onClick={() => handleDecrease("interval")}
                           className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
                         >
                           -
@@ -1291,7 +1400,7 @@ function Dashboard() {
                           disabled
                         />
                         <button
-                          onClick={handleIncrease}
+                          onClick={() => handleIncrease("interval")}
                           className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
                         >
                           +
@@ -1300,7 +1409,7 @@ function Dashboard() {
                     </div>
                     <div className="flex flex-col gap-2">
                       <label className="flex gap-1 text-gray-500 text-sm uppercase tracking-widest">
-                        transitionTime (SECONDS){" "}
+                        transition Time (SECONDS){" "}
                         <a
                           data-tooltip-id="help"
                           data-tooltip-content="Duration of the animation of changing slides."
@@ -1323,16 +1432,22 @@ function Dashboard() {
                         </a>
                       </label>
                       <div className="flex gap-2">
-                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                        <button
+                          onClick={() => handleDecrease("transition")}
+                          className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
+                        >
                           -
                         </button>
                         <input
                           type="text"
                           className="border-1 border-blue-600 h-10 w-full bg-transparent text-center align-middle outline-none"
-                          value={interval}
+                          value={transitionTime}
                           disabled
                         />
-                        <button className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl">
+                        <button
+                          onClick={() => handleIncrease("transition")}
+                          className="flex justify-center items-center bg-blue-600 hover:bg-blue-700 py-1.5 px-3 rounded text-white font-bold text-xl"
+                        >
                           +
                         </button>
                       </div>
@@ -1361,9 +1476,15 @@ function Dashboard() {
                           </svg>
                         </a>
                       </label>
-                      <select className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none text-sm uppercase tracking-widest">
-                        <option>horizontal (recommended)</option>
-                        <option>vertical</option>
+                      <select
+                        value={axis}
+                        onChange={(e) => setAxis(e.target.value)}
+                        className="border-1 border-blue-600 h-10 w-full bg-transparent px-2 align-middle outline-none text-sm uppercase tracking-widest"
+                      >
+                        <option value={"horizontal"}>
+                          horizontal (recommended)
+                        </option>
+                        <option value={"vertical"}>vertical</option>
                       </select>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -1393,13 +1514,13 @@ function Dashboard() {
                       <span
                         data-testid="toggler"
                         className={`relative inline-block h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent cursor-pointer focus:shadow-outlinetransition-colors duration-200 ease-in-out focus:outline-none ${
-                          isToggled ? "bg-blue-500" : "bg-gray-300"
+                          autoPlay ? "bg-blue-500" : "bg-gray-300"
                         }`}
-                        onClick={handleToggle}
+                        onClick={handleAutoPlayToggle}
                       >
                         <span
                           className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out translate-x-${
-                            isToggled ? "5" : "0"
+                            autoPlay ? "5" : "0"
                           }`}
                         ></span>
                       </span>

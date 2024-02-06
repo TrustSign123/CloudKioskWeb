@@ -7,7 +7,8 @@ const Kiosk = require("../models/Kiosk");
 
 router.post("/schedule/:kioskCode", fetchUser, async (req, res) => {
   try {
-    const { kioskContent, kioskContentType, startDate, endDate } = req.body;
+    const { kioskContentArray, kioskContentTypeArray, startDate, endDate } =
+      req.body;
     const kioskCode = req.params.kioskCode;
 
     // Find the Kiosk associated with the given Kiosk code
@@ -20,33 +21,37 @@ router.post("/schedule/:kioskCode", fetchUser, async (req, res) => {
 
     const scheduleSharedId = new mongoose.Types.ObjectId();
 
-    for (let i = 0; i < kioskContent.length; i++) {
+    // Construct kioskContent object to hold all elements
+    const kioskContent = [];
+
+    // Loop through each item in kioskContentArray and kioskContentTypeArray
+    for (let i = 0; i < kioskContentArray.length; i++) {
       const contentSharedId = new mongoose.Types.ObjectId();
-      kiosk.kioskSchedule.push({
-        kioskContent: {
-          KioskContent: kioskContent[i],
-          KioskContentFileType: kioskContentType[i],
-          _id: contentSharedId,
-        },
-        startDate: startDate,
-        endDate: endDate,
-        _id: scheduleSharedId,
-      });
 
-      kioskcode.kioskSchedule.push({
-        kioskContent: {
-          KioskContent: kioskContent[i],
-          KioskContentFileType: kioskContentType[i],
-          _id: contentSharedId,
-        },
-        startDate: startDate,
-        endDate: endDate,
-        _id: scheduleSharedId,
+      // Construct kioskContent object for each item and push it into kioskContent array
+      kioskContent.push({
+        KioskContent: kioskContentArray[i],
+        KioskContentFileType: kioskContentTypeArray[i],
+        _id: contentSharedId,
       });
-
-      continue;
     }
 
+    // Push the constructed kioskContent object into kioskSchedule array for both kiosk and kioskcode
+    kiosk.kioskSchedule.push({
+      kioskContent: kioskContent,
+      startDate: startDate,
+      endDate: endDate,
+      _id: scheduleSharedId,
+    });
+
+    kioskcode.kioskSchedule.push({
+      kioskContent: kioskContent,
+      startDate: startDate,
+      endDate: endDate,
+      _id: scheduleSharedId,
+    });
+
+    // Save changes
     await kiosk.save();
     await kioskcode.save();
 

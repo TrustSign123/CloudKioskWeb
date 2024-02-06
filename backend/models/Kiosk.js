@@ -32,11 +32,23 @@ const KioskSettingsSchema = new Schema({
     type: String,
     default: "0",
   },
+  splitScreen: {
+    type: String,
+    default: "1",
+  },
   interval: {
     type: String,
     default: "30",
   },
-  transition: {
+  transitionTime: {
+    type: String,
+    default: "30",
+  },
+  axis: {
+    type: String,
+    default: "horizontal",
+  },
+  autoPlay: {
     type: Boolean,
     default: true,
   },

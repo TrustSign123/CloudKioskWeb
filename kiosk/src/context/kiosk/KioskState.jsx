@@ -158,7 +158,17 @@ const Kioskstate = (props) => {
       console.error(error);
     }
   };
-  const editKiosk = async (kioskName, orientation, interval, kioskCode, id) => {
+  const editKiosk = async (
+    kioskName,
+    orientation,
+    splitScreen,
+    interval,
+    transitionTime,
+    axis,
+    autoPlay,
+    kioskCode,
+    id
+  ) => {
     setLoading(true);
     try {
       const response = await fetch(`${host}kioskMachine/kiosk/${id}`, {
@@ -170,7 +180,11 @@ const Kioskstate = (props) => {
         body: JSON.stringify({
           kioskName,
           orientation,
+          splitScreen,
           interval,
+          transitionTime,
+          axis,
+          autoPlay,
           kioskCode,
         }),
       });
@@ -625,8 +639,8 @@ const Kioskstate = (props) => {
 
   const scheduleKioskContent = async (
     kioskCode,
-    kioskContent,
-    kioskContentType,
+    kioskContentArray,
+    kioskContentTypeArray,
     startDate,
     endDate
   ) => {
@@ -639,8 +653,8 @@ const Kioskstate = (props) => {
           "auth-token": token,
         },
         body: JSON.stringify({
-          kioskContent,
-          kioskContentType,
+          kioskContentArray,
+          kioskContentTypeArray,
           startDate,
           endDate,
         }),
